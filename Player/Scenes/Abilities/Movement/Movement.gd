@@ -17,6 +17,10 @@ var gravity : float = 0
 var airMomentumEnabled : bool = false
 var airMomentumStyle : int = 0
 var airMomentum : float = 0
+var airMovementEnabled : bool
+var airMovementStyle : int
+var airMovementSpeed : int
+var airMovementAcc : float
 
 var runningEnabled : bool = true
 var runningAirMomentum : int = 0
@@ -36,6 +40,8 @@ var jumpCount : int = 0
 
 var player
 var grounded : bool
+var input : Vector2
+var direction : Vector3
 var gravityVec : Vector3
 
 func _get(property):
@@ -54,7 +60,10 @@ func _get(property):
 	if property == 'basic/gravity/enable air momentum': return airMomentumEnabled
 	if property == 'basic/gravity/air momentum style': return airMomentumStyle
 	if property == 'basic/gravity/air momentum acceleration': return airMomentum
-
+	if property == 'basic/gravity/enable mid air movement': return airMovementEnabled
+	if property == 'basic/gravity/mid air movement style': return airMovementStyle
+	if property == 'basic/gravity/custom speed': return airMovementSpeed
+	if property == 'basic/gravity/custom acceleration': return airMovementAcc
 	## RUNNING PROPERTIES
 	if property == 'basic/running/enabled': return runningEnabled
 	if property == 'basic/running/running style': return runningStyle
@@ -96,7 +105,15 @@ func _set(property, value):
 		airMomentumStyle = value
 		notify_property_list_changed()
 	if property == 'basic/gravity/air momentum acceleration':airMomentum = value
-
+	if property == 'basic/gravity/enable mid air movement':
+		airMovementEnabled = value
+		notify_property_list_changed()
+	if property == 'basic/gravity/mid air movement style':
+		airMovementStyle = value
+		notify_property_list_changed()
+	if property == 'basic/gravity/custom speed':airMovementSpeed = value
+	if property == 'basic/gravity/custom acceleration':airMovementAcc = value
+	
 	## RUNNING PROPERTIES
 	if property == 'basic/running/enabled': 
 		runningEnabled = value
@@ -211,6 +228,35 @@ func gravity_properties():
 						'type': TYPE_FLOAT
 					}
 				)
+		props.append(
+			{
+				'name': 'basic/gravity/enable mid air movement',
+				'type': TYPE_BOOL
+			}
+		)
+		if airMovementEnabled:
+			props.append(
+				{
+					'name': 'basic/gravity/mid air movement style',
+						"type":2, 
+						"hint":2, 
+						"hint_string":"Use Movement Style,Retro Movement Style,Modern Movement Style", 
+				}
+			)
+			if airMovementStyle != 0:
+				props.append(
+					{
+						'name': 'basic/gravity/custom speed',
+						'type': TYPE_INT
+					}
+				)
+			if airMovementStyle == 2:
+				props.append(
+					{
+						'name': 'basic/gravity/custom acceleration',
+						'type': TYPE_FLOAT
+					}
+				)
 func running_properties():
 	props.append(
 		{
@@ -224,7 +270,7 @@ func running_properties():
 				'name': 'basic/running/running style',
 				"type":2, 
 				"hint":2, 
-				"hint_string":"Linear,Exponential", 
+				"hint_string":"Use Movement Style,Retro,Modern", 
 			}
 		)
 		props.append(
@@ -233,17 +279,11 @@ func running_properties():
 				'type': TYPE_INT
 			}
 		)
-		if runningStyle == 1:
+		if runningStyle == 2 or (movementStyle == 1 and runningStyle == 0):
 			props.append(
 				{
 					'name': 'basic/running/acceleration',
 					'type': TYPE_FLOAT
-				}
-			)
-			props.append(
-				{
-					'name': 'basic/running/maximum Running Speed',
-					'type': TYPE_INT
 				}
 			)
 		props.append(
@@ -431,12 +471,15 @@ func _physics_process(delta):
 	
 	if Engine.is_editor_hint() == false:
 
-		if movementStyle == 0 and grounded:
-			player.velocity = Vector3.ZERO
-
 		if not player.is_on_floor():
 			grounded = false
-			gravityVec += Vector3.DOWN * gravity * delta
+			if gravityStyle == 1:
+				gravityVec += Vector3.DOWN * gravity * delta
+			else:
+				if gravityVec.y > 0:
+					gravityVec += Vector3.DOWN * gravity * delta
+				else:
+					gravityVec = Vector3.DOWN * gravity
 			if airMomentumEnabled:
 				if movementStyle == 0:
 					if airMomentumStyle == 0:
@@ -461,23 +504,50 @@ func _physics_process(delta):
 		if jumpCount < availableJumps and Input.is_action_just_pressed('ui_accept'):
 			jumpCount += 1
 			gravityVec = Vector3.UP * jumpHeight
+			input = Input.get_vector('move_left','move_right','move_forward','move_back')
+			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+			if movementStyle == 0:
+				player.velocity.x = direction.x * speed
+				player.velocity.z = direction.z * speed
 		elif player.is_on_floor():
 			jumpCount = 0
 
-		var input = Input.get_vector('move_left','move_right','move_forward','move_back')
-		var direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+		input = Input.get_vector('move_left','move_right','move_forward','move_back')
+		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+
+		if movementStyle == 0 and grounded:
+			player.velocity = Vector3.ZERO
 
 		if movementStyle == 0:
-			if direction != Vector3.ZERO:
+			if grounded or airMovementEnabled:
 				player.velocity.x = direction.x * speed
 				player.velocity.z = direction.z * speed
-			elif airMomentumEnabled and not grounded:
-				player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
+			if airMovementEnabled:
+				if not grounded:
+					if airMovementStyle == 0:
+						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
+					if airMovementStyle == 2:
+						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * airMovementSpeed,delta * airMovementAcc)
+					if airMovementStyle == 1:
+						player.velocity.x = direction.x * airMovementSpeed
+						player.velocity.z = direction.z * airMovementSpeed
 		else:
-			player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
+			if grounded or airMovementEnabled:
+				player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
+			if airMovementEnabled:
+				if not grounded:
+					if airMovementStyle == 0:
+						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
+					if airMovementStyle == 2:
+						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * airMovementSpeed,delta * airMovementAcc)
+					if airMovementStyle == 1:
+						player.velocity.x = direction.x * airMovementSpeed
+						player.velocity.z = direction.z * airMovementSpeed
 
 		if input == Vector2.ZERO and frictionEnabled and grounded:
 			player.velocity = player.velocity.lerp(Vector3.ZERO,delta * friction)
 		player.velocity.y = gravityVec.y
  
+
+
 		player.move_and_slide()
