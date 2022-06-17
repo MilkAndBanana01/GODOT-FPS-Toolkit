@@ -20,7 +20,6 @@
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.63263)
 
 [node name="Camera" parent="Player" instance=ExtResource( "2_aet60" )]
-basic/sensitivity = 1.173
 
 [node name="Movement" parent="Player" instance=ExtResource( "3_rqffl" )]
 basic/movement/enabled = true
@@ -30,7 +29,7 @@ basic/gravity/enabled = true
 "basic/gravity/gravity style" = 0
 "basic/gravity/gravity rate" = 20.0
 "basic/gravity/enable air momentum" = true
-"basic/gravity/air momentum style" = 2
+"basic/gravity/air momentum style" = 1
 "basic/gravity/air momentum acceleration" = 2.102
 basic/running/enabled = true
 "basic/running/running style" = 0

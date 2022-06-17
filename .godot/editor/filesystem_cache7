@@ -1,0 +1,25 @@
+0b7126e0c6e86d3ec295a72f5aa6e0bd
+::res://::1655444927
+icon.png::CompressedTexture2D::4070270333054250056::1654514595::1655444931::1::::<><>::
+README.md::TextFile::-1::1655443987::0::1::::<><>::
+::res://Demo World/::1654432664
+::res://Demo World/Scenes/::1655443901
+Demo World.tscn::PackedScene::8015083052886207721::1655439186::0::1::::<><>::uid://m880ulrrhub8<>uid://cj6ndkkxxxlun<>uid://c4jf32o7iw773
+Demo.tscn::PackedScene::3618405446041991432::1654505027::0::1::::<><>::uid://m880ulrrhub8<>uid://c4jf32o7iw773<>uid://c4jf32o7iw773
+::res://Player/::1654432679
+::res://Player/Scenes/::1655444082
+Player.gd::GDScript::-1::1654656247::0::1::::<>CharacterBody3D<>::
+Player.tscn::PackedScene::912439963404546619::1655437256::0::1::::<><>::
+::res://Player/Scenes/Abilities/::1654503145
+::res://Player/Scenes/Abilities/Camera/::1655444072
+Camera.gd::GDScript::-1::1655134895::0::1::::<>Node<>::
+Camera.tscn::PackedScene::5469331890550238825::1655132487::0::1::::<><>::res://Player/Scenes/Abilities/Camera/Camera.gd
+::res://Player/Scenes/Abilities/Combat/::1655444080
+Movement.gd::GDScript::-1::1654514607::0::1::::<>Node<>::
+Movement.tscn::PackedScene::6827252261092091404::1654514606::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd
+::res://Player/Scenes/Abilities/Inventory/::1655444077
+Movement.gd::GDScript::-1::1654514604::0::1::::<>Node<>::
+Movement.tscn::PackedScene::6827252261092091404::1654514602::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd
+::res://Player/Scenes/Abilities/Movement/::1655444075
+Movement.gd::GDScript::-1::1655439189::0::1::::<>Node<>::
+Movement.tscn::PackedScene::6827252261092091404::1654514611::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd

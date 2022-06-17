@@ -92,7 +92,9 @@ func _set(property, value):
 		airMomentumEnabled = value
 		notify_property_list_changed()
 	if property == 'basic/gravity/gravity rate':gravity = value
-	if property == 'basic/gravity/air momentum style':airMomentumStyle = value
+	if property == 'basic/gravity/air momentum style':
+		airMomentumStyle = value
+		notify_property_list_changed()
 	if property == 'basic/gravity/air momentum acceleration':airMomentum = value
 
 	## RUNNING PROPERTIES
@@ -202,12 +204,13 @@ func gravity_properties():
 					"hint_string":"Use Movement Acceleration,Add Acceleration,Use Custom Acceleration", 
 				}
 			)
-			props.append(
-				{
-					'name': 'basic/gravity/air momentum acceleration',
-					'type': TYPE_FLOAT
-				}
-			)
+			if airMomentumStyle != 0:
+				props.append(
+					{
+						'name': 'basic/gravity/air momentum acceleration',
+						'type': TYPE_FLOAT
+					}
+				)
 func running_properties():
 	props.append(
 		{
