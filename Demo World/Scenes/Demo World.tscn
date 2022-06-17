@@ -1,0 +1,100 @@
+[gd_scene load_steps=9 format=3 uid="uid://dmgtinmxts7y0"]
+
+[ext_resource type="PackedScene" uid="uid://m880ulrrhub8" path="res://Player/Scenes/Player.tscn" id="1_rxrag"]
+[ext_resource type="PackedScene" uid="uid://cj6ndkkxxxlun" path="res://Player/Scenes/Abilities/Camera/Camera.tscn" id="2_aet60"]
+[ext_resource type="PackedScene" uid="uid://c4jf32o7iw773" path="res://Player/Scenes/Abilities/Movement/Movement.tscn" id="3_rqffl"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5v3mr"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bn3ym"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_mldbv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pku0n"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_owajp"]
+
+[node name="Demo" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource( "1_rxrag" )]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.63263)
+
+[node name="Camera" parent="Player" instance=ExtResource( "2_aet60" )]
+basic/sensitivity = 1.173
+
+[node name="Movement" parent="Player" instance=ExtResource( "3_rqffl" )]
+basic/movement/enabled = true
+"basic/movement/movement style" = 0
+basic/movement/speed = 10
+basic/gravity/enabled = true
+"basic/gravity/gravity style" = 0
+"basic/gravity/gravity rate" = 20.0
+"basic/gravity/enable air momentum" = true
+"basic/gravity/air momentum style" = 2
+"basic/gravity/air momentum acceleration" = 2.102
+basic/running/enabled = true
+"basic/running/running style" = 0
+basic/running/speed = null
+"basic/running/air momentum" = 0
+basic/jumping/enabled = true
+basic/jumping/height = 10
+basic/jumping/jumps = 3
+basic/crouching/enabled = null
+basic/crouching/sneaking/enabled = null
+basic/crouching/crawling/enabled = null
+basic/crouching/proning/enabled = null
+"basic/grabbing & throwing/enabled" = null
+advanced/sliding/enabled = null
+"advanced/wall abilities/climbing/enabled" = null
+"advanced/wall abilities/jumping/enabled" = null
+"advanced/wall abilities/sliding/enabled" = null
+"advanced/wall abilities/sidling (Wall hugging)/enabled" = null
+"advanced/wall abilities/sidling (Wall hugging)/Peeking/enabled" = null
+advanced/dashing/enabled = null
+"advanced/ledge abilities/enabled" = null
+"advanced/ledge abilities/ledge grab/enabled" = null
+"advanced/ledge abilities/ledge hang/enabled" = null
+advanced/zooming/enabled = null
+advanced/vaulting/enabled = null
+advanced/rolling/enabled = null
+"advanced/down smashing (Diving)/enabled" = null
+advanced/leaning/enabled = null
+advanced/grappling/enabled = null
+"advanced/swimming (Floating)/enabled" = null
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.479519, -0.877531, 0, 0.877531, 0.479519, 0, 0, 0, 1, 6.17701, 0, -1.98229)
+mesh = SubResource( "BoxMesh_5v3mr" )
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(2.49765, 2.3423, 1.56457, -3.15062, 0.681354, 2.43782, 1.61979, -2.28645, 2.32926, -3.96778, 7.26114, -2.88183)
+mesh = SubResource( "BoxMesh_5v3mr" )
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(3.32678, -0.506188, -2.31538, 2.2577, 2.38629, 1.74065, 1.61979, -2.28645, 2.32926, -8.45189, 2.48157, -1.14876)
+mesh = SubResource( "BoxMesh_5v3mr" )
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.39626, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource( "WorldBoundaryShape3D_bn3ym" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D/CollisionShape3D"]
+transform = Transform3D(17.1925, 0, 0, 0, 1, 0, 0, 0, 18.8268, 0, 0, 0)
+mesh = SubResource( "PlaneMesh_mldbv" )
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="."]
+transform = Transform3D(4.22736, 0.861322, 0, -2.40293, 1.51528, 0, 0, 0, 3.62468, 2, -1.11993, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+shape = SubResource( "BoxShape3D_pku0n" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_owajp" )
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.0962627, 0.995356, 0, -0.995356, -0.0962627, 0, 2.74435, 0)
+shadow_blur = 4.27

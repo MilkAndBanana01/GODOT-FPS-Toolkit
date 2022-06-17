@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://m880ulrrhub8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ku7c"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tligw"]
+
+[node name="Player" type="CharacterBody3D"]
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource( "CapsuleShape3D_3ku7c" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Collision"]
+mesh = SubResource( "CapsuleMesh_tligw" )
+skeleton = NodePath("../..")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Camera" type="Camera3D" parent="Head"]
+current = true
