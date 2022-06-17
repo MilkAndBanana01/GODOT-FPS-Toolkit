@@ -24,10 +24,8 @@ basic/sensitivity = 1.185
 
 [node name="Movement" parent="Player" instance=ExtResource( "3_rqffl" )]
 basic/movement/enabled = true
-"basic/movement/movement style" = 1
+"basic/movement/movement style" = 0
 basic/movement/speed = 20
-basic/movement/acceleration = 2.0
-"basic/movement/enable friction" = false
 basic/gravity/enabled = true
 "basic/gravity/gravity style" = 1
 "basic/gravity/gravity rate" = 20.0
@@ -36,9 +34,8 @@ basic/gravity/enabled = true
 "basic/gravity/air momentum acceleration" = 0.5
 "basic/gravity/enable mid air movement" = false
 basic/running/enabled = true
-"basic/running/running style" = 0
+"basic/running/running style" = 1
 basic/running/speed = null
-basic/running/acceleration = null
 "basic/running/air momentum" = 0
 basic/jumping/enabled = true
 basic/jumping/height = 10
