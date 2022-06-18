@@ -1,0 +1,4 @@
+DirectionalLight3D
+WorldEnvironment
+CollisionShape3D
+StaticBody3D

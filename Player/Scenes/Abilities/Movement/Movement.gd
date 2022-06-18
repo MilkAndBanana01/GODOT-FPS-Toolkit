@@ -512,8 +512,9 @@ func _physics_process(delta):
 		elif player.is_on_floor():
 			jumpCount = 0
 
-		input = Input.get_vector('move_left','move_right','move_forward','move_back')
-		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+		if grounded or airMovementEnabled:
+			input = Input.get_vector('move_left','move_right','move_forward','move_back')
+			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
 
 		if movementStyle == 0 and grounded:
 			player.velocity = Vector3.ZERO
@@ -531,6 +532,7 @@ func _physics_process(delta):
 					if airMovementStyle == 1:
 						player.velocity.x = direction.x * airMovementSpeed
 						player.velocity.z = direction.z * airMovementSpeed
+
 		else:
 			if grounded or airMovementEnabled:
 				player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
@@ -547,7 +549,5 @@ func _physics_process(delta):
 		if input == Vector2.ZERO and frictionEnabled and grounded:
 			player.velocity = player.velocity.lerp(Vector3.ZERO,delta * friction)
 		player.velocity.y = gravityVec.y
- 
-
 
 		player.move_and_slide()

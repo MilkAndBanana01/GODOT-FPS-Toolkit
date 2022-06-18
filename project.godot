@@ -15,6 +15,10 @@ run/main_scene="res://Demo World/Scenes/Demo World.tscn"
 config/icon="res://icon.png"
 config/features=PackedStringArray("4.0", "Vulkan Clustered")
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 move_forward={
