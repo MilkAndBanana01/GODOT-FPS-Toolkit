@@ -1,33 +1,14 @@
 0b7126e0c6e86d3ec295a72f5aa6e0bd
-::res://::1655557151
+::res://::1655646751
 icon.png::CompressedTexture2D::4070270333054250056::1655466853::1655466853::1::::<><>::
 README.md::TextFile::-1::1655466853::0::1::::<><>::
 ::res://Demo World/::1655556115
-::res://Demo World/Scenes/::1655557319
-Demo World.tscn::PackedScene::8015083052886207721::1655557318::0::1::::<><>::uid://m880ulrrhub8<>uid://cj6ndkkxxxlun<>uid://c4jf32o7iw773
+::res://Demo World/Scenes/::1655643989
+Demo World.tscn::PackedScene::8015083052886207721::1655643989::0::1::::<><>::uid://m880ulrrhub8<>uid://cj6ndkkxxxlun<>uid://c4jf32o7iw773
 Demo.tscn::PackedScene::3618405446041991432::1655466853::0::1::::<><>::uid://m880ulrrhub8<>uid://c4jf32o7iw773<>uid://c4jf32o7iw773
 platform.tscn::PackedScene::8352970647891936405::1655557205::0::1::::<><>::uid://dsl6u3v4th48u
-::res://Demo World/Source/::1655557152
+::res://Demo World/Source/::1655557330
 fps facility.glb::PackedScene::8447288838950426162::1655557047::1655557152::1::::<><>::
-::res://Demo World/Source/LilySurface/::1655555312
-::res://Demo World/Source/LilySurface/ambientCG/::1655554643
-::res://Demo World/Source/LilySurface/cgbookcase/::1655554643
-::res://Demo World/Source/LilySurface/hdrihaven/::1655555312
-::res://Demo World/Source/LilySurface/texturehaven/::1655554790
-::res://Demo World/Source/LilySurface/texturehaven/Beige Wall 001/::1655557152
-thumb.png::CompressedTexture2D::4875862668711054378::1655554791::1655557152::1::::<><>::
-::res://Demo World/Source/LilySurface/texturehaven/Beige Wall 001/1k (exr)/::1655557252
-ARM.exr::CompressedTexture2D::7686839307733466265::1655554795::1655557329::0::::<><>::
-diffuse.exr::CompressedTexture2D::4010768061996636460::1655554794::1655557329::0::::<><>::
-height.exr::CompressedTexture2D::1732144191879649762::1655554793::1655557329::0::::<><>::
-normal.exr::CompressedTexture2D::6629420139386481405::1655554794::1655557329::0::::<><>::
-::res://Demo World/Source/LilySurface/texturehaven/Concrete Floor Worn 001/::1655557152
-thumb.png::CompressedTexture2D::1112862498797268348::1655554680::1655557152::1::::<><>::
-::res://Demo World/Source/LilySurface/texturehaven/Concrete Floor Worn 001/1k (exr)/::1655557252
-ARM.exr::CompressedTexture2D::1809669485532628710::1655554659::1655557329::0::::<><>::
-diffuse.exr::CompressedTexture2D::1077426540193514934::1655554682::1655557329::0::::<><>::
-height.exr::CompressedTexture2D::8305715222306616976::1655554658::1655557329::0::::<><>::
-normal.exr::CompressedTexture2D::4181724526579926722::1655554658::1655557329::0::::<><>::
 ::res://Player/::1655466853
 ::res://Player/Scenes/::1655474404
 Player.gd::GDScript::-1::1655466853::0::1::::<>CharacterBody3D<>::
@@ -42,6 +23,6 @@ Movement.tscn::PackedScene::6827252261092091404::1655466853::0::1::::<><>::res:/
 ::res://Player/Scenes/Abilities/Inventory/::1655466853
 Movement.gd::GDScript::-1::1655466853::0::1::::<>Node<>::
 Movement.tscn::PackedScene::6827252261092091404::1655466853::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd
-::res://Player/Scenes/Abilities/Movement/::1655476305
-Movement.gd::GDScript::-1::1655476305::0::1::::<>Node<>::
+::res://Player/Scenes/Abilities/Movement/::1655643989
+Movement.gd::GDScript::-1::1655643989::0::1::::<>Node<>::
 Movement.tscn::PackedScene::6827252261092091404::1655466853::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd

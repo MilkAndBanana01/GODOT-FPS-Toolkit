@@ -9,22 +9,32 @@ var speed : int = 0
 var acceleration : float = 0
 var frictionEnabled : bool = false
 var friction : float = 0
-var usedAcceleration : float = 0
 
 var gravityEnabled : bool = true
 var gravityStyle : int = 0
 var gravity : float = 0
+
 var airMomentumEnabled : bool = false
 var airMomentumStyle : int = 0
 var airMomentum : float = 0
+
 var airMovementEnabled : bool
 var airMovementStyle : int
 var airMovementSpeed : int
 var airMovementAcc : float
 
+var jumpMovementEnabled : bool
+var jumpMovementAllowed : int
+var jumpMovementStyle : int
+var jumpMovementSpeed : int
+var jumpMovementAcc : float
+
 var runningEnabled : bool = true
 var runningAirMomentum : int = 0
 var runningStyle : int = 0
+var runningSpeed : int
+var runningAcc : float
+var runningAirEnabled : bool
 
 var jumpingEnabled : bool = true
 var jumpHeight : int = 0
@@ -40,119 +50,162 @@ var jumpCount : int = 0
 
 var player
 var grounded : bool
+var usedAcceleration : float
 var input : Vector2
 var direction : Vector3
 var gravityVec : Vector3
 
+
 func _get(property):
 	## movement PROPERTIES
-	if property == 'basic/movement/enabled': return movementEnabled
-	if property == 'basic/movement/movement style': return movementStyle
-	if property == 'basic/movement/enable friction': return frictionEnabled
-	if property == 'basic/movement/speed': return speed
-	if property == 'basic/movement/acceleration': return acceleration
-	if property == 'basic/movement/friction': return friction
+	if property == 'movement/enabled': return movementEnabled
+	if property == 'movement/movement style': return movementStyle
+	if property == 'movement/enable friction': return frictionEnabled
+	if property == 'movement/speed': return speed
+	if property == 'movement/acceleration': return acceleration
+	if property == 'movement/friction': return friction
+
 
 	## GRAVITY PROPERTIES
-	if property == 'basic/gravity/enabled': return gravityEnabled
-	if property == 'basic/gravity/gravity style': return gravityStyle
-	if property == 'basic/gravity/gravity rate': return gravity
-	if property == 'basic/gravity/enable air momentum': return airMomentumEnabled
-	if property == 'basic/gravity/air momentum style': return airMomentumStyle
-	if property == 'basic/gravity/air momentum acceleration': return airMomentum
-	if property == 'basic/gravity/enable mid air movement': return airMovementEnabled
-	if property == 'basic/gravity/mid air movement style': return airMovementStyle
-	if property == 'basic/gravity/custom speed': return airMovementSpeed
-	if property == 'basic/gravity/custom acceleration': return airMovementAcc
-	## RUNNING PROPERTIES
-	if property == 'basic/running/enabled': return runningEnabled
-	if property == 'basic/running/running style': return runningStyle
-	if property == 'basic/running/air momentum': return runningAirMomentum
+	if property == 'gravity/enabled': return gravityEnabled
+	if property == 'gravity/gravity style': return gravityStyle
+	if property == 'gravity/gravity rate': return gravity
+	
+	if property == 'gravity/enable air momentum': return airMomentumEnabled
+	if property == 'gravity/air momentum style': return airMomentumStyle
+	if property == 'gravity/air momentum acceleration': return airMomentum
 
+	if property == 'gravity/enable mid air movement': return airMovementEnabled
+	if property == 'gravity/mid air movement style': return airMovementStyle
+	if property == 'gravity/custom speed': return airMovementSpeed
+	if property == 'gravity/custom acceleration': return airMovementAcc
+
+	if property == 'jumping/allow movement after jump': return jumpMovementEnabled
+	if property == 'jumping/number of jumps': return jumpMovementAllowed
+	if property == 'jumping/speed of movement': return jumpMovementStyle
+	if property == 'jumping/custom speed': return jumpMovementSpeed
+	if property == 'jumping/custom acceleration': return jumpMovementAcc
+
+	## RUNNING PROPERTIES
+	if property == 'running/enabled': return runningEnabled
+	if property == 'running/running style': return runningStyle
+	if property == 'running/air momentum': return runningAirMomentum
+	if property == 'running/speed': return runningSpeed
+	if property == 'running/acceleration': return runningAcc
 
 	## JUMPING PROPERTIES
-	if property == 'basic/jumping/enabled': return jumpingEnabled
-	if property == 'basic/jumping/height': return jumpHeight
-	if property == 'basic/jumping/jumps': return availableJumps
+	if property == 'jumping/enabled': return jumpingEnabled
+	if property == 'jumping/height': return jumpHeight
+	if property == 'jumping/jumps': return availableJumps
 
 func _set(property, value):
 	## movement PROPERTIES
-	if property == 'basic/movement/enabled': 
+	if property == 'movement/enabled': 
 		movementEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/movement/movement style': 
+	if property == 'movement/movement style': 
 		movementStyle = value
 		notify_property_list_changed()
-	if property == 'basic/movement/enable friction': 
+	if property == 'movement/enable friction': 
 		frictionEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/movement/speed':speed = value
-	if property == 'basic/movement/acceleration':acceleration = value
-	if property == 'basic/movement/friction':friction = value
+	if property == 'movement/speed':
+		value = clamp(value,0,INF)
+		speed = value
+	if property == 'movement/acceleration':
+		value = clamp(value,0,INF)
+		acceleration = value
+	if property == 'movement/friction':
+		value = clamp(value,0,INF)
+		friction = value
 	
 	## GRAVITY PROPERTIES
-	if property == 'basic/gravity/enabled': 
+	if property == 'gravity/enabled': 
 		gravityEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/gravity/gravity style': 
+	if property == 'gravity/gravity style': 
 		gravityStyle = value
 		notify_property_list_changed()
-	if property == 'basic/gravity/enable air momentum': 
+	if property == 'gravity/enable air momentum': 
 		airMomentumEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/gravity/gravity rate':gravity = value
-	if property == 'basic/gravity/air momentum style':
+	if property == 'gravity/gravity rate':
+		value = clamp(value,0,INF)
+		gravity = value
+	if property == 'gravity/air momentum style':
 		airMomentumStyle = value
 		notify_property_list_changed()
-	if property == 'basic/gravity/air momentum acceleration':airMomentum = value
-	if property == 'basic/gravity/enable mid air movement':
+	if property == 'gravity/air momentum acceleration':
+		value = clamp(value,0,INF)
+		airMomentum = value
+	if property == 'gravity/enable mid air movement':
 		airMovementEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/gravity/mid air movement style':
+	if property == 'gravity/mid air movement style':
 		airMovementStyle = value
 		notify_property_list_changed()
-	if property == 'basic/gravity/custom speed':airMovementSpeed = value
-	if property == 'basic/gravity/custom acceleration':airMovementAcc = value
+	if property == 'gravity/custom speed':airMovementSpeed = value
+	if property == 'gravity/custom acceleration':airMovementAcc = value
 	
 	## RUNNING PROPERTIES
-	if property == 'basic/running/enabled': 
+	if property == 'running/enabled': 
 		runningEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/running/running style': 
+	if property == 'running/running style': 
 		runningStyle = value
 		notify_property_list_changed()
-	if property == 'basic/running/air momentum': 
+	if property == 'running/air momentum': 
 		runningAirMomentum = value
 		notify_property_list_changed()
+	if property == 'running/speed':
+		value = clamp(value,0,INF)
+		runningSpeed = value
+	if property == 'running/acceleration':
+		value = clamp(value,0,INF)
+		runningAcc = value
+
 
 	## JUMPING PROPERTIES
-	if property == 'basic/jumping/enabled': 
+	if property == 'jumping/enabled': 
 		jumpingEnabled = value
 		notify_property_list_changed()
-	if property == 'basic/jumping/height': 
+	if property == 'jumping/height': 
 		value = clamp(value,0,INF)
 		jumpHeight = value
-	if property == 'basic/jumping/jumps': availableJumps = value
+	if property == 'jumping/jumps': 
+		value = clamp(value,1,INF)
+		availableJumps = value
+	if property == 'jumping/allow movement after jump': 
+		jumpMovementEnabled = value
+		notify_property_list_changed()
+	if property == 'jumping/number of jumps': 
+		value = clamp(value,1,availableJumps)
+		jumpMovementAllowed = value
+	if property == 'jumping/speed of movement': 
+		jumpMovementStyle = value
+		notify_property_list_changed()
+	if property == 'jumping/custom speed': jumpMovementSpeed = value
+	if property == 'jumping/custom acceleration': jumpMovementAcc = value
 
 
 func movement_properties():
 	props.append(
 		{
-			'name': 'Movement Settings',
+			'name': 'Basic Settings',
 			'type': TYPE_NIL,
 			'usage': PROPERTY_USAGE_CATEGORY
 		}
 	)
 	props.append(
 		{
-			'name': 'basic/movement/enabled',
+			'name': 'movement/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	if movementEnabled:
 		props.append(
 			{
-				"name":"basic/movement/movement style", 
+				"name":"movement/movement style", 
 				"type":TYPE_INT, 
 				"hint":2,
 				"hint_string":"Retro - No Momentum,Modern - Momentum", 
@@ -160,41 +213,41 @@ func movement_properties():
 		)
 		props.append(
 			{
-				'name': 'basic/movement/speed',
+				'name': 'movement/speed',
 				'type': TYPE_INT
 			}
 		)
 		if movementStyle == 1:
 			props.append(
 				{
-					'name': 'basic/movement/acceleration',
+					'name': 'movement/acceleration',
 					'type': TYPE_FLOAT
 				}
 			)
 			props.append(
 				{
-					'name': 'basic/movement/enable friction',
+					'name': 'movement/enable friction',
 					'type': TYPE_BOOL
 				}
 			)
 			if frictionEnabled:
 				props.append(
 					{
-						'name': 'basic/movement/friction',
+						'name': 'movement/friction',
 						'type': TYPE_FLOAT
 					}
 				)
 func gravity_properties():
 	props.append(
 		{
-			'name': 'basic/gravity/enabled',
+			'name': 'gravity/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	if gravityEnabled:
 		props.append(
 			{
-				"name":"basic/gravity/gravity style", 
+				"name":"gravity/gravity style", 
 				"type":2, 
 				"hint":2, 
 				"hint_string":"Linear,Exponential", 
@@ -202,42 +255,43 @@ func gravity_properties():
 		)
 		props.append(
 			{
-				'name': 'basic/gravity/gravity rate',
+				'name': 'gravity/gravity rate',
 				'type': TYPE_FLOAT
 			}
 		)
-		props.append(
-			{
-				'name': 'basic/gravity/enable air momentum',
-				'type': TYPE_BOOL
-			}
-		)
-		if airMomentumEnabled:
+		if movementStyle != 0:
 			props.append(
 				{
-					"name":"basic/gravity/air momentum style", 
-					"type":2, 
-					"hint":2, 
-					"hint_string":"Use Movement Acceleration,Add Acceleration,Use Custom Acceleration", 
+					'name': 'gravity/enable air momentum',
+					'type': TYPE_BOOL
 				}
 			)
-			if airMomentumStyle != 0:
+			if airMomentumEnabled:
 				props.append(
 					{
-						'name': 'basic/gravity/air momentum acceleration',
-						'type': TYPE_FLOAT
+						"name":"gravity/air momentum style", 
+						"type":2, 
+						"hint":2, 
+						"hint_string":"Use Movement Acceleration,Add Acceleration,Use Custom Acceleration", 
 					}
 				)
+				if airMomentumStyle != 0:
+					props.append(
+						{
+							'name': 'gravity/air momentum acceleration',
+							'type': TYPE_FLOAT
+						}
+					)
 		props.append(
 			{
-				'name': 'basic/gravity/enable mid air movement',
+				'name': 'gravity/enable mid air movement',
 				'type': TYPE_BOOL
 			}
 		)
 		if airMovementEnabled:
 			props.append(
 				{
-					'name': 'basic/gravity/mid air movement style',
+					'name': 'gravity/mid air movement style',
 						"type":2, 
 						"hint":2, 
 						"hint_string":"Use Movement Style,Retro Movement Style,Modern Movement Style", 
@@ -246,28 +300,28 @@ func gravity_properties():
 			if airMovementStyle != 0:
 				props.append(
 					{
-						'name': 'basic/gravity/custom speed',
+						'name': 'gravity/custom speed',
 						'type': TYPE_INT
 					}
 				)
 			if airMovementStyle == 2:
 				props.append(
 					{
-						'name': 'basic/gravity/custom acceleration',
+						'name': 'gravity/custom acceleration',
 						'type': TYPE_FLOAT
 					}
 				)
 func running_properties():
 	props.append(
 		{
-			'name': 'basic/running/enabled',
+			'name': 'running/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	if runningEnabled:
 		props.append(
 			{
-				'name': 'basic/running/running style',
+				'name': 'running/running style',
 				"type":2, 
 				"hint":2, 
 				"hint_string":"Use Movement Style,Retro,Modern", 
@@ -275,46 +329,79 @@ func running_properties():
 		)
 		props.append(
 			{
-				'name': 'basic/running/speed',
+				'name': 'running/speed',
 				'type': TYPE_INT
 			}
 		)
 		if runningStyle == 2 or (movementStyle == 1 and runningStyle == 0):
 			props.append(
 				{
-					'name': 'basic/running/acceleration',
+					'name': 'running/acceleration',
 					'type': TYPE_FLOAT
 				}
 			)
 		props.append(
 			{
-				'name': 'basic/running/air momentum',
-				"type":2, 
-				"hint":2, 
-				"hint_string":"Keep Running Speed,Keep Air Momentum Speed,Add Running Speed", 
+				'name': 'running/allow running mid air',
+				'type': TYPE_BOOL
 			}
 		)
 func jumping_properties():
 	props.append(
 		{
-			'name': 'basic/jumping/enabled',
+			'name': 'jumping/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	if jumpingEnabled:
 		props.append(
 			{
-				'name': 'basic/jumping/height',
+				'name': 'jumping/height',
 				'type': TYPE_INT
 			}
 		)
 		props.append(
 			{
-				'name': 'basic/jumping/jumps',
+				'name': 'jumping/jumps',
 				'type': TYPE_INT
 			}
 		)
-
+		if not airMovementEnabled:
+			props.append(
+				{
+					'name': 'jumping/allow movement after jump',
+					'type': TYPE_BOOL
+				}
+			)
+			if jumpMovementEnabled:
+				props.append(
+					{
+						'name': 'jumping/number of jumps',
+						'type': TYPE_INT
+					}
+				)
+				props.append(
+					{
+						"name":"jumping/speed of movement", 
+						"type":2, 
+						"hint":2, 
+						"hint_string":"Use Movement Acceleration,Use Custom Acceleration", 
+					}
+				)
+				if jumpMovementStyle != 0:
+					props.append(
+						{
+							'name': 'jumping/custom speed',
+							'type': TYPE_INT
+						}
+					)
+					if movementStyle == 1:
+						props.append(
+							{
+								'name': 'jumping/custom acceleration',
+								'type': TYPE_FLOAT
+							}
+						)
 func _get_property_list() -> Array:
 	props = []
 	movement_properties()
@@ -354,111 +441,111 @@ func _get_property_list() -> Array:
 	)
 	props.append(
 		{
-			'name': 'Movement Settings',
+			'name': 'Advanced Settings',
 			'type': TYPE_NIL,
 			'usage': PROPERTY_USAGE_CATEGORY
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/sliding/enabled',
+			'name': 'sliding/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/wall abilities/climbing/enabled',
+			'name': 'wall abilities/climbing/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/wall abilities/jumping/enabled',
+			'name': 'wall abilities/jumping/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/wall abilities/sliding/enabled',
+			'name': 'wall abilities/sliding/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/wall abilities/sidling (Wall hugging)/enabled',
+			'name': 'wall abilities/sidling (Wall hugging)/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/wall abilities/sidling (Wall hugging)/Peeking/enabled',
+			'name': 'wall abilities/sidling (Wall hugging)/Peeking/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 
 	props.append(
 		{
-			'name': 'advanced/dashing/enabled',
+			'name': 'dashing/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/ledge abilities/enabled',
+			'name': 'ledge abilities/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/ledge abilities/ledge grab/enabled',
+			'name': 'ledge abilities/ledge grab/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/ledge abilities/ledge hang/enabled',
+			'name': 'ledge abilities/ledge hang/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/zooming/enabled',
+			'name': 'zooming/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/vaulting/enabled',
+			'name': 'vaulting/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/rolling/enabled',
+			'name': 'rolling/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/down smashing (Diving)/enabled',
+			'name': 'down smashing (Diving)/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/leaning/enabled',
+			'name': 'leaning/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/grappling/enabled',
+			'name': 'grappling/enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'advanced/swimming (Floating)/enabled',
+			'name': 'swimming (Floating)/enabled',
 			'type': TYPE_BOOL
 		}
 	)
@@ -512,39 +599,32 @@ func _physics_process(delta):
 		elif player.is_on_floor():
 			jumpCount = 0
 
-		if grounded or airMovementEnabled:
-			input = Input.get_vector('move_left','move_right','move_forward','move_back')
-			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+		input = Input.get_vector('move_left','move_right','move_forward','move_back')
+		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
 
-		if movementStyle == 0 and grounded:
-			player.velocity = Vector3.ZERO
+		if not Input.is_action_pressed('sprint') and \
+		(grounded \
+		or (airMovementEnabled and airMovementStyle == 0) \
+		or (not grounded and jumpMovementEnabled and (jumpCount <= jumpMovementAllowed))):
+			if movementStyle == 0:
+					print('normal walking')
+					player.velocity = Vector3.ZERO
+					player.velocity.x = direction.x * (speed + (int(runningEnabled and (Input.is_action_pressed('sprint') and (runningAirEnabled or grounded))) * runningSpeed))
+					player.velocity.z = direction.z * (speed + (int(runningEnabled and (Input.is_action_pressed('sprint') and (runningAirEnabled or grounded))) * runningSpeed))
+			else:
+					player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * (speed + (int(runningEnabled and Input.is_action_pressed('sprint')) * runningSpeed)),delta * usedAcceleration)
 
-		if movementStyle == 0:
-			if grounded or airMovementEnabled:
-				player.velocity.x = direction.x * speed
-				player.velocity.z = direction.z * speed
-			if airMovementEnabled:
-				if not grounded:
-					if airMovementStyle == 0:
-						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
-					if airMovementStyle == 2:
-						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * airMovementSpeed,delta * airMovementAcc)
-					if airMovementStyle == 1:
-						player.velocity.x = direction.x * airMovementSpeed
-						player.velocity.z = direction.z * airMovementSpeed
+		if airMovementEnabled:
+			if not grounded:
+				if airMovementStyle == 1:
+					player.velocity.x = direction.x * airMovementSpeed
+					player.velocity.z = direction.z * airMovementSpeed
+				if airMovementStyle == 2:
+					player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * airMovementSpeed,delta * airMovementAcc)
 
-		else:
-			if grounded or airMovementEnabled:
-				player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
-			if airMovementEnabled:
-				if not grounded:
-					if airMovementStyle == 0:
-						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * speed,delta * usedAcceleration)
-					if airMovementStyle == 2:
-						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * airMovementSpeed,delta * airMovementAcc)
-					if airMovementStyle == 1:
-						player.velocity.x = direction.x * airMovementSpeed
-						player.velocity.z = direction.z * airMovementSpeed
+		if runningEnabled and Input.is_action_pressed('sprint'):
+			if runningStyle == 2:
+				player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * (speed + (int(runningEnabled and (Input.is_action_pressed('sprint') and (runningAirEnabled or grounded))) * runningSpeed)),delta * runningAcc)
 
 		if input == Vector2.ZERO and frictionEnabled and grounded:
 			player.velocity = player.velocity.lerp(Vector3.ZERO,delta * friction)
