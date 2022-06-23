@@ -8,6 +8,7 @@ var mouseMovement
 var rotationVelocity: Vector2
 
 var headExists : bool
+var camExists : bool
 
 var enabled := true
 var sensitivity : float = 0
@@ -85,17 +86,22 @@ func _ready():
 	if Engine.is_editor_hint() == false:
 		player = get_parent()
 		for i in player.get_children():
-			if i is Spatial and not CollisionShape:
+			if i.name == "Head":
 				head = i
 				headExists = true
-				camera = head.get_node("Camera")
+				for child in head.get_children():
+					if child is Camera:
+						camera = child
+						camExists = true
 		if not headExists:
 			head = Spatial.new()
 			head.name = 'Head'
-			camera = Camera.new()
-			camera.name = 'Camera'
+			head.translate(Vector3(1,0,0))
 			player.call_deferred('add_child',head)
 			head.call_deferred('set_owner',player)
+		if not camExists:
+			camera = Camera.new()
+			camera.name = 'Camera'
 			head.call_deferred('add_child',camera)
 			camera.call_deferred('set_owner',player)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -103,6 +109,8 @@ func _ready():
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouseMovement = event.relative
+	if Input.is_key_pressed(KEY_ESCAPE):
+		get_tree().quit()
 
 func _physics_process(_delta: float) -> void:
 	if mouseMovement != null:
