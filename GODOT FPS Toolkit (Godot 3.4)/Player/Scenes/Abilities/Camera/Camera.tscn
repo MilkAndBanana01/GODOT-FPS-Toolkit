@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Player/Scenes/Abilities/Camera/Camera.gd" type="Script" id=1]
+
+[node name="Camera" type="Node"]
+script = ExtResource( 1 )
+basic/enabled = true
+basic/sensitivity = 1.0
+basic/smoothing = false
+basic/lock_camera = false

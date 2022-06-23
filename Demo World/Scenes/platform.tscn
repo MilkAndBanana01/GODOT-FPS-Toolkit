@@ -1,5 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://draihal7o3v7b"]
-
-[ext_resource type="PackedScene" uid="uid://dsl6u3v4th48u" path="res://Demo World/Source/fps facility.glb" id="1_g4fp3"]
-
-[node name="fps facility" instance=ExtResource( "1_g4fp3" )]

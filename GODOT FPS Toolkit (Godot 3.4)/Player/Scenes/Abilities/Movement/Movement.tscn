@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Player/Scenes/Abilities/Movement/Movement.gd" type="Script" id=1]
+
+[node name="Movement" type="Node"]
+script = ExtResource( 1 )
+movement/enabled = true
+"movement/movement style" = 0
+movement/speed = 0
+gravity/enabled = false
+running/enabled = true
+"running/running style" = 0
+running/speed = 0
+"running/allow running mid air" = false
+jumping/enabled = false
+crouching/enabled = false
+"crouching/allow crouching mid air" = 0
+"grabbing & throwing/enabled" = null
+sliding/enabled = null
+"wall abilities/climbing/enabled" = null
+"wall abilities/jumping/enabled" = null
+"wall abilities/sliding/enabled" = null
+"wall abilities/sidling (Wall hugging)/enabled" = null
+"wall abilities/sidling (Wall hugging)/Peeking/enabled" = null
+dashing/enabled = null
+"ledge abilities/enabled" = null
+"ledge abilities/ledge grab/enabled" = null
+"ledge abilities/ledge hang/enabled" = null
+zooming/enabled = null
+vaulting/enabled = null
+"advanced crouching/enabled" = null
+"down smashing (Diving)/enabled" = null
+leaning/enabled = null
+grappling/enabled = null
+"swimming (Floating)/enabled" = null
+rolling/enabled = null
