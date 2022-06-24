@@ -1,6 +1,8 @@
 tool
 extends Node
 
+signal updateHeight
+
 var props : Array
 
 var movementEnabled : bool
@@ -11,23 +13,14 @@ var frictionEnabled : bool
 var friction : float
 
 var gravityEnabled : bool 
-var gravityStyle : int
 var gravity : float
-
 var airMomentumEnabled : bool 
 var airMomentumStyle : int
 var airMomentum : float
-
 var airMovementEnabled : bool
 var airMovementStyle : int
 var airMovementSpeed : int
 var airMovementAcc : float
-
-var jumpMovementEnabled : bool
-var jumpMovementAllowed : int
-var jumpMovementStyle : int
-var jumpMovementSpeed : int
-var jumpMovementAcc : float
 
 var runningEnabled : bool = true
 var runningAirMomentum : int
@@ -35,6 +28,13 @@ var runningStyle : int
 var runningSpeed : int
 var runningAcc : float
 var runningAirEnabled : bool
+
+
+var jumpMovementEnabled : bool
+var jumpMovementAllowed : int
+var jumpMovementStyle : int
+var jumpMovementSpeed : int
+var jumpMovementAcc : float
 
 var jumpingEnabled : bool
 var jumpHeight : float
@@ -49,12 +49,10 @@ var crouchingSpeed : float
 var crouchingHeight : float
 var crouchingSpeedConfig : int
 var decreaseSpeed : float
-var crouchingSpeedStyle : int
-var customCrouchingSpeed : int
-var customCrouchingAcc : float
 var airCrouching : int
 
 var collision
+var capsuleMesh
 var collExists : bool
 
 var player
@@ -62,7 +60,9 @@ var grounded : bool
 var usedAcceleration : float
 var input : Vector2
 var direction : Vector3
+var velocity : Vector3
 var gravityVec : Vector3
+var snapVec : Vector3
 
 func _get(property):
 	## MOVEMENT PROPERTIES
@@ -76,7 +76,6 @@ func _get(property):
 
 	## GRAVITY PROPERTIES
 	if property == 'gravity/enabled': return gravityEnabled
-	if property == 'gravity/gravity style': return gravityStyle
 	if property == 'gravity/gravity rate': return gravity
 	
 	if property == 'gravity/enable air momentum': return airMomentumEnabled
@@ -116,9 +115,6 @@ func _get(property):
 	if property == 'crouching/crouching speed': return crouchingSpeed
 	if property == 'crouching/speed configuration': return crouchingSpeedConfig
 	if property == 'crouching/decrease speed': return decreaseSpeed
-	if property == 'crouching/custom speed style': return crouchingSpeedStyle
-	if property == 'crouching/custom speed': return customCrouchingSpeed
-	if property == 'crouching/custom acceleration': return customCrouchingAcc
 	if property == 'crouching/allow crouching mid air': return airCrouching
 
 func _set(property, value):
@@ -145,9 +141,6 @@ func _set(property, value):
 	## GRAVITY PROPERTIES
 	if property == 'gravity/enabled': 
 		gravityEnabled = value
-		property_list_changed_notify()
-	if property == 'gravity/gravity style': 
-		gravityStyle = value
 		property_list_changed_notify()
 	if property == 'gravity/enable air momentum': 
 		airMomentumEnabled = value
@@ -220,18 +213,15 @@ func _set(property, value):
 		property_list_changed_notify()
 		crouchingConfig = value
 	if property == 'crouching/decrease height': decreaseStandingHeight = value
-	if property == 'crouching/standing height': standingHeight = value
+	if property == 'crouching/standing height': 
+		standingHeight = value
+		emit_signal("updateHeight",standingHeight)
 	if property == 'crouching/crouching height': crouchingHeight = value
 	if property == 'crouching/crouching speed': crouchingSpeed = value
 	if property == 'crouching/speed configuration': 
 		property_list_changed_notify()
 		crouchingSpeedConfig = value
 	if property == 'crouching/decrease speed': decreaseSpeed = value
-	if property == 'crouching/custom speed style': 
-		property_list_changed_notify()
-		crouchingSpeedStyle = value
-	if property == 'crouching/custom speed': customCrouchingSpeed = value
-	if property == 'crouching/custom acceleration': customCrouchingAcc = value
 	if property == 'crouching/allow crouching mid air': airCrouching = value
 
 func movement_properties():
@@ -291,14 +281,6 @@ func gravity_properties():
 		}
 	)
 	if gravityEnabled:
-		props.append(
-			{
-				"name":"gravity/gravity style", 
-				"type":2, 
-				"hint":3, 
-				"hint_string":"Linear,Exponential", 
-			}
-		)
 		props.append(
 			{
 				'name': 'gravity/gravity rate',
@@ -431,7 +413,7 @@ func jumping_properties():
 						"name":"jumping/speed of movement", 
 						"type":2, 
 						"hint":3, 
-						"hint_string":"Use Movement Acceleration,Use Custom Acceleration", 
+						"hint_string":"Use Movement Speed,Use Custom Speed", 
 					}
 				)
 				if jumpMovementStyle != 0:
@@ -448,7 +430,6 @@ func jumping_properties():
 								'type': TYPE_REAL
 							}
 						)
-
 func crouching_properties():
 	props.append(
 		{
@@ -493,50 +474,18 @@ func crouching_properties():
 		)
 		props.append(
 			{
-				"name":"crouching/speed configuration", 
-				"type":2, 
-				"hint":3, 
-				"hint_string":"Decrease from Current Speed,Use Custom Speed", 
+				'name': 'crouching/decrease speed',
+				'type': TYPE_REAL
 			}
 		)
-
-		if crouchingSpeedConfig != 0:
-			props.append(
-				{
-					"name":"crouching/custom speed style", 
-					"type":2, 
-					"hint":3, 
-					"hint_string":"Retro,Modern", 
-				}
-			)
-			props.append(
-				{
-					'name': 'crouching/custom speed',
-					'type': TYPE_INT
-				}
-			)
-			if crouchingSpeedStyle == 1:
-				props.append(
-					{
-						'name': 'crouching/custom acceleration',
-						'type': TYPE_REAL
-					}
-				)
-		else:
-			props.append(
-				{
-					'name': 'crouching/decrease speed',
-					'type': TYPE_REAL
-				}
-			)
-	props.append(
-		{
-			"name":"crouching/allow crouching mid air", 
-			"type":2, 
-			"hint":3, 
-			"hint_string":"Disabled,Enable,Affect Height,Affect Speed", 
-		}
-	)
+		props.append(
+			{
+				"name":"crouching/allow crouching mid air", 
+				"type":2, 
+				"hint":3, 
+				"hint_string":"Disabled,Enable,Affect Height,Affect Speed", 
+			}
+		)
 
 func _get_property_list() -> Array:
 	props = []
@@ -672,122 +621,155 @@ func _get_property_list() -> Array:
 	return props
 
 func _ready() -> void:
-	player = get_parent()
-	for i in player.get_children():
-		if i is CollisionShape:
-			collision = i
-			collExists = true
-	if not collExists:
-		collision = CollisionShape.new()
-		collision.name = "Collision"
-		var capsule = CapsuleShape.new()
-		capsule.radius = 0.5
-		collision.set_shape(capsule)
-		collision.rotate_x(deg2rad(90))
-		player.call_deferred('add_child',collision)
-		collision.call_deferred('set_owner',player)
-		yield()
-	if crouchingConfig == 0:
-		standingHeight = player.get_node("Collision").shape.height
-		crouchingHeight = standingHeight - decreaseStandingHeight
+	if Engine.is_editor_hint() == false:
+		player = get_parent()
+		for i in get_children():
+			if i is CollisionShape:
+				collision = i
+				collExists = true
+		if not collExists:
+			collision = CollisionShape.new()
+			collision.name = "Collision"
+			var capsule = CapsuleShape.new()
+			capsule.height = standingHeight
+			capsule.radius = 0.5
+			collision.set_shape(capsule)
+			collision.rotate_x(deg2rad(90))
+
+			capsuleMesh = CapsuleMesh.new()
+			capsuleMesh.radius = 0.5
+			var mesh = MeshInstance.new()
+			mesh.set_mesh(capsuleMesh)
+
+			player.call_deferred('add_child',collision)
+			collision.call_deferred('set_owner',player)
+			player.call_deferred('add_child',collision)
+			collision.call_deferred('set_owner',player)
+			collision.call_deferred('add_child',mesh)
+			mesh.call_deferred('set_owner',player)
+
+		if crouchingConfig == 0:
+			standingHeight = 1
+			crouchingHeight = standingHeight - decreaseStandingHeight
+
+		capsuleMesh.mid_height = standingHeight
+
+		var inputs := ["move_left","move_right","move_back","move_forward","jump","sprint","crouch"]
+		var keyCodes := [KEY_A,KEY_D,KEY_S,KEY_W,KEY_SPACE,KEY_SHIFT,KEY_CONTROL]
+		var pos := 0
+		for i in inputs:
+			if InputMap.has_action(i):
+				var inputEvent = InputEventKey.new()
+				inputEvent.scancode = keyCodes[pos]
+				if InputMap.action_has_event(i,inputEvent):
+					pass
+				else:
+					InputMap.action_add_event(i,inputEvent)
+			pos += 1
+		connect('updateHeight',player.get_node("Camera"),"updateHeight")
+		emit_signal("updateHeight",standingHeight)
 
 func _physics_process(delta):
-
 	if Engine.is_editor_hint() == false:
+		grounded = player.is_on_floor()
 
-		if not player.is_on_floor():
-			grounded = false
-			if gravityStyle == 1:
-				gravityVec += Vector3.DOWN * gravity * delta
-			else:
-				if gravityVec.y > 0:
-					gravityVec += Vector3.DOWN * gravity * delta
-				else:
-					gravityVec = Vector3.DOWN * gravity
-			if airMomentumEnabled:
-				if movementStyle == 0:
-					if airMomentumStyle == 0:
-						usedAcceleration = speed
-					elif airMomentumStyle == 1:
-						usedAcceleration = speed + airMomentum
-					elif airMomentumStyle == 2:
-						usedAcceleration = airMomentum
-				else:
-					if airMomentumStyle == 1:
-						usedAcceleration = acceleration + airMomentum
-					elif airMomentumStyle == 2:
-						usedAcceleration = airMomentum
-		else:
-			if movementStyle == 0 and airMomentumStyle == 1:
-				usedAcceleration = speed
-			else:
-				usedAcceleration = acceleration
-			gravityVec = -player.get_floor_normal()
-			grounded = true
-
-		if jumpingEnabled and jumpCount < availableJumps and Input.is_action_just_pressed('ui_accept'):
-			jumpCount += 1
-			gravityVec = Vector3.UP * jumpHeight
-			input = Input.get_vector('move_left','move_right','move_forward','move_back')
-			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
-			if movementStyle == 0:
-				player.velocity.x = direction.x * speed
-				player.velocity.z = direction.z * speed
-		elif player.is_on_floor():
-			jumpCount = 0
-
+# CAPTURING INPUTS
 		input = Input.get_vector('move_left','move_right','move_forward','move_back')
-		if (grounded and not airMovementEnabled) \
-		or airMovementEnabled \
-		or ((not grounded) and jumpMovementEnabled and (jumpCount <= jumpMovementAllowed)):
+		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+
+# INTERPOLATING PLAYER HEIGHT INPUTS
+		if crouchingConfig == 0:
+			collision.shape.height = lerp(
+				collision.shape.height,
+				standingHeight - (int(Input.is_action_pressed('crouch')) * decreaseStandingHeight),
+				delta * crouchingSpeed)
+			capsuleMesh.mid_height = lerp(
+				capsuleMesh.mid_height,
+				standingHeight - (int(Input.is_action_pressed('crouch')) * decreaseStandingHeight),
+				delta * crouchingSpeed)
+		else:
+			collision.shape.height = lerp(
+				collision.shape.height,
+				(int(not Input.is_action_pressed('crouch')) * standingHeight) + 
+				(int(Input.is_action_pressed('crouch')) * crouchingHeight),
+				delta * crouchingSpeed)
+			capsuleMesh.mid_height = lerp(
+				capsuleMesh.mid_height,
+				(int(not Input.is_action_pressed('crouch')) * standingHeight) + 
+				(int(Input.is_action_pressed('crouch')) * crouchingHeight),
+				delta * crouchingSpeed)
+# GRAVITY
+		if grounded:
+			jumpCount = 0
+			snapVec = -player.get_floor_normal()
+			gravityVec = Vector3.ZERO
+			usedAcceleration = acceleration
+		else:
+			snapVec = Vector3.DOWN
+			gravityVec += Vector3.DOWN * gravity * delta
+			usedAcceleration = acceleration
+			if airMomentumEnabled:
+				if airMomentumStyle == 0:
+					usedAcceleration = acceleration
+				if airMomentumStyle == 1:
+					usedAcceleration = acceleration + airMomentum
+				if airMomentumStyle == 2:
+					usedAcceleration = airMomentum
+
+		var currentSpeed = ((speed 
+		+ (int(runningEnabled and Input.is_action_pressed("sprint"))) * runningSpeed) 
+		- (int(crouchingEnabled and Input.is_action_pressed('crouch') and \
+		grounded or not (airCrouching != 0 or airCrouching != 2))) * decreaseSpeed)
+
+# JUMPING
+		if Input.is_action_just_pressed("jump") and \
+		(grounded or \
+		jumpCount < availableJumps or \
+		airMovementEnabled):
+			jumpCount += 1
+			snapVec = Vector3.ZERO
+			gravityVec = Vector3.UP * jumpHeight
 			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+			velocity.x = direction.x * currentSpeed
+			velocity.z = direction.z * currentSpeed
 
-		player.get_node("Collision").shape.height = lerp(
-			player.get_node("Collision").shape.height,
-		int(crouchingConfig == 1) * ((standingHeight * int(not Input.is_action_pressed('crouch')) + (crouchingHeight * int(Input.is_action_pressed('crouch'))))) + int(crouchingConfig == 0) * (standingHeight - (int(grounded or airCrouching == 1 or airCrouching == 2) * (int(crouchingEnabled and Input.is_action_pressed('crouch')) * decreaseStandingHeight))),
-		delta * crouchingSpeed)
-
-		if runningEnabled and Input.is_action_pressed('sprint'):
-			if runningStyle == 2:
-				player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * (speed + (int(runningEnabled and (Input.is_action_pressed('sprint') and (runningAirEnabled or grounded))) * runningSpeed)),delta * runningAcc)
-
-		if grounded \
-		or (airMovementEnabled and airMovementStyle == 0) \
-		or ((not grounded) and jumpMovementEnabled and (jumpCount <= jumpMovementAllowed)):
+# MOVEMENT STYLE
+		if grounded:
 			if movementStyle == 0:
-					var currentSpeed = ((speed 
-						+ (int(runningEnabled and (Input.is_action_pressed('sprint') and (runningAirEnabled or grounded))) * runningSpeed)) 
-						- (int(crouchingEnabled and Input.is_action_pressed('crouch') and crouchingSpeedConfig == 0 and (grounded or airCrouching == 1 or airCrouching == 3)) * decreaseSpeed))
-					if not Input.is_action_pressed('crouch'):
-						player.velocity = Vector3.ZERO
-						player.velocity.x = direction.x * currentSpeed
-						player.velocity.z = direction.z * currentSpeed
-					elif crouchingSpeedStyle == 1 and Input.is_action_pressed('crouch'):
-						player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * customCrouchingSpeed,delta * customCrouchingAcc)
+				velocity = Vector3.ZERO
+				velocity.x = direction.x * currentSpeed
+				velocity.z = direction.z * currentSpeed
 			else:
-					var currentSpeed = ((speed 
-						+ (int(runningEnabled and (Input.is_action_pressed('sprint') and (runningAirEnabled or grounded))) * runningSpeed)) 
-						- (int(crouchingEnabled and Input.is_action_pressed('crouch') and crouchingSpeedConfig == 0 and (grounded or airCrouching == 1 or airCrouching == 3)) * decreaseSpeed))
-					player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * currentSpeed,delta * usedAcceleration)
+				velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * currentSpeed, delta * usedAcceleration)
 
-		if airMovementEnabled:
-			if not grounded:
+# FRICTION
+			if frictionEnabled and input == Vector2.ZERO:
+				velocity = velocity.linear_interpolate(Vector3.ZERO, delta * friction)
+
+# AIR MOVEMENT
+		else:
+			if airMovementEnabled:
 				if airMovementStyle == 1:
-					player.velocity = Vector3.ZERO
-					player.velocity.x = direction.x * airMovementSpeed
-					player.velocity.z = direction.z * airMovementSpeed
-				if airMovementStyle == 2:
-					player.velocity = player.velocity.lerp(Vector3(direction.x,0,direction.z) * airMovementSpeed,delta * airMovementAcc)
+					velocity = Vector3.ZERO
+					velocity.x = direction.x * airMovementSpeed
+					velocity.z = direction.z * airMovementSpeed
+				elif airMovementStyle == 2:
+					velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * airMovementSpeed, delta * airMovementAcc)
 
-		if crouchingEnabled \
-		and Input.is_action_pressed('crouch') \
-		and crouchingSpeedConfig == 1 \
-		and (grounded or (not grounded and (airCrouching == 1 or airCrouching == 3))):
-			if crouchingSpeedStyle == 0:
-				player.velocity.x = direction.x * customCrouchingSpeed
-				player.velocity.z = direction.z * customCrouchingSpeed
-		if input == Vector2.ZERO and frictionEnabled and grounded:
-			player.velocity = player.velocity.lerp(Vector3.ZERO,delta * friction)
-		player.velocity.y = gravityVec.y
+# JUMP MOVEMENT
+			if jumpMovementEnabled and (jumpCount < jumpMovementAllowed):
+				var jumpAirSpeed : int
+				if jumpMovementStyle == 0:
+					jumpAirSpeed = currentSpeed
+				elif airMovementStyle == 1:
+					jumpAirSpeed = jumpMovementSpeed
+					if movementStyle == 0:
+						velocity = Vector3.ZERO
+						velocity.x = direction.x * jumpAirSpeed
+						velocity.z = direction.z * jumpAirSpeed
+					else:
+						velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * jumpAirSpeed, delta * jumpMovementAcc)
 
-		player.move_and_slide()
+
+		velocity.y = gravityVec.y
+		player.move_and_slide_with_snap(velocity,snapVec,Vector3.UP)

@@ -1,12 +1,15 @@
 tool
 extends Node
 
+signal updateHeadPosition
+
 var player
 var head
 var camera
 var mouseMovement
 var rotationVelocity: Vector2
 
+var movement
 var headExists : bool
 var camExists : bool
 
@@ -93,10 +96,11 @@ func _ready():
 					if child is Camera:
 						camera = child
 						camExists = true
+			if i is CollisionShape:
+				updateHeight(i.shape.height)
 		if not headExists:
 			head = Spatial.new()
 			head.name = 'Head'
-			head.translate(Vector3(1,0,0))
 			player.call_deferred('add_child',head)
 			head.call_deferred('set_owner',player)
 		if not camExists:
@@ -105,6 +109,7 @@ func _ready():
 			head.call_deferred('add_child',camera)
 			camera.call_deferred('set_owner',player)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		movement = player.get_node("Movement")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -112,14 +117,25 @@ func _input(event: InputEvent) -> void:
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
 
-func _physics_process(_delta: float) -> void:
-	if mouseMovement != null:
-		if smoothing:
-			rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - smoothing_amount) * .01)
-		else:
-			rotationVelocity = mouseMovement * (sensitivity * 0.25)
-		if not lock_camera:
-			player.rotate_y(-deg2rad(rotationVelocity.x))
-			head.rotate_x(-deg2rad(rotationVelocity.y))
-			head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
-		mouseMovement = Vector2.ZERO
+func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint() == false:
+
+		head.translation.y = lerp(
+			head.translation.y,
+			(int(not Input.is_action_pressed('crouch')) * movement.standingHeight) + 
+			(int(Input.is_action_pressed('crouch')) * movement.crouchingHeight),
+			delta * movement.crouchingSpeed)
+
+		if mouseMovement != null:
+			if smoothing:
+				rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - smoothing_amount) * .01)
+			else:
+				rotationVelocity = mouseMovement * (sensitivity * 0.25)
+			if not lock_camera:
+				player.rotate_y(-deg2rad(rotationVelocity.x))
+				head.rotate_x(-deg2rad(rotationVelocity.y))
+				head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
+			mouseMovement = Vector2.ZERO
+
+func updateHeight(n):
+	head.translation.y = n
