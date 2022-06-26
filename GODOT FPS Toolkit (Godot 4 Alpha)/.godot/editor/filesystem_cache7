@@ -1,0 +1,29 @@
+0b7126e0c6e86d3ec295a72f5aa6e0bd
+::res://::1656203776
+icon.png::CompressedTexture2D::4070270333054250056::1655740826::1655740826::1::::<><>::
+README.md::TextFile::-1::1655740826::0::1::::<><>::
+test.gd::GDScript::-1::1655740826::0::1::::<>CharacterBody3D<>::
+::res://Demo World/::1655740826
+::res://Demo World/Scenes/::1655740826
+Demo World.tscn::PackedScene::8015083052886207721::1655740826::0::1::::<><>::uid://m880ulrrhub8<>uid://cj6ndkkxxxlun<>uid://c4jf32o7iw773
+Demo.tscn::PackedScene::3618405446041991432::1655740826::0::1::::<><>::uid://m880ulrrhub8<>uid://c4jf32o7iw773<>uid://c4jf32o7iw773
+platform.tscn::PackedScene::8352970647891936405::1655740826::0::1::::<><>::uid://dsl6u3v4th48u
+::res://Demo World/Source/::1655740826
+fps facility.glb::PackedScene::8447288838950426162::1655740826::1655740826::1::::<><>::
+::res://Player/::1655740826
+::res://Player/Scenes/::1655740826
+Player.gd::GDScript::-1::1655740826::0::1::::<>CharacterBody3D<>::
+Player.tscn::PackedScene::912439963404546619::1655740826::0::1::::<><>::
+::res://Player/Scenes/Abilities/::1655740826
+::res://Player/Scenes/Abilities/Camera/::1655740826
+Camera.gd::GDScript::-1::1655740826::0::1::::<>Node<>::
+Camera.tscn::PackedScene::5469331890550238825::1655740826::0::1::::<><>::res://Player/Scenes/Abilities/Camera/Camera.gd
+::res://Player/Scenes/Abilities/Combat/::1655740826
+Movement.gd::GDScript::-1::1655740826::0::1::::<>Node<>::
+Movement.tscn::PackedScene::6827252261092091404::1655740826::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd
+::res://Player/Scenes/Abilities/Inventory/::1655740826
+Movement.gd::GDScript::-1::1655740826::0::1::::<>Node<>::
+Movement.tscn::PackedScene::6827252261092091404::1655740826::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd
+::res://Player/Scenes/Abilities/Movement/::1655740826
+Movement.gd::GDScript::-1::1655740826::0::1::::<>Node<>::
+Movement.tscn::PackedScene::6827252261092091404::1655740826::0::1::::<><>::res://Player/Scenes/Abilities/Movement/Movement.gd

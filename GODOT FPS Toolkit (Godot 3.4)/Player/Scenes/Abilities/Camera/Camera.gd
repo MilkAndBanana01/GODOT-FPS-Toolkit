@@ -96,8 +96,6 @@ func _ready():
 					if child is Camera:
 						camera = child
 						camExists = true
-			if i is CollisionShape:
-				updateHeight(i.shape.height)
 		if not headExists:
 			head = Spatial.new()
 			head.name = 'Head'

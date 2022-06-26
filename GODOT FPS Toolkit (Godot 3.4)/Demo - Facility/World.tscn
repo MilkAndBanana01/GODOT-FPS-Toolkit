@@ -13,10 +13,16 @@ background_sky = SubResource( 1 )
 tonemap_mode = 2
 tonemap_white = 16.0
 auto_exposure_enabled = true
-ssao_enabled = true
 ssao_radius = 0.28
 ssao_radius2 = 0.32
 ssao_quality = 2
+dof_blur_far_distance = 9.32
+dof_blur_far_transition = 19.9
+dof_blur_near_enabled = true
+adjustment_enabled = true
+adjustment_brightness = 1.12
+adjustment_contrast = 1.19
+adjustment_saturation = 1.4
 
 [sub_resource type="BoxShape" id=3]
 
@@ -31,16 +37,27 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.21499, 0 )
 [node name="Camera" parent="KinematicBody" instance=ExtResource( 2 )]
 
 [node name="Movement" parent="KinematicBody" instance=ExtResource( 3 )]
-movement/speed = 10
-gravity/enabled = true
-"gravity/gravity rate" = 20.0
-"gravity/enable mid air movement" = true
-"gravity/mid air movement style" = 0
-crouching/enabled = true
-crouching/configuration = 0
-"crouching/decrease height" = 0.533
-"crouching/crouching speed" = 6.863
-"crouching/decrease speed" = 8.255
+"hide all" = false
+"hide basic" = true
+basic/movement = true
+basic/gravity = true
+basic/running = true
+basic/jumping = true
+basic/crouching = true
+"basic/grabbing & throwing" = true
+"hide advanced" = false
+advanced/sliding = false
+"advanced/wall abilities" = false
+advanced/dashing = false
+"advanced/ledge abilities" = false
+advanced/zooming = false
+advanced/vaulting = false
+"advanced/advanced crouching" = false
+"advanced/down smashing (Diving)" = false
+advanced/leaning = false
+advanced/grappling = false
+"advanced/swimming (Floating)" = false
+advanced/rolling = false
 
 [node name="StaticBody" type="StaticBody" parent="."]
 transform = Transform( 192.803, 0, 0, 0, 1, 0, 0, 0, 192.803, 0, 0, 0 )

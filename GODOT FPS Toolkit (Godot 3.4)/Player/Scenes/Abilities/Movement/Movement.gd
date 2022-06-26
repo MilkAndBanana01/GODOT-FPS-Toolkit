@@ -5,6 +5,28 @@ signal updateHeight
 
 var props : Array
 
+var hideAll : bool
+var hideBasic : bool
+var hideAdvanced : bool
+var hideMovement : bool
+var hideGravity : bool
+var hideRunning : bool
+var hideJumping : bool
+var hideCrouching : bool
+var hideGrabbing : bool
+var hideSliding : bool
+var hideWall : bool
+var hideDashing : bool
+var hideLedge : bool
+var hideZooming : bool
+var hideVaulting : bool
+var hideAdvancedCrouching : bool
+var hideDownSmashing : bool
+var hideLeaning : bool
+var hideGrappling : bool
+var hideSwimming : bool
+var hideRolling : bool
+
 var movementEnabled : bool
 var movementStyle : int
 var speed : int
@@ -29,7 +51,6 @@ var runningSpeed : int
 var runningAcc : float
 var runningAirEnabled : bool
 
-
 var jumpMovementEnabled : bool
 var jumpMovementAllowed : int
 var jumpMovementStyle : int
@@ -51,6 +72,17 @@ var crouchingSpeedConfig : int
 var decreaseSpeed : float
 var airCrouching : int
 
+var grabbingEnabled : bool
+var grabbingReachConfig : int
+var grabbingReach : float
+var grabbingObjectDistance : float
+var throwingPower : float
+var grabbingLockRotationEnabled : bool
+var grabbingLockEnabled : bool
+var grabbingLockX : bool
+var grabbingLockY : bool
+var grabbingLockZ : bool
+
 var collision
 var capsuleMesh
 var collExists : bool
@@ -64,7 +96,95 @@ var velocity : Vector3
 var gravityVec : Vector3
 var snapVec : Vector3
 
+func checkBasic(value) -> void:
+		if value == true:
+			if hideMovement\
+			and hideGravity\
+			and hideJumping\
+			and hideRunning\
+			and hideCrouching\
+			and hideGrabbing:
+				hideBasic = true
+				property_list_changed_notify()
+		else:
+			hideAll = false
+			hideBasic = false
+			property_list_changed_notify()
+		checkAll(value)
+
+func checkAdvanced(value) -> void:
+		if value == true:
+			if hideSliding\
+			and hideWall\
+			and hideDashing\
+			and hideLedge\
+			and hideZooming\
+			and hideVaulting\
+			and hideAdvancedCrouching\
+			and hideDownSmashing\
+			and hideLeaning\
+			and hideGrappling\
+			and hideSwimming\
+			and hideRolling:
+				hideAdvanced = true
+		else:
+			hideAll = false
+			hideAdvanced = false
+		property_list_changed_notify()
+		checkAll(value)
+
+func checkAll(value):
+	if value == true:
+			if hideMovement\
+			and hideGravity\
+			and hideJumping\
+			and hideRunning\
+			and hideCrouching\
+			and hideGrabbing\
+			and hideSliding\
+			and hideWall\
+			and hideDashing\
+			and hideLedge\
+			and hideZooming\
+			and hideVaulting\
+			and hideAdvancedCrouching\
+			and hideDownSmashing\
+			and hideLeaning\
+			and hideGrappling\
+			and hideSwimming\
+			and hideRolling:
+				hideAll = true
+				property_list_changed_notify()
+	else:
+		hideAll = false
+		property_list_changed_notify()
+
 func _get(property):
+	## DISPLAY SETTINGS
+	if property == 'hide all': return hideAll
+	if property == 'hide basic': return hideBasic
+	if property == 'hide advanced': return hideAdvanced
+	
+	if property == 'basic/movement': return hideMovement
+	if property == 'basic/gravity': return hideGravity
+	if property == 'basic/running': return hideRunning
+	if property == 'basic/jumping': return hideJumping
+	if property == 'basic/crouching': return hideCrouching
+	if property == 'basic/grabbing & throwing': return hideGrabbing
+	
+	if property == 'advanced/sliding': return hideSliding
+	if property == 'advanced/wall abilities': return hideWall
+	if property == 'advanced/dashing': return hideDashing
+	if property == 'advanced/ledge abilities': return hideLedge
+	if property == 'advanced/zooming': return hideZooming
+	if property == 'advanced/vaulting': return hideVaulting
+	if property == 'advanced/advanced crouching': return hideAdvancedCrouching
+	if property == 'advanced/down smashing (Diving)': return hideDownSmashing
+	if property == 'advanced/leaning': return hideLeaning
+	if property == 'advanced/grappling': return hideGrappling
+	if property == 'advanced/swimming (Floating)': return hideSwimming
+	if property == 'advanced/rolling': return hideRolling
+	
 	## MOVEMENT PROPERTIES
 	if property == 'movement/enabled': return movementEnabled
 	if property == 'movement/movement style': return movementStyle
@@ -72,7 +192,6 @@ func _get(property):
 	if property == 'movement/speed': return speed
 	if property == 'movement/acceleration': return acceleration
 	if property == 'movement/friction': return friction
-
 
 	## GRAVITY PROPERTIES
 	if property == 'gravity/enabled': return gravityEnabled
@@ -117,8 +236,127 @@ func _get(property):
 	if property == 'crouching/decrease speed': return decreaseSpeed
 	if property == 'crouching/allow crouching mid air': return airCrouching
 
+	## GRABBING PROPERTIES
+	if property == 'grabbing & throwing/enabled': return grabbingEnabled
+	if property == 'grabbing & throwing/grabbing reach': return grabbingReachConfig
+	if property == 'grabbing & throwing/custom reach': return grabbingReach
+	if property == 'grabbing & throwing/object distance': return grabbingObjectDistance
+	if property == 'grabbing & throwing/throwing power': return throwingPower
+	if property == 'grabbing & throwing/enable lock rotation': return grabbingLockRotationEnabled
+	if property == 'grabbing & throwing/lock hold': return grabbingLockEnabled
+	if property == 'grabbing & throwing/rotation lock/x rotation': return grabbingLockX
+	if property == 'grabbing & throwing/rotation lock/y rotation': return grabbingLockY
+	if property == 'grabbing & throwing/rotation lock/z rotation': return grabbingLockZ
+
 func _set(property, value):
-	## movement PROPERTIES
+	
+	## DISPLAY SETTINGS
+	if property == 'hide all': 
+		hideAll = value
+		hideBasic = value
+		hideMovement = value
+		hideGravity = value
+		hideRunning = value
+		hideJumping = value
+		hideCrouching = value
+		hideGrabbing = value
+		hideAdvanced = value
+		hideSliding = value
+		hideWall = value
+		hideDashing = value
+		hideLedge = value
+		hideZooming = value
+		hideVaulting = value
+		hideAdvancedCrouching = value
+		hideDownSmashing = value
+		hideLeaning = value
+		hideGrappling = value
+		hideSwimming = value
+		hideRolling = value
+		checkAll(value)
+		property_list_changed_notify()
+	if property == 'hide basic':
+		hideBasic = value
+		hideMovement = value
+		hideGravity = value
+		hideRunning = value
+		hideJumping = value
+		hideCrouching = value
+		hideGrabbing = value
+		checkAll(value)
+		property_list_changed_notify()
+	if property == 'hide advanced': 
+		hideAdvanced = value
+		hideSliding = value
+		hideWall = value
+		hideDashing = value
+		hideLedge = value
+		hideZooming = value
+		hideVaulting = value
+		hideAdvancedCrouching = value
+		hideDownSmashing = value
+		hideLeaning = value
+		hideGrappling = value
+		hideSwimming = value
+		hideRolling = value
+		checkAll(value)
+		property_list_changed_notify()
+	if property == 'basic/movement':
+		hideMovement = value
+		checkBasic(value)
+	if property == 'basic/gravity':
+		hideGravity = value
+		checkBasic(value)
+	if property == 'basic/running': 
+		hideRunning = value
+		checkBasic(value)
+	if property == 'basic/jumping':
+		hideJumping = value
+		checkBasic(value)
+	if property == 'basic/crouching': 
+		hideCrouching = value
+		checkBasic(value)
+	if property == 'basic/grabbing & throwing': 
+		hideGrabbing = value
+		checkBasic(value)
+	if property == 'advanced/sliding': 
+		hideSliding = value
+		checkAdvanced(value)
+	if property == 'advanced/wall abilities': 
+		hideWall = value
+		checkAdvanced(value)
+	if property == 'advanced/dashing':
+		hideDashing = value
+		checkAdvanced(value)
+	if property == 'advanced/ledge abilities': 
+		hideLedge = value
+		checkAdvanced(value)
+	if property == 'advanced/zooming': 
+		hideZooming = value
+		checkAdvanced(value)
+	if property == 'advanced/vaulting': 
+		hideVaulting = value
+		checkAdvanced(value)
+	if property == 'advanced/advanced crouching': 
+		hideAdvancedCrouching = value
+		checkAdvanced(value)
+	if property == 'advanced/down smashing (Diving)': 
+		hideDownSmashing = value
+		checkAdvanced(value)
+	if property == 'advanced/leaning': 
+		hideLeaning = value
+		checkAdvanced(value)
+	if property == 'advanced/grappling': 
+		hideGrappling = value
+		checkAdvanced(value)
+	if property == 'advanced/swimming (Floating)': 
+		hideSwimming = value
+		checkAdvanced(value)
+	if property == 'advanced/rolling': 
+		hideRolling = value
+		checkAdvanced(value)
+
+	## MOVEMENT PROPERTIES
 	if property == 'movement/enabled': 
 		movementEnabled = value
 		property_list_changed_notify()
@@ -223,6 +461,20 @@ func _set(property, value):
 		crouchingSpeedConfig = value
 	if property == 'crouching/decrease speed': decreaseSpeed = value
 	if property == 'crouching/allow crouching mid air': airCrouching = value
+
+	## GRABBING PROPERTIES
+	if property == 'grabbing & throwing/enabled': 
+		grabbingEnabled = value
+		property_list_changed_notify()
+	if property == 'grabbing & throwing/grabbing reach': grabbingReachConfig = value
+	if property == 'grabbing & throwing/custom reach': grabbingReach = value
+	if property == 'grabbing & throwing/object distance': grabbingObjectDistance = value
+	if property == 'grabbing & throwing/throwing power': throwingPower = value
+	if property == 'grabbing & throwing/enable lock rotation': grabbingLockRotationEnabled = value
+	if property == 'grabbing & throwing/lock hold': grabbingLockEnabled = value
+	if property == 'grabbing & throwing/rotation lock/x rotation': grabbingLockX = value
+	if property == 'grabbing & throwing/rotation lock/y rotation': grabbingLockY = value
+	if property == 'grabbing & throwing/rotation lock/z rotation': grabbingLockZ = value
 
 func movement_properties():
 	props.append(
@@ -486,138 +738,350 @@ func crouching_properties():
 				"hint_string":"Disabled,Enable,Affect Height,Affect Speed", 
 			}
 		)
-
-func _get_property_list() -> Array:
-	props = []
-	movement_properties()
-	gravity_properties()
-	running_properties()
-	jumping_properties()
-	crouching_properties()
-
+func grabbing_properties():
 	props.append(
 		{
 			'name': 'grabbing & throwing/enabled',
 			'type': TYPE_BOOL
 		}
 	)
+	if grabbingEnabled:
+		props.append(
+			{
+					"name":"grabbing & throwing/grabbing reach", 
+					"type":2, 
+					"hint":3, 
+					"hint_string":"Custom Reach,Infinite Reach"
+			}
+		)
+		if grabbingReachConfig == 1:
+			props.append(
+				{
+					'name': 'grabbing & throwing/custom reach',
+					'type': TYPE_REAL
+				}
+			)
+		props.append(
+			{
+				'name': 'grabbing & throwing/object distance',
+				'type': TYPE_REAL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/throwing power',
+				'type': TYPE_REAL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/grabbing speed',
+				'type': TYPE_REAL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/enable grabbing lock',
+				'type': TYPE_BOOL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/enable lock rotation',
+				'type': TYPE_BOOL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/rotation lock/x rotation',
+				'type': TYPE_BOOL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/rotation lock/y rotation',
+				'type': TYPE_BOOL
+			}
+		)
+		props.append(
+			{
+				'name': 'grabbing & throwing/rotation lock/z rotation',
+				'type': TYPE_BOOL
+			}
+		)
 
+func display_settings():
 	props.append(
 		{
-			'name': 'Advanced Settings',
+			'name': 'Hide Settings',
 			'type': TYPE_NIL,
 			'usage': PROPERTY_USAGE_CATEGORY
 		}
 	)
 	props.append(
 		{
-			'name': 'sliding/enabled',
+			'name': 'hide all',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'wall abilities/climbing/enabled',
+			'name': 'hide basic',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'wall abilities/jumping/enabled',
+			'name': 'basic/movement',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'wall abilities/sliding/enabled',
+			'name': 'basic/gravity',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'wall abilities/sidling (Wall hugging)/enabled',
+			'name': 'basic/running',
 			'type': TYPE_BOOL
 		}
 	)
 	props.append(
 		{
-			'name': 'wall abilities/sidling (Wall hugging)/Peeking/enabled',
+			'name': 'basic/jumping',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/crouching',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/grabbing & throwing',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'hide advanced',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/sliding',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/wall abilities',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/dashing',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/ledge abilities',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/zooming',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/vaulting',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/advanced crouching',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/down smashing (Diving)',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/leaning',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/grappling',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/swimming (Floating)',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/rolling',
 			'type': TYPE_BOOL
 		}
 	)
 
-	props.append(
-		{
-			'name': 'dashing/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'ledge abilities/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'ledge abilities/ledge grab/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'ledge abilities/ledge hang/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'zooming/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'vaulting/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced crouching/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'down smashing (Diving)/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'leaning/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'grappling/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'swimming (Floating)/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'rolling/enabled',
-			'type': TYPE_BOOL
-		}
-	)
+func _get_property_list() -> Array:
+	props = []
+	if not hideAll:
+		if not hideBasic:
+			if not hideMovement:
+				movement_properties()
+			if not hideGravity:
+				gravity_properties()
+			if not hideRunning:
+				running_properties()
+			if not hideJumping:
+				jumping_properties()
+			if not hideCrouching:
+				crouching_properties()
+			if not hideGrabbing:
+				grabbing_properties()
+
+		if not hideAdvanced:
+			props.append(
+				{
+					'name': 'Advanced Settings',
+					'type': TYPE_NIL,
+					'usage': PROPERTY_USAGE_CATEGORY
+				}
+			)
+			props.append(
+				{
+					'name': 'sliding/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'wall abilities/climbing/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'wall abilities/jumping/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'wall abilities/sliding/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'wall abilities/sidling (Wall hugging)/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'wall abilities/sidling (Wall hugging)/Peeking/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+
+			props.append(
+				{
+					'name': 'dashing/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'ledge abilities/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'ledge abilities/ledge grab/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'ledge abilities/ledge hang/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'zooming/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'vaulting/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'advanced crouching/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'down smashing (Diving)/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'leaning/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'grappling/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'swimming (Floating)/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'rolling/enabled',
+					'type': TYPE_BOOL
+				}
+			)
+
+	display_settings()
+
 	return props
 
 func _ready() -> void:
