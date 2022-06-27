@@ -117,7 +117,7 @@ var grounded : bool
 var usedAcceleration : float
 var input : Vector2
 var mouseMovement : Vector2
-var rotationVelocity : Vector3
+var rotationVelocity : Vector2
 var direction : Vector3
 var velocity : Vector3
 var gravityVec : Vector3
@@ -556,10 +556,12 @@ func _set(property, value):
 			grabbingRightSensitivityConfig = value
 			property_list_changed_notify()
 		if property == 'grabbing & throwing/custom sensitivity': grabbingRightSensitivity = value
-		if property == 'grabbing & throwing/enable smoothing': 
+		if property == 'grabbing & throwing/enable smoothing':
 			grabbingRotationSmoothingEnabled = value
 			property_list_changed_notify()
-		if property == 'grabbing & throwing/smoothing rate': grabbingRotationSmoothing = value
+		if property == 'grabbing & throwing/smoothing rate': 
+			value = clamp(value,0,100)
+			grabbingRotationSmoothing = value
 		if property == 'grabbing & throwing/lock rotation': 
 			grabbingRightLockConfig = value
 			property_list_changed_notify()
@@ -1286,6 +1288,31 @@ func grab():
 	if objectGrabbed:
 		var vector = grabPos.global_transform.origin - objectGrabbed.global_transform.origin
 		objectGrabbed.linear_velocity = vector * grabbingSpeed
+		if grabbingRightClickEnabled:
+			if Input.is_mouse_button_pressed(BUTTON_RIGHT):
+				get_parent().get_node('Camera').lockCamera = true
+				var sensitivity : float
+				if grabbingRightSensitivityConfig == 0:
+					sensitivity = get_parent().get_node("Camera").sensitivity
+				else:
+					sensitivity = grabbingRightSensitivity
+				if grabbingRotationSmoothingEnabled:
+					var input = mouseMovement * (sensitivity * 0.25)
+					rotationVelocity = rotationVelocity.linear_interpolate(input, (100.5 - grabbingRotationSmoothing) * .01)
+				else:
+					rotationVelocity = mouseMovement * (sensitivity * 0.25)
+				if mouseMovement == Vector2.ZERO and not grabbingRotationSmoothingEnabled:
+					rotationVelocity = Vector2.ZERO
+				if grabbingRightLockConfig == 2 and not grabbingRightLockX or grabbingRightLockY:
+					objectGrabbed.rotate_x(deg2rad(rotationVelocity.x))
+				if grabbingRightLockConfig == 2 and not grabbingRightLockY:
+					objectGrabbed.rotate_y(deg2rad(rotationVelocity.x))
+				if grabbingRightLockConfig == 2 and not grabbingRightLockZ:
+					objectGrabbed.rotate_z(deg2rad(rotationVelocity.y))
+			else:
+				input = Vector2.ZERO
+				rotationVelocity = Vector2.ZERO
+				get_parent().get_node('Camera').lockCamera = false
 		if vector.length() >= grabbingThreshold and not grabbingLockEnabled:
 			release()
 func release():
@@ -1360,7 +1387,15 @@ func _ready() -> void:
 
 		capsuleMesh.mid_height = standingHeight
 
-		var inputs := ["move_left","move_right","move_back","move_forward","jump","sprint","crouch","interact"]
+		var inputs := [
+			"move_left",
+			"move_right",
+			"move_back",
+			"move_forward",
+			"jump","sprint",
+			"crouch",
+			"interact"
+		]
 		var keyCodes := [KEY_A,KEY_D,KEY_S,KEY_W,KEY_SPACE,KEY_SHIFT,KEY_CONTROL,KEY_E]
 		var pos := 0
 		for i in inputs:
@@ -1385,6 +1420,8 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouseMovement = event.relative
+	else:
+		mouseMovement = Vector2.ZERO
 	if grabbingEnabled:
 		if grabbingScrollEnabled:
 			if Input.is_mouse_button_pressed(BUTTON_WHEEL_UP): scrollInput += grabbingScrollSpeed
@@ -1405,15 +1442,7 @@ func _input(event: InputEvent) -> void:
 						objectGrabbed.axis_lock_angular_x = grabbingLockX
 						objectGrabbed.axis_lock_angular_y = grabbingLockY
 						objectGrabbed.axis_lock_angular_z = grabbingLockZ
-		if grabbingRightClickEnabled:
-			if Input.is_mouse_button_pressed(BUTTON_RIGHT):
-				if grabbingRotationSmoothingEnabled:
-					var sensitivity = get_parent().get_node("Camera").sensitivity
-					rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - grabbingRotationSmoothing) * .01)
-				else:
-					rotationVelocity = mouseMovement * (sensitivity * 0.25)
-				player.rotate_y(-deg2rad(rotationVelocity.x))
-				head.rotate_x(-deg2rad(rotationVelocity.y))
+
 func _physics_process(delta):
 	if Engine.is_editor_hint() == false:
 		grounded = player.is_on_floor()

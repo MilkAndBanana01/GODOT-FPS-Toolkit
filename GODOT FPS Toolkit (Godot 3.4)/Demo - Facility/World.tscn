@@ -43,22 +43,20 @@ environment = SubResource( 2 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.21499, 0 )
 
 [node name="Camera" parent="KinematicBody" instance=ExtResource( 2 )]
+"basic/lock camera" = false
 
 [node name="Movement" parent="KinematicBody" instance=ExtResource( 3 )]
 "grabbing & throwing/enabled" = true
-"grabbing & throwing/grabbing reach" = 0
-"grabbing & throwing/custom reach" = 0.0
+"grabbing & throwing/grabbing reach" = 1
 "grabbing & throwing/allow scrolling" = false
-"grabbing & throwing/object distance" = 0.0
+"grabbing & throwing/object distance" = 5.53
 "grabbing & throwing/throwing power" = 0.0
-"grabbing & throwing/grabbing speed" = 0.0
-"grabbing & throwing/grabbing speed threshold" = 0.0
-"grabbing & throwing/enable grabbing lock" = false
+"grabbing & throwing/grabbing speed" = 11.205
+"grabbing & throwing/enable grabbing lock" = true
 "grabbing & throwing/enable rotation lock" = false
 "grabbing & throwing/enable right click rotation" = true
 "grabbing & throwing/right click sensitivity" = 0
-"grabbing & throwing/enable smoothing" = true
-"grabbing & throwing/smoothing rate" = 0
+"grabbing & throwing/enable smoothing" = false
 "grabbing & throwing/lock rotation" = 0
 "hide advanced" = true
 advanced/sliding = true

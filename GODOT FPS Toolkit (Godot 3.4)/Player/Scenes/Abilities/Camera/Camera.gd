@@ -15,15 +15,15 @@ var camExists : bool
 var enabled := true
 var sensitivity : float = 0
 var smoothing := false
-var smoothing_amount : int = 0
-var lock_camera := false
+var smoothingAmount : int = 0
+var lockCamera := false
 
 func _get(property):
 	if property == 'basic/enabled': return enabled
 	if property == 'basic/sensitivity': return sensitivity
 	if property == 'basic/smoothing': return smoothing
-	if property == 'basic/lock_camera': return lock_camera
-	if property == 'basic/smoothing_amount': return smoothing_amount
+	if property == 'basic/lock camera': return lockCamera
+	if property == 'basic/smoothing amount': return smoothingAmount
 
 func _set(property, value) -> bool:
 	if property == 'basic/enabled': 
@@ -32,13 +32,13 @@ func _set(property, value) -> bool:
 	if property == 'basic/smoothing': 
 		smoothing = value
 		property_list_changed_notify()
-	if property == 'basic/lock_camera': lock_camera = value
+	if property == 'basic/lock camera': lockCamera = value
 	if property == 'basic/sensitivity':
 		value = clamp(value,0,10)
 		sensitivity = value
-	if property == 'basic/smoothing_amount':
+	if property == 'basic/smoothing amount':
 		value = clamp(value,0,100)
-		smoothing_amount = value
+		smoothingAmount = value
 	return true
 
 func _get_property_list() -> Array:
@@ -72,13 +72,13 @@ func _get_property_list() -> Array:
 		if smoothing:
 			props.append(
 				{
-					'name': 'basic/smoothing_amount',
+					'name': 'basic/smoothing amount',
 					'type': TYPE_INT
 				}
 			)
 		props.append(
 			{
-				'name': 'basic/lock_camera',
+				'name': 'basic/lock camera',
 				'type': TYPE_BOOL
 			}
 		)
@@ -111,6 +111,8 @@ func _ready():
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouseMovement = event.relative
+	else:
+		mouseMovement = Vector2.ZERO
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
 
@@ -125,10 +127,10 @@ func _physics_process(delta: float) -> void:
 
 		if mouseMovement != null:
 			if smoothing:
-				rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - smoothing_amount) * .01)
+				rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - smoothingAmount) * .01)
 			else:
 				rotationVelocity = mouseMovement * (sensitivity * 0.25)
-			if not lock_camera:
+			if not lockCamera:
 				player.rotate_y(-deg2rad(rotationVelocity.x))
 				head.rotate_x(-deg2rad(rotationVelocity.y))
 				head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
