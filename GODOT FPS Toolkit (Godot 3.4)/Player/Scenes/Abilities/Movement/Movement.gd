@@ -36,6 +36,8 @@ var friction : float
 
 var gravityEnabled : bool 
 var gravity : float
+var gravityLimitEnabled : bool 
+var gravityLimit : float
 var airMomentumEnabled : bool 
 var airMomentumStyle : int
 var airMomentum : float
@@ -76,25 +78,51 @@ var grabbingEnabled : bool
 var grabbingReachConfig : int
 var grabbingReach : float
 var grabbingObjectDistance : float
-var throwingPower : float
+var grabbingScrollEnabled : bool
+var grabbingMinObjectDistance : float
+var grabbingMaxObjectDistance : float
+var grabbingScrollSpeed : float
+var grabbingSpeed : float
+var grabbingThreshold : float
+var grabbingThrowingPower : float
 var grabbingLockRotationEnabled : bool
 var grabbingLockEnabled : bool
 var grabbingLockX : bool
 var grabbingLockY : bool
 var grabbingLockZ : bool
+var grabbingRightClickEnabled : bool
+var grabbingRightSensitivityConfig : int
+var grabbingRightSensitivity : float
+var grabbingRotationSmoothingEnabled : bool
+var grabbingRotationSmoothing : int
+var grabbingRightLockConfig : int
+var grabbingRightLockX : bool
+var grabbingRightLockY : bool
+var grabbingRightLockZ : bool
 
 var collision
 var capsuleMesh
 var collExists : bool
+var head
+var springArm
+var springExists : bool
+var ray
+var rayExists : bool
+var grabPos
+var grabPosExists : bool
+var objectGrabbed
 
 var player
 var grounded : bool
 var usedAcceleration : float
 var input : Vector2
+var mouseMovement : Vector2
+var rotationVelocity : Vector3
 var direction : Vector3
 var velocity : Vector3
 var gravityVec : Vector3
 var snapVec : Vector3
+var scrollInput : float = 0
 
 func checkBasic(value) -> void:
 		if value == true:
@@ -111,7 +139,6 @@ func checkBasic(value) -> void:
 			hideBasic = false
 			property_list_changed_notify()
 		checkAll(value)
-
 func checkAdvanced(value) -> void:
 		if value == true:
 			if hideSliding\
@@ -132,7 +159,6 @@ func checkAdvanced(value) -> void:
 			hideAdvanced = false
 		property_list_changed_notify()
 		checkAll(value)
-
 func checkAll(value):
 	if value == true:
 			if hideMovement\
@@ -196,6 +222,8 @@ func _get(property):
 	## GRAVITY PROPERTIES
 	if property == 'gravity/enabled': return gravityEnabled
 	if property == 'gravity/gravity rate': return gravity
+	if property == 'gravity/limit gravity velocity': return gravityLimitEnabled
+	if property == 'gravity/limit velocity': return gravityLimit
 	
 	if property == 'gravity/enable air momentum': return airMomentumEnabled
 	if property == 'gravity/air momentum style': return airMomentumStyle
@@ -241,240 +269,303 @@ func _get(property):
 	if property == 'grabbing & throwing/grabbing reach': return grabbingReachConfig
 	if property == 'grabbing & throwing/custom reach': return grabbingReach
 	if property == 'grabbing & throwing/object distance': return grabbingObjectDistance
-	if property == 'grabbing & throwing/throwing power': return throwingPower
-	if property == 'grabbing & throwing/enable lock rotation': return grabbingLockRotationEnabled
-	if property == 'grabbing & throwing/lock hold': return grabbingLockEnabled
+	if property == 'grabbing & throwing/allow scrolling': return grabbingScrollEnabled
+	if property == 'grabbing & throwing/scrolling options/minimum object distance': return grabbingMinObjectDistance
+	if property == 'grabbing & throwing/scrolling options/max object distance': return grabbingMaxObjectDistance
+	if property == 'grabbing & throwing/scrolling options/scroll speed': return grabbingScrollSpeed
+	if property == 'grabbing & throwing/throwing power': return grabbingThrowingPower
+	if property == 'grabbing & throwing/grabbing speed': return grabbingSpeed
+	if property == 'grabbing & throwing/enable rotation lock': return grabbingLockRotationEnabled
+	if property == 'grabbing & throwing/grabbing speed threshold': return grabbingThreshold
+	if property == 'grabbing & throwing/enable grabbing lock': return grabbingLockEnabled
 	if property == 'grabbing & throwing/rotation lock/x rotation': return grabbingLockX
 	if property == 'grabbing & throwing/rotation lock/y rotation': return grabbingLockY
 	if property == 'grabbing & throwing/rotation lock/z rotation': return grabbingLockZ
 
+	if property == 'grabbing & throwing/enable right click rotation': return  grabbingRightClickEnabled
+	if property == 'grabbing & throwing/right click sensitivity': return  grabbingRightSensitivityConfig
+	if property == 'grabbing & throwing/custom sensitivity': return  grabbingRightSensitivity
+	if property == 'grabbing & throwing/enable smoothing': return grabbingRotationSmoothingEnabled
+	if property == 'grabbing & throwing/smoothing rate': return grabbingRotationSmoothing
+	if property == 'grabbing & throwing/lock rotation': return  grabbingRightLockConfig
+	if property == 'grabbing & throwing/custom lock configuration/x rotation': return  grabbingRightLockX
+	if property == 'grabbing & throwing/custom lock configuration/y rotation': return  grabbingRightLockY
+	if property == 'grabbing & throwing/custom lock configuration/z rotation': return  grabbingRightLockZ
+
+func setDisplay(p,v):
+	if p == 'hide all': 
+		hideAll = v
+		hideBasic = v
+		hideMovement = v
+		hideGravity = v
+		hideRunning = v
+		hideJumping = v
+		hideCrouching = v
+		hideGrabbing = v
+		hideAdvanced = v
+		hideSliding = v
+		hideWall = v
+		hideDashing = v
+		hideLedge = v
+		hideZooming = v
+		hideVaulting = v
+		hideAdvancedCrouching = v
+		hideDownSmashing = v
+		hideLeaning = v
+		hideGrappling = v
+		hideSwimming = v
+		hideRolling = v
+		checkAll(v)
+		property_list_changed_notify()
+	if p == 'hide basic':
+		hideBasic = v
+		hideMovement = v
+		hideGravity = v
+		hideRunning = v
+		hideJumping = v
+		hideCrouching = v
+		hideGrabbing = v
+		checkAll(v)
+		property_list_changed_notify()
+	if p == 'hide advanced': 
+		hideAdvanced = v
+		hideSliding = v
+		hideWall = v
+		hideDashing = v
+		hideLedge = v
+		hideZooming = v
+		hideVaulting = v
+		hideAdvancedCrouching = v
+		hideDownSmashing = v
+		hideLeaning = v
+		hideGrappling = v
+		hideSwimming = v
+		hideRolling = v
+		checkAll(v)
+		property_list_changed_notify()
+	if p == 'basic/movement':
+		hideMovement = v
+		checkBasic(v)
+	if p == 'basic/gravity':
+		hideGravity = v
+		checkBasic(v)
+	if p == 'basic/running': 
+		hideRunning = v
+		checkBasic(v)
+	if p == 'basic/jumping':
+		hideJumping = v
+		checkBasic(v)
+	if p == 'basic/crouching': 
+		hideCrouching = v
+		checkBasic(v)
+	if p == 'basic/grabbing & throwing': 
+		hideGrabbing = v
+		checkBasic(v)
+	if p == 'advanced/sliding': 
+		hideSliding = v
+		checkAdvanced(v)
+	if p == 'advanced/wall abilities': 
+		hideWall = v
+		checkAdvanced(v)
+	if p == 'advanced/dashing':
+		hideDashing = v
+		checkAdvanced(v)
+	if p == 'advanced/ledge abilities': 
+		hideLedge = v
+		checkAdvanced(v)
+	if p == 'advanced/zooming': 
+		hideZooming = v
+		checkAdvanced(v)
+	if p == 'advanced/vaulting': 
+		hideVaulting = v
+		checkAdvanced(v)
+	if p == 'advanced/advanced crouching': 
+		hideAdvancedCrouching = v
+		checkAdvanced(v)
+	if p == 'advanced/down smashing (Diving)': 
+		hideDownSmashing = v
+		checkAdvanced(v)
+	if p == 'advanced/leaning': 
+		hideLeaning = v
+		checkAdvanced(v)
+	if p == 'advanced/grappling': 
+		hideGrappling = v
+		checkAdvanced(v)
+	if p == 'advanced/swimming (Floating)': 
+		hideSwimming = v
+		checkAdvanced(v)
+	if p == 'advanced/rolling': 
+		hideRolling = v
+		checkAdvanced(v)
 func _set(property, value):
-	
-	## DISPLAY SETTINGS
-	if property == 'hide all': 
-		hideAll = value
-		hideBasic = value
-		hideMovement = value
-		hideGravity = value
-		hideRunning = value
-		hideJumping = value
-		hideCrouching = value
-		hideGrabbing = value
-		hideAdvanced = value
-		hideSliding = value
-		hideWall = value
-		hideDashing = value
-		hideLedge = value
-		hideZooming = value
-		hideVaulting = value
-		hideAdvancedCrouching = value
-		hideDownSmashing = value
-		hideLeaning = value
-		hideGrappling = value
-		hideSwimming = value
-		hideRolling = value
-		checkAll(value)
-		property_list_changed_notify()
-	if property == 'hide basic':
-		hideBasic = value
-		hideMovement = value
-		hideGravity = value
-		hideRunning = value
-		hideJumping = value
-		hideCrouching = value
-		hideGrabbing = value
-		checkAll(value)
-		property_list_changed_notify()
-	if property == 'hide advanced': 
-		hideAdvanced = value
-		hideSliding = value
-		hideWall = value
-		hideDashing = value
-		hideLedge = value
-		hideZooming = value
-		hideVaulting = value
-		hideAdvancedCrouching = value
-		hideDownSmashing = value
-		hideLeaning = value
-		hideGrappling = value
-		hideSwimming = value
-		hideRolling = value
-		checkAll(value)
-		property_list_changed_notify()
-	if property == 'basic/movement':
-		hideMovement = value
-		checkBasic(value)
-	if property == 'basic/gravity':
-		hideGravity = value
-		checkBasic(value)
-	if property == 'basic/running': 
-		hideRunning = value
-		checkBasic(value)
-	if property == 'basic/jumping':
-		hideJumping = value
-		checkBasic(value)
-	if property == 'basic/crouching': 
-		hideCrouching = value
-		checkBasic(value)
-	if property == 'basic/grabbing & throwing': 
-		hideGrabbing = value
-		checkBasic(value)
-	if property == 'advanced/sliding': 
-		hideSliding = value
-		checkAdvanced(value)
-	if property == 'advanced/wall abilities': 
-		hideWall = value
-		checkAdvanced(value)
-	if property == 'advanced/dashing':
-		hideDashing = value
-		checkAdvanced(value)
-	if property == 'advanced/ledge abilities': 
-		hideLedge = value
-		checkAdvanced(value)
-	if property == 'advanced/zooming': 
-		hideZooming = value
-		checkAdvanced(value)
-	if property == 'advanced/vaulting': 
-		hideVaulting = value
-		checkAdvanced(value)
-	if property == 'advanced/advanced crouching': 
-		hideAdvancedCrouching = value
-		checkAdvanced(value)
-	if property == 'advanced/down smashing (Diving)': 
-		hideDownSmashing = value
-		checkAdvanced(value)
-	if property == 'advanced/leaning': 
-		hideLeaning = value
-		checkAdvanced(value)
-	if property == 'advanced/grappling': 
-		hideGrappling = value
-		checkAdvanced(value)
-	if property == 'advanced/swimming (Floating)': 
-		hideSwimming = value
-		checkAdvanced(value)
-	if property == 'advanced/rolling': 
-		hideRolling = value
-		checkAdvanced(value)
+	if value != null:
+	#	print("Setting: "+ str(property) + " | "+ str(value))
 
-	## MOVEMENT PROPERTIES
-	if property == 'movement/enabled': 
-		movementEnabled = value
-		property_list_changed_notify()
-	if property == 'movement/movement style': 
-		movementStyle = value
-		property_list_changed_notify()
-	if property == 'movement/enable friction': 
-		frictionEnabled = value
-		property_list_changed_notify()
-	if property == 'movement/speed':
-		value = clamp(value,0,INF)
-		speed = value
-	if property == 'movement/acceleration':
-		value = clamp(value,0,INF)
-		acceleration = value
-	if property == 'movement/friction':
-		value = clamp(value,0,INF)
-		friction = value
-	
-	## GRAVITY PROPERTIES
-	if property == 'gravity/enabled': 
-		gravityEnabled = value
-		property_list_changed_notify()
-	if property == 'gravity/enable air momentum': 
-		airMomentumEnabled = value
-		property_list_changed_notify()
-	if property == 'gravity/gravity rate':
-		value = clamp(value,0,INF)
-		gravity = value
-	if property == 'gravity/air momentum style':
-		airMomentumStyle = value
-		property_list_changed_notify()
-	if property == 'gravity/air momentum acceleration':
-		value = clamp(value,0,INF)
-		airMomentum = value
-	if property == 'gravity/enable mid air movement':
-		airMovementEnabled = value
-		property_list_changed_notify()
-	if property == 'gravity/mid air movement style':
-		airMovementStyle = value
-		property_list_changed_notify()
-	if property == 'gravity/custom speed':airMovementSpeed = value
-	if property == 'gravity/custom acceleration':airMovementAcc = value
-	
-	## RUNNING PROPERTIES
-	if property == 'running/enabled': 
-		runningEnabled = value
-		property_list_changed_notify()
-	if property == 'running/running style': 
-		runningStyle = value
-		property_list_changed_notify()
-	if property == 'running/air momentum': 
-		runningAirMomentum = value
-		property_list_changed_notify()
-	if property == 'running/speed':
-		value = clamp(value,0,INF)
-		runningSpeed = value
-	if property == 'running/acceleration':
-		value = clamp(value,0,INF)
-		runningAcc = value
-	if property == 'running/allow running mid air': 
-		runningAirEnabled = value
-		property_list_changed_notify()
+		## DISPLAY SETTINGS
+		setDisplay(property,value)
 
-	## JUMPING PROPERTIES
-	if property == 'jumping/enabled': 
-		jumpingEnabled = value
-		property_list_changed_notify()
-	if property == 'jumping/height': 
-		value = clamp(value,0,INF)
-		jumpHeight = value
-	if property == 'jumping/jumps': 
-		value = clamp(value,1,INF)
-		availableJumps = value
-	if property == 'jumping/allow movement after jump': 
-		jumpMovementEnabled = value
-		property_list_changed_notify()
-	if property == 'jumping/number of jumps': 
-		value = clamp(value,1,availableJumps)
-		jumpMovementAllowed = value
-	if property == 'jumping/speed of movement': 
-		jumpMovementStyle = value
-		property_list_changed_notify()
-	if property == 'jumping/custom speed': jumpMovementSpeed = value
-	if property == 'jumping/custom acceleration': jumpMovementAcc = value
+		## MOVEMENT PROPERTIES
+		if property == 'movement/enabled': 
+			movementEnabled = value
+			property_list_changed_notify()
+		if property == 'movement/movement style': 
+			movementStyle = value
+			property_list_changed_notify()
+		if property == 'movement/enable friction': 
+			frictionEnabled = value
+			property_list_changed_notify()
+		if property == 'movement/speed':
+			value = clamp(value,0,INF)
+			speed = value
+		if property == 'movement/acceleration':
+			value = clamp(value,0,INF)
+			acceleration = value
+		if property == 'movement/friction':
+			value = clamp(value,0,INF)
+			friction = value
+		
+		## GRAVITY PROPERTIES
+		if property == 'gravity/enabled': 
+			gravityEnabled = value
+			property_list_changed_notify()
+		if property == 'gravity/limit gravity velocity': 
+			gravityLimitEnabled = value
+			property_list_changed_notify()
+		if property == 'gravity/limit velocity': 
+			value = clamp(value,0,INF)
+			gravityLimit = value
+		if property == 'gravity/enable air momentum': 
+			airMomentumEnabled = value
+			property_list_changed_notify()
+		if property == 'gravity/gravity rate':
+			value = clamp(value,0,INF)
+			gravity = value
+		if property == 'gravity/air momentum style':
+			airMomentumStyle = value
+			property_list_changed_notify()
+		if property == 'gravity/air momentum acceleration':
+			value = clamp(value,0,INF)
+			airMomentum = value
+		if property == 'gravity/enable mid air movement':
+			airMovementEnabled = value
+			property_list_changed_notify()
+		if property == 'gravity/mid air movement style':
+			airMovementStyle = value
+			property_list_changed_notify()
+		if property == 'gravity/custom speed':airMovementSpeed = value
+		if property == 'gravity/custom acceleration':airMovementAcc = value
+		
+		## RUNNING PROPERTIES
+		if property == 'running/enabled': 
+			runningEnabled = value
+			property_list_changed_notify()
+		if property == 'running/running style': 
+			runningStyle = value
+			property_list_changed_notify()
+		if property == 'running/air momentum': 
+			runningAirMomentum = value
+			property_list_changed_notify()
+		if property == 'running/speed':
+			value = clamp(value,0,INF)
+			runningSpeed = value
+		if property == 'running/acceleration':
+			value = clamp(value,0,INF)
+			runningAcc = value
+		if property == 'running/allow running mid air': 
+			runningAirEnabled = value
+			property_list_changed_notify()
 
-	## CROUCHING PROPERTIES
-	if property == 'crouching/enabled':
-		property_list_changed_notify()
-		crouchingEnabled = value
-	if property == 'crouching/configuration': 
-		property_list_changed_notify()
-		crouchingConfig = value
-	if property == 'crouching/decrease height': decreaseStandingHeight = value
-	if property == 'crouching/standing height': 
-		standingHeight = value
-		emit_signal("updateHeight",standingHeight)
-	if property == 'crouching/crouching height': crouchingHeight = value
-	if property == 'crouching/crouching speed': crouchingSpeed = value
-	if property == 'crouching/speed configuration': 
-		property_list_changed_notify()
-		crouchingSpeedConfig = value
-	if property == 'crouching/decrease speed': decreaseSpeed = value
-	if property == 'crouching/allow crouching mid air': airCrouching = value
+		## JUMPING PROPERTIES
+		if property == 'jumping/enabled': 
+			jumpingEnabled = value
+			property_list_changed_notify()
+		if property == 'jumping/height': 
+			value = clamp(value,0,INF)
+			jumpHeight = value
+		if property == 'jumping/jumps': 
+			value = clamp(value,1,INF)
+			availableJumps = value
+		if property == 'jumping/allow movement after jump': 
+			jumpMovementEnabled = value
+			property_list_changed_notify()
+		if property == 'jumping/number of jumps': 
+			value = clamp(value,1,availableJumps)
+			jumpMovementAllowed = value
+		if property == 'jumping/speed of movement': 
+			jumpMovementStyle = value
+			property_list_changed_notify()
+		if property == 'jumping/custom speed': jumpMovementSpeed = value
+		if property == 'jumping/custom acceleration': jumpMovementAcc = value
 
-	## GRABBING PROPERTIES
-	if property == 'grabbing & throwing/enabled': 
-		grabbingEnabled = value
-		property_list_changed_notify()
-	if property == 'grabbing & throwing/grabbing reach': grabbingReachConfig = value
-	if property == 'grabbing & throwing/custom reach': grabbingReach = value
-	if property == 'grabbing & throwing/object distance': grabbingObjectDistance = value
-	if property == 'grabbing & throwing/throwing power': throwingPower = value
-	if property == 'grabbing & throwing/enable lock rotation': grabbingLockRotationEnabled = value
-	if property == 'grabbing & throwing/lock hold': grabbingLockEnabled = value
-	if property == 'grabbing & throwing/rotation lock/x rotation': grabbingLockX = value
-	if property == 'grabbing & throwing/rotation lock/y rotation': grabbingLockY = value
-	if property == 'grabbing & throwing/rotation lock/z rotation': grabbingLockZ = value
+		## CROUCHING PROPERTIES
+		if property == 'crouching/enabled':
+			property_list_changed_notify()
+			crouchingEnabled = value
+		if property == 'crouching/configuration': 
+			property_list_changed_notify()
+			crouchingConfig = value
+		if property == 'crouching/decrease height': decreaseStandingHeight = value
+		if property == 'crouching/standing height': 
+			standingHeight = value
+			emit_signal("updateHeight",standingHeight)
+		if property == 'crouching/crouching height': crouchingHeight = value
+		if property == 'crouching/crouching speed': crouchingSpeed = value
+		if property == 'crouching/speed configuration': 
+			property_list_changed_notify()
+			crouchingSpeedConfig = value
+		if property == 'crouching/decrease speed': decreaseSpeed = value
+		if property == 'crouching/allow crouching mid air': airCrouching = value
+
+		## GRABBING PROPERTIES
+		if property == 'grabbing & throwing/enabled': 
+			grabbingEnabled = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/grabbing reach': 
+			grabbingReachConfig = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/custom reach': grabbingReach = value
+		if property == 'grabbing & throwing/allow scrolling': 
+			grabbingScrollEnabled = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/scrolling options/minimum object distance':
+			value = clamp(value,0,INF)
+			grabbingMinObjectDistance = value
+		if property == 'grabbing & throwing/scrolling options/max object distance': 
+			value = clamp(value,grabbingMinObjectDistance,INF)
+			grabbingMaxObjectDistance = value
+		if property == 'grabbing & throwing/scrolling options/scroll speed':
+			value = clamp(value,0,INF)
+			grabbingScrollSpeed = value
+		if property == 'grabbing & throwing/object distance': grabbingObjectDistance = value
+		if property == 'grabbing & throwing/throwing power': grabbingThrowingPower = value
+		if property == 'grabbing & throwing/grabbing speed': grabbingSpeed = value
+		if property == 'grabbing & throwing/grabbing speed threshold': grabbingThreshold = value
+		if property == 'grabbing & throwing/enable grabbing lock':
+			grabbingLockEnabled = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/enable rotation lock': 
+			grabbingLockRotationEnabled = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/rotation lock/x rotation': grabbingLockX = value
+		if property == 'grabbing & throwing/rotation lock/y rotation': grabbingLockY = value
+		if property == 'grabbing & throwing/rotation lock/z rotation': grabbingLockZ = value
+		if property == 'grabbing & throwing/enable right click rotation': 
+			grabbingRightClickEnabled = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/right click sensitivity': 
+			grabbingRightSensitivityConfig = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/custom sensitivity': grabbingRightSensitivity = value
+		if property == 'grabbing & throwing/enable smoothing': 
+			grabbingRotationSmoothingEnabled = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/smoothing rate': grabbingRotationSmoothing = value
+		if property == 'grabbing & throwing/lock rotation': 
+			grabbingRightLockConfig = value
+			property_list_changed_notify()
+		if property == 'grabbing & throwing/custom lock configuration/x rotation': grabbingRightLockX = value
+		if property == 'grabbing & throwing/custom lock configuration/y rotation': grabbingRightLockY = value
+		if property == 'grabbing & throwing/custom lock configuration/z rotation': grabbingRightLockZ = value
 
 func movement_properties():
 	props.append(
@@ -539,6 +630,19 @@ func gravity_properties():
 				'type': TYPE_REAL
 			}
 		)
+		props.append(
+			{
+				'name': 'gravity/limit gravity velocity',
+				'type': TYPE_BOOL
+			}
+		)
+		if gravityLimitEnabled:
+			props.append(
+				{
+					'name': 'gravity/limit velocity',
+					'type': TYPE_REAL
+				}
+			)
 		if movementStyle != 0:
 			props.append(
 				{
@@ -754,7 +858,7 @@ func grabbing_properties():
 					"hint_string":"Custom Reach,Infinite Reach"
 			}
 		)
-		if grabbingReachConfig == 1:
+		if grabbingReachConfig == 0:
 			props.append(
 				{
 					'name': 'grabbing & throwing/custom reach',
@@ -763,10 +867,36 @@ func grabbing_properties():
 			)
 		props.append(
 			{
-				'name': 'grabbing & throwing/object distance',
-				'type': TYPE_REAL
+				'name': 'grabbing & throwing/allow scrolling',
+				'type': TYPE_BOOL
 			}
 		)
+		if not grabbingScrollEnabled:
+			props.append(
+				{
+					'name': 'grabbing & throwing/object distance',
+					'type': TYPE_REAL
+				}
+			)
+		else:
+			props.append(
+				{
+					'name': 'grabbing & throwing/scrolling options/minimum object distance',
+					'type': TYPE_REAL
+				}
+			)
+			props.append(
+				{
+					'name': 'grabbing & throwing/scrolling options/max object distance',
+					'type': TYPE_REAL
+				}
+			)
+			props.append(
+				{
+					'name': 'grabbing & throwing/scrolling options/scroll speed',
+					'type': TYPE_REAL
+				}
+			)
 		props.append(
 			{
 				'name': 'grabbing & throwing/throwing power',
@@ -779,6 +909,13 @@ func grabbing_properties():
 				'type': TYPE_REAL
 			}
 		)
+		if not grabbingLockEnabled:
+			props.append(
+				{
+					'name': 'grabbing & throwing/grabbing speed threshold',
+					'type': TYPE_REAL
+				}
+			)
 		props.append(
 			{
 				'name': 'grabbing & throwing/enable grabbing lock',
@@ -787,29 +924,91 @@ func grabbing_properties():
 		)
 		props.append(
 			{
-				'name': 'grabbing & throwing/enable lock rotation',
+				'name': 'grabbing & throwing/enable rotation lock',
 				'type': TYPE_BOOL
 			}
 		)
+		if grabbingLockRotationEnabled:
+			props.append(
+				{
+					'name': 'grabbing & throwing/rotation lock/x rotation',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'grabbing & throwing/rotation lock/y rotation',
+					'type': TYPE_BOOL
+				}
+			)
+			props.append(
+				{
+					'name': 'grabbing & throwing/rotation lock/z rotation',
+					'type': TYPE_BOOL
+				}
+			)
 		props.append(
 			{
-				'name': 'grabbing & throwing/rotation lock/x rotation',
+				'name': 'grabbing & throwing/enable right click rotation',
 				'type': TYPE_BOOL
 			}
 		)
-		props.append(
-			{
-				'name': 'grabbing & throwing/rotation lock/y rotation',
-				'type': TYPE_BOOL
-			}
-		)
-		props.append(
-			{
-				'name': 'grabbing & throwing/rotation lock/z rotation',
-				'type': TYPE_BOOL
-			}
-		)
-
+		if grabbingRightClickEnabled:
+			props.append(
+				{
+						"name":"grabbing & throwing/right click sensitivity", 
+						"type":2, 
+						"hint":3, 
+						"hint_string":"Use Camera Sensitivity,Use Custom Sensitivity"
+				}
+			)
+			if grabbingRightSensitivityConfig == 1:
+				props.append(
+					{
+						'name': 'grabbing & throwing/custom sensitivity',
+						'type': TYPE_REAL
+					}
+				)
+			props.append(
+				{
+					'name': 'grabbing & throwing/enable smoothing',
+					'type': TYPE_BOOL
+				}
+			)
+			if grabbingRotationSmoothingEnabled:
+				props.append(
+					{
+						'name': 'grabbing & throwing/smoothing rate',
+						'type': TYPE_INT
+					}
+				)
+			props.append(
+				{
+						"name":"grabbing & throwing/lock rotation", 
+						"type":2, 
+						"hint":3, 
+						"hint_string":"Disable,Use Rotation Lock Settings,Use Custom Lock Settings"
+				}
+			)
+			if grabbingRightLockConfig == 2:
+				props.append(
+					{
+						'name': 'grabbing & throwing/custom lock configuration/x rotation',
+						'type': TYPE_BOOL
+					}
+				)
+				props.append(
+					{
+						'name': 'grabbing & throwing/custom lock configuration/y rotation',
+						'type': TYPE_BOOL
+					}
+				)
+				props.append(
+					{
+						'name': 'grabbing & throwing/custom lock configuration/z rotation',
+						'type': TYPE_BOOL
+					}
+				)
 func display_settings():
 	props.append(
 		{
@@ -944,7 +1143,6 @@ func display_settings():
 			'type': TYPE_BOOL
 		}
 	)
-
 func _get_property_list() -> Array:
 	props = []
 	if not hideAll:
@@ -1084,6 +1282,19 @@ func _get_property_list() -> Array:
 
 	return props
 
+func grab():
+	if objectGrabbed:
+		var vector = grabPos.global_transform.origin - objectGrabbed.global_transform.origin
+		objectGrabbed.linear_velocity = vector * grabbingSpeed
+		if vector.length() >= grabbingThreshold and not grabbingLockEnabled:
+			release()
+func release():
+	objectGrabbed.axis_lock_angular_x = false
+	objectGrabbed.axis_lock_angular_y = false
+	objectGrabbed.axis_lock_angular_z = false
+	springArm.remove_excluded_object(objectGrabbed)
+	objectGrabbed = null
+
 func _ready() -> void:
 	if Engine.is_editor_hint() == false:
 		player = get_parent()
@@ -1091,6 +1302,15 @@ func _ready() -> void:
 			if i is CollisionShape:
 				collision = i
 				collExists = true
+			if i.name == 'Head' and grabbingEnabled:
+				for child in i.get_children():
+					if child is SpringArm:
+						springArm = child
+						springExists = true
+						for a in springArm.get_children():
+							if a is Spatial and a.name == "Grab Pos":
+								grabPos = a
+								grabPosExists = true
 		if not collExists:
 			collision = CollisionShape.new()
 			collision.name = "Collision"
@@ -1107,10 +1327,32 @@ func _ready() -> void:
 
 			player.call_deferred('add_child',collision)
 			collision.call_deferred('set_owner',player)
-			player.call_deferred('add_child',collision)
-			collision.call_deferred('set_owner',player)
 			collision.call_deferred('add_child',mesh)
 			mesh.call_deferred('set_owner',player)
+
+		if grabbingEnabled and not springExists:
+			head = get_parent().get_node('Camera').head
+
+			springArm = SpringArm.new()
+			springArm.set_length(-10.0)
+			springArm.add_excluded_object(player)
+			var shape = RayShape.new()
+			springArm.set_shape(shape)
+			grabPos = Spatial.new()
+			grabPos.name = "Grab Pos"
+			head.call_deferred('add_child',springArm)
+			springArm.call_deferred('set_owner',player)
+			springArm.call_deferred('add_child',grabPos)
+			grabPos.call_deferred('set_owner',player)
+
+			ray = RayCast.new()
+			ray.enabled = true
+			if grabbingReachConfig == 0:
+				ray.cast_to = Vector3(0,0,-grabbingReach)
+			else:
+				ray.cast_to = Vector3(0,0,-99999999999999999)
+			head.call_deferred('add_child',ray)
+			ray.call_deferred('set_owner',player)
 
 		if crouchingConfig == 0:
 			standingHeight = 1
@@ -1118,8 +1360,8 @@ func _ready() -> void:
 
 		capsuleMesh.mid_height = standingHeight
 
-		var inputs := ["move_left","move_right","move_back","move_forward","jump","sprint","crouch"]
-		var keyCodes := [KEY_A,KEY_D,KEY_S,KEY_W,KEY_SPACE,KEY_SHIFT,KEY_CONTROL]
+		var inputs := ["move_left","move_right","move_back","move_forward","jump","sprint","crouch","interact"]
+		var keyCodes := [KEY_A,KEY_D,KEY_S,KEY_W,KEY_SPACE,KEY_SHIFT,KEY_CONTROL,KEY_E]
 		var pos := 0
 		for i in inputs:
 			if InputMap.has_action(i):
@@ -1129,14 +1371,53 @@ func _ready() -> void:
 					pass
 				else:
 					InputMap.action_add_event(i,inputEvent)
+			else:
+				InputMap.add_action(i)
+				var inputEvent = InputEventKey.new()
+				inputEvent.scancode = keyCodes[pos]
+				if InputMap.action_has_event(i,inputEvent):
+					pass
+				else:
+					InputMap.action_add_event(i,inputEvent)
 			pos += 1
 		connect('updateHeight',player.get_node("Camera"),"updateHeight")
 		emit_signal("updateHeight",standingHeight)
-
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		mouseMovement = event.relative
+	if grabbingEnabled:
+		if grabbingScrollEnabled:
+			if Input.is_mouse_button_pressed(BUTTON_WHEEL_UP): scrollInput += grabbingScrollSpeed
+			elif Input.is_mouse_button_pressed(BUTTON_WHEEL_DOWN): scrollInput -= grabbingScrollSpeed
+			scrollInput = clamp(scrollInput,grabbingMinObjectDistance,grabbingMaxObjectDistance)
+			springArm.set_length(-scrollInput)
+		else:
+			springArm.set_length(-grabbingObjectDistance)
+		if Input.is_action_just_pressed("interact"):
+			if objectGrabbed:
+				objectGrabbed.linear_velocity = head.global_transform.basis.z * -grabbingThrowingPower
+				release()
+			else:
+				if ray.get_collider() is RigidBody:
+					objectGrabbed = ray.get_collider()
+					springArm.add_excluded_object(objectGrabbed)
+					if grabbingLockRotationEnabled:
+						objectGrabbed.axis_lock_angular_x = grabbingLockX
+						objectGrabbed.axis_lock_angular_y = grabbingLockY
+						objectGrabbed.axis_lock_angular_z = grabbingLockZ
+		if grabbingRightClickEnabled:
+			if Input.is_mouse_button_pressed(BUTTON_RIGHT):
+				if grabbingRotationSmoothingEnabled:
+					var sensitivity = get_parent().get_node("Camera").sensitivity
+					rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - grabbingRotationSmoothing) * .01)
+				else:
+					rotationVelocity = mouseMovement * (sensitivity * 0.25)
+				player.rotate_y(-deg2rad(rotationVelocity.x))
+				head.rotate_x(-deg2rad(rotationVelocity.y))
 func _physics_process(delta):
 	if Engine.is_editor_hint() == false:
 		grounded = player.is_on_floor()
-
+		grab()
 # CAPTURING INPUTS
 		input = Input.get_vector('move_left','move_right','move_forward','move_back')
 		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
@@ -1198,7 +1479,7 @@ func _physics_process(delta):
 			velocity.z = direction.z * currentSpeed
 
 # MOVEMENT STYLE
-		if grounded:
+		if grounded or !gravityEnabled:
 			if movementStyle == 0:
 				velocity = Vector3.ZERO
 				velocity.x = direction.x * currentSpeed
@@ -1234,6 +1515,8 @@ func _physics_process(delta):
 					else:
 						velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * jumpAirSpeed, delta * jumpMovementAcc)
 
-
-		velocity.y = gravityVec.y
+		if gravityLimitEnabled:
+			velocity.y = clamp(gravityVec.y,-gravityLimit,jumpHeight)
+		else:
+			velocity.y = gravityVec.y
 		player.move_and_slide_with_snap(velocity,snapVec,Vector3.UP)

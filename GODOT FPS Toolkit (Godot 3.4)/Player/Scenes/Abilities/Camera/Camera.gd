@@ -1,16 +1,15 @@
 tool
 extends Node
 
-signal updateHeadPosition
-
 var player
-var head
-var camera
 var mouseMovement
 var rotationVelocity: Vector2
 
 var movement
+
+var head
 var headExists : bool
+var camera
 var camExists : bool
 
 var enabled := true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://sky.exr" type="Texture" id=1]
 [ext_resource path="res://Player/Scenes/Abilities/Camera/Camera.tscn" type="PackedScene" id=2]
@@ -28,6 +28,14 @@ adjustment_saturation = 1.4
 
 [sub_resource type="CubeMesh" id=4]
 
+[sub_resource type="BoxShape" id=5]
+
+[sub_resource type="SpatialMaterial" id=7]
+albedo_color = Color( 0.764706, 0.345098, 0.345098, 1 )
+
+[sub_resource type="CubeMesh" id=6]
+material = SubResource( 7 )
+
 [node name="World" type="WorldEnvironment"]
 environment = SubResource( 2 )
 
@@ -37,27 +45,34 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.21499, 0 )
 [node name="Camera" parent="KinematicBody" instance=ExtResource( 2 )]
 
 [node name="Movement" parent="KinematicBody" instance=ExtResource( 3 )]
-"hide all" = false
-"hide basic" = true
-basic/movement = true
-basic/gravity = true
-basic/running = true
-basic/jumping = true
-basic/crouching = true
-"basic/grabbing & throwing" = true
-"hide advanced" = false
-advanced/sliding = false
-"advanced/wall abilities" = false
-advanced/dashing = false
-"advanced/ledge abilities" = false
-advanced/zooming = false
-advanced/vaulting = false
-"advanced/advanced crouching" = false
-"advanced/down smashing (Diving)" = false
-advanced/leaning = false
-advanced/grappling = false
-"advanced/swimming (Floating)" = false
-advanced/rolling = false
+"grabbing & throwing/enabled" = true
+"grabbing & throwing/grabbing reach" = 0
+"grabbing & throwing/custom reach" = 0.0
+"grabbing & throwing/allow scrolling" = false
+"grabbing & throwing/object distance" = 0.0
+"grabbing & throwing/throwing power" = 0.0
+"grabbing & throwing/grabbing speed" = 0.0
+"grabbing & throwing/grabbing speed threshold" = 0.0
+"grabbing & throwing/enable grabbing lock" = false
+"grabbing & throwing/enable rotation lock" = false
+"grabbing & throwing/enable right click rotation" = true
+"grabbing & throwing/right click sensitivity" = 0
+"grabbing & throwing/enable smoothing" = true
+"grabbing & throwing/smoothing rate" = 0
+"grabbing & throwing/lock rotation" = 0
+"hide advanced" = true
+advanced/sliding = true
+"advanced/wall abilities" = true
+advanced/dashing = true
+"advanced/ledge abilities" = true
+advanced/zooming = true
+advanced/vaulting = true
+"advanced/advanced crouching" = true
+"advanced/down smashing (Diving)" = true
+advanced/leaning = true
+advanced/grappling = true
+"advanced/swimming (Floating)" = true
+advanced/rolling = true
 
 [node name="StaticBody" type="StaticBody" parent="."]
 transform = Transform( 192.803, 0, 0, 0, 1, 0, 0, 0, 192.803, 0, 0, 0 )
@@ -115,3 +130,16 @@ material/0 = null
 transform = Transform( 0.938632, 0.246845, -0.240911, 0, 0.698453, 0.715656, 0.344921, -0.671737, 0.65559, -0.168134, 15.9247, 0 )
 shadow_enabled = true
 shadow_contact = 0.934
+
+[node name="RigidBody" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.62203, 3.66399, 0 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="RigidBody"]
+shape = SubResource( 5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="RigidBody/CollisionShape"]
+mesh = SubResource( 6 )
+material/0 = null
