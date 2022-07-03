@@ -4,7 +4,4 @@
 
 [node name="Camera" type="Node"]
 script = ExtResource( 1 )
-basic/enabled = true
-basic/sensitivity = 1.0
-basic/smoothing = false
-basic/lock_camera = false
+enabled = false

@@ -100,6 +100,22 @@ var grabbingRightLockX : bool
 var grabbingRightLockY : bool
 var grabbingRightLockZ : bool
 
+var slidingEnabled : bool
+var slidingMovementStyle : int
+var slidingBoostDuration : float
+var slidingStopSliding : bool
+var slidingSpeedConfig : int
+var slidingAddSpeed : float
+var slidingCustomSpeed : float
+var slidingMovementSlidingEnabled : bool
+var slidingMovementConfig : int
+var slidingMovementAddSpeed : float
+var slidingMovementCustomStyle : int
+var slidingMovementCustomSpeed : float
+var slidingMovementCustomAcc : float
+var slidingHeightConfig : int
+var slidingHeightCustom : float
+
 var collision
 var capsuleMesh
 var collExists : bool
@@ -133,11 +149,10 @@ func checkBasic(value) -> void:
 			and hideCrouching\
 			and hideGrabbing:
 				hideBasic = true
-				property_list_changed_notify()
 		else:
 			hideAll = false
 			hideBasic = false
-			property_list_changed_notify()
+		property_list_changed_notify()
 		checkAll(value)
 func checkAdvanced(value) -> void:
 		if value == true:
@@ -291,6 +306,22 @@ func _get(property):
 	if property == 'grabbing & throwing/custom lock configuration/x rotation': return  grabbingRightLockX
 	if property == 'grabbing & throwing/custom lock configuration/y rotation': return  grabbingRightLockY
 	if property == 'grabbing & throwing/custom lock configuration/z rotation': return  grabbingRightLockZ
+
+	if property == 'sliding/enabled': return slidingEnabled
+	if property == 'sliding/slide movement': return slidingMovementStyle
+	if property == 'sliding/boost duration': return slidingBoostDuration
+	if property == 'sliding/stop after sliding': return slidingStopSliding 
+	if property == 'sliding/slide speed': return slidingSpeedConfig
+	if property == 'sliding/additional slide speed': return slidingAddSpeed
+	if property == 'sliding/custom slide speed': return slidingCustomSpeed
+	if property == 'sliding/allow movement while sliding': return slidingMovementSlidingEnabled
+	if property == 'sliding/slide movement settings/movement configuration': return slidingMovementConfig
+	if property == 'sliding/slide movement settings/additional speed': return slidingMovementAddSpeed
+	if property == 'sliding/slide movement settings/movement slide style' : return slidingMovementCustomStyle
+	if property == 'sliding/slide movement settings/custom speed': return slidingMovementCustomSpeed
+	if property == 'sliding/slide movement settings/custom acceleration': return slidingMovementCustomAcc
+	if property == 'sliding/height configuration': return slidingHeightConfig
+	if property == 'sliding/custom height': return slidingHeightCustom
 
 func setDisplay(p,v):
 	if p == 'hide all': 
@@ -568,6 +599,171 @@ func _set(property, value):
 		if property == 'grabbing & throwing/custom lock configuration/x rotation': grabbingRightLockX = value
 		if property == 'grabbing & throwing/custom lock configuration/y rotation': grabbingRightLockY = value
 		if property == 'grabbing & throwing/custom lock configuration/z rotation': grabbingRightLockZ = value
+
+	if property == 'sliding/enabled': 
+		slidingEnabled = value
+		property_list_changed_notify()
+	if property == 'sliding/slide movement': 
+		slidingMovementStyle = value
+		property_list_changed_notify()
+	if property == 'sliding/boost duration': slidingBoostDuration = value
+	if property == 'sliding/stop after sliding': slidingStopSliding  = value
+	if property == 'sliding/slide speed': 
+		slidingSpeedConfig = value
+		property_list_changed_notify()
+	if property == 'sliding/additional slide speed': slidingAddSpeed = value
+	if property == 'sliding/custom slide speed': slidingCustomSpeed = value
+	if property == 'sliding/allow movement while sliding': 
+		slidingMovementSlidingEnabled = value
+		property_list_changed_notify()
+	if property == 'sliding/slide movement settings/movement configuration': 
+		slidingMovementConfig = value
+		property_list_changed_notify()
+	if property == 'sliding/slide movement settings/additional speed': slidingMovementAddSpeed = value
+	if property == 'sliding/slide movement settings/movement slide style': 
+		slidingMovementCustomStyle = value
+		property_list_changed_notify()
+	if property == 'sliding/slide movement settings/custom speed': slidingMovementCustomSpeed = value
+	if property == 'sliding/slide movement settings/custom acceleration': slidingMovementCustomAcc = value
+	if property == 'sliding/height configuration': 
+		slidingHeightConfig = value
+		property_list_changed_notify()
+	if property == 'sliding/custom height': slidingHeightCustom = value
+
+func display_settings():
+	props.append(
+		{
+			'name': 'Hide Settings',
+			'type': TYPE_NIL,
+			'usage': PROPERTY_USAGE_CATEGORY
+		}
+	)
+	props.append(
+		{
+			'name': 'hide all',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'hide basic',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/movement',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/gravity',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/running',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/jumping',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/crouching',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'basic/grabbing & throwing',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'hide advanced',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/sliding',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/wall abilities',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/dashing',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/ledge abilities',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/zooming',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/vaulting',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/advanced crouching',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/down smashing (Diving)',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/leaning',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/grappling',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/swimming (Floating)',
+			'type': TYPE_BOOL
+		}
+	)
+	props.append(
+		{
+			'name': 'advanced/rolling',
+			'type': TYPE_BOOL
+		}
+	)
 
 func movement_properties():
 	props.append(
@@ -1011,140 +1207,120 @@ func grabbing_properties():
 						'type': TYPE_BOOL
 					}
 				)
-func display_settings():
+
+func sliding_properties():
 	props.append(
 		{
-			'name': 'Hide Settings',
-			'type': TYPE_NIL,
-			'usage': PROPERTY_USAGE_CATEGORY
-		}
-	)
-	props.append(
-		{
-			'name': 'hide all',
+			'name': 'sliding/enabled',
 			'type': TYPE_BOOL
 		}
 	)
-	props.append(
-		{
-			'name': 'hide basic',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'basic/movement',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'basic/gravity',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'basic/running',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'basic/jumping',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'basic/crouching',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'basic/grabbing & throwing',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'hide advanced',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/sliding',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/wall abilities',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/dashing',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/ledge abilities',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/zooming',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/vaulting',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/advanced crouching',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/down smashing (Diving)',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/leaning',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/grappling',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/swimming (Floating)',
-			'type': TYPE_BOOL
-		}
-	)
-	props.append(
-		{
-			'name': 'advanced/rolling',
-			'type': TYPE_BOOL
-		}
-	)
+	if slidingEnabled:
+		props.append(
+			{
+				'name': 'sliding/slide movement',
+				"type":2, 
+				"hint":3, 
+				"hint_string":"Constant Sliding,Boosted Sliding"
+			}
+		)
+		if slidingMovementStyle == 1:
+			props.append(
+				{
+					'name': 'sliding/boost duration',
+					'type': TYPE_REAL
+				}
+			)
+			if crouchingEnabled:
+				props.append(
+					{
+						'name': 'sliding/stop after sliding',
+						'type': TYPE_BOOL
+					}
+				)
+		props.append(
+			{
+				'name': 'sliding/slide speed',
+				"type":2, 
+				"hint":3, 
+				"hint_string":"Movement Speed,Running Speed,Custom Speed"
+			}
+		)
+		if slidingSpeedConfig != 2:
+			props.append(
+				{
+					'name': 'sliding/additional slide speed',
+					'type': TYPE_REAL
+				}
+			)
+		else:
+			props.append(
+				{
+					'name': 'sliding/custom slide speed',
+					'type': TYPE_REAL
+				}
+			)
+		props.append(
+			{
+				'name': 'sliding/allow movement while sliding',
+				'type': TYPE_BOOL
+			}
+		)
+		if slidingMovementSlidingEnabled:
+			props.append(
+				{
+					'name': 'sliding/slide movement settings/movement configuration',
+					"type":2, 
+					"hint":3, 
+					"hint_string":"Use Movement Speed,Use Running Speed,Custom Settings"
+				}
+			)
+			if slidingMovementConfig != 2:
+				props.append(
+					{
+						'name': 'sliding/slide movement settings/additional speed',
+						'type': TYPE_REAL
+					}
+				)
+			else:
+				props.append(
+					{
+						'name': 'sliding/slide movement settings/movement slide style',
+						"type":2, 
+						"hint":3, 
+						"hint_string":"Retro,Modern"
+					}
+				)
+				props.append(
+						{
+							'name': 'sliding/slide movement settings/custom speed',
+							'type': TYPE_REAL
+						}
+					)
+				if slidingMovementCustomStyle == 1:
+					props.append(
+						{
+							'name': 'sliding/slide movement settings/custom acceleration',
+							'type': TYPE_REAL
+						}
+					)
+		if crouchingEnabled:
+			props.append(
+				{
+					'name': 'sliding/height configuration',
+					"type":2, 
+					"hint":3, 
+					"hint_string":"Crouching Height,Custom Height"
+				}
+			)
+		if (slidingHeightConfig == 1 and crouchingEnabled) or not crouchingEnabled:
+			props.append(
+				{
+					'name': 'sliding/custom height',
+					'type': TYPE_REAL
+				}
+			)
+
 func _get_property_list() -> Array:
 	props = []
 	if not hideAll:
@@ -1170,12 +1346,9 @@ func _get_property_list() -> Array:
 					'usage': PROPERTY_USAGE_CATEGORY
 				}
 			)
-			props.append(
-				{
-					'name': 'sliding/enabled',
-					'type': TYPE_BOOL
-				}
-			)
+			if not hideSliding:
+				sliding_properties()
+
 			props.append(
 				{
 					'name': 'wall abilities/climbing/enabled',
@@ -1228,12 +1401,6 @@ func _get_property_list() -> Array:
 			props.append(
 				{
 					'name': 'ledge abilities/ledge hang/enabled',
-					'type': TYPE_BOOL
-				}
-			)
-			props.append(
-				{
-					'name': 'zooming/enabled',
 					'type': TYPE_BOOL
 				}
 			)
@@ -1301,9 +1468,9 @@ func grab():
 					rotationVelocity = rotationVelocity.linear_interpolate(input, (100.5 - grabbingRotationSmoothing) * .01)
 				else:
 					rotationVelocity = mouseMovement * (sensitivity * 0.25)
-				if mouseMovement == Vector2.ZERO and not grabbingRotationSmoothingEnabled:
+				if mouseMovement == Vector2.ZERO:
 					rotationVelocity = Vector2.ZERO
-				if grabbingRightLockConfig == 2 and not grabbingRightLockX or grabbingRightLockY:
+				if grabbingRightLockConfig == 2 and grabbingRightLockY and not grabbingRightLockX:
 					objectGrabbed.rotate_x(deg2rad(rotationVelocity.x))
 				if grabbingRightLockConfig == 2 and not grabbingRightLockY:
 					objectGrabbed.rotate_y(deg2rad(rotationVelocity.x))

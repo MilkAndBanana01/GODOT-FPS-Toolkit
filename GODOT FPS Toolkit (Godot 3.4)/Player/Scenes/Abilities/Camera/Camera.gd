@@ -12,31 +12,31 @@ var headExists : bool
 var camera
 var camExists : bool
 
-var enabled := true
-var sensitivity : float = 0
-var smoothing := false
-var smoothingAmount : int = 0
-var lockCamera := false
+var enabled : bool
+var sensitivity : float
+var smoothing : bool
+var smoothingAmount : int
+var lockCamera : bool
 
 func _get(property):
-	if property == 'basic/enabled': return enabled
-	if property == 'basic/sensitivity': return sensitivity
-	if property == 'basic/smoothing': return smoothing
-	if property == 'basic/lock camera': return lockCamera
-	if property == 'basic/smoothing amount': return smoothingAmount
+	if property == 'enabled': return enabled
+	if property == 'sensitivity': return sensitivity
+	if property == 'smoothing': return smoothing
+	if property == 'lock camera': return lockCamera
+	if property == 'smoothing amount': return smoothingAmount
 
 func _set(property, value) -> bool:
-	if property == 'basic/enabled': 
+	if property == 'enabled': 
 		enabled = value
 		property_list_changed_notify()
-	if property == 'basic/smoothing': 
+	if property == 'smoothing': 
 		smoothing = value
 		property_list_changed_notify()
-	if property == 'basic/lock camera': lockCamera = value
-	if property == 'basic/sensitivity':
+	if property == 'lock camera': lockCamera = value
+	if property == 'sensitivity':
 		value = clamp(value,0,10)
 		sensitivity = value
-	if property == 'basic/smoothing amount':
+	if property == 'smoothing amount':
 		value = clamp(value,0,100)
 		smoothingAmount = value
 	return true
@@ -45,40 +45,40 @@ func _get_property_list() -> Array:
 	var props = []
 	props.append(
 		{
-			'name': 'Camera Settings',
+			'name': 'Basic Settings',
 			'type': TYPE_NIL,
 			'usage': PROPERTY_USAGE_CATEGORY
 		}
 	)
 	props.append(
 		{
-			'name': 'basic/enabled',
+			'name': 'enabled',
 			'type': TYPE_BOOL
 		}
 	)
 	if enabled:
 		props.append(
 			{
-				'name': 'basic/sensitivity',
+				'name': 'sensitivity',
 				'type': TYPE_REAL
 			}
 		)
 		props.append(
 			{
-				'name': 'basic/smoothing',
+				'name': 'smoothing',
 				'type': TYPE_BOOL
 			}
 		)
 		if smoothing:
 			props.append(
 				{
-					'name': 'basic/smoothing amount',
+					'name': 'smoothing amount',
 					'type': TYPE_INT
 				}
 			)
 		props.append(
 			{
-				'name': 'basic/lock camera',
+				'name': 'lock camera',
 				'type': TYPE_BOOL
 			}
 		)

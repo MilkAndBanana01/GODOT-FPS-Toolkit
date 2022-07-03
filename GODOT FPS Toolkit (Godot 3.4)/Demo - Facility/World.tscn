@@ -43,39 +43,22 @@ environment = SubResource( 2 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.21499, 0 )
 
 [node name="Camera" parent="KinematicBody" instance=ExtResource( 2 )]
-"basic/lock camera" = false
 
 [node name="Movement" parent="KinematicBody" instance=ExtResource( 3 )]
-"grabbing & throwing/enabled" = true
-"grabbing & throwing/grabbing reach" = 1
-"grabbing & throwing/allow scrolling" = false
-"grabbing & throwing/object distance" = 5.53
-"grabbing & throwing/throwing power" = 0.0
-"grabbing & throwing/grabbing speed" = 11.205
-"grabbing & throwing/enable grabbing lock" = true
-"grabbing & throwing/enable rotation lock" = false
-"grabbing & throwing/enable right click rotation" = true
-"grabbing & throwing/right click sensitivity" = 0
-"grabbing & throwing/enable smoothing" = false
-"grabbing & throwing/lock rotation" = 0
-"hide advanced" = true
-advanced/sliding = true
-"advanced/wall abilities" = true
-advanced/dashing = true
-"advanced/ledge abilities" = true
-advanced/zooming = true
-advanced/vaulting = true
-"advanced/advanced crouching" = true
-"advanced/down smashing (Diving)" = true
-advanced/leaning = true
-advanced/grappling = true
-"advanced/swimming (Floating)" = true
-advanced/rolling = true
+sliding/enabled = true
+"sliding/slide movement" = 0
+"sliding/slide speed" = 0
+"sliding/additional slide speed" = 0.0
+"sliding/allow movement while sliding" = true
+"sliding/slide movement settings/movement configuration" = 0
+"sliding/slide movement settings/additional speed" = 0.0
+"sliding/custom height" = 0.0
 
 [node name="StaticBody" type="StaticBody" parent="."]
 transform = Transform( 192.803, 0, 0, 0, 1, 0, 0, 0, 192.803, 0, 0, 0 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
@@ -88,7 +71,8 @@ material/0 = null
 [node name="StaticBody2" type="StaticBody" parent="."]
 transform = Transform( 2.88501, 0, 0, 0, 2.88501, 0, 0, 0, 2.88501, 0, 0, -16.1604 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody2"]
@@ -101,7 +85,8 @@ material/0 = null
 [node name="StaticBody4" type="StaticBody" parent="."]
 transform = Transform( 2.88501, 0, 0, 0, 5.0931, 0, 0, 0, 2.88501, 0, 0, -7.37518 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody4"]
@@ -114,7 +99,8 @@ material/0 = null
 [node name="StaticBody3" type="StaticBody" parent="."]
 transform = Transform( 4.0047, -3.70489, 0, 1.9592, 2.11774, 0, 0, 0, 5.45563, 13.0068, 0, -15.5349 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody3"]
@@ -128,6 +114,9 @@ material/0 = null
 transform = Transform( 0.938632, 0.246845, -0.240911, 0, 0.698453, 0.715656, 0.344921, -0.671737, 0.65559, -0.168134, 15.9247, 0 )
 shadow_enabled = true
 shadow_contact = 0.934
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="RigidBody" type="RigidBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.62203, 3.66399, 0 )
