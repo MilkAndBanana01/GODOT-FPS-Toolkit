@@ -18,21 +18,21 @@ var smoothing : bool
 var smoothingAmount : int
 var lockCamera : bool
 
+var props : Array
+
 func _get(property):
-	if property == 'enabled': return enabled
 	if property == 'sensitivity': return sensitivity
 	if property == 'smoothing': return smoothing
 	if property == 'lock camera': return lockCamera
 	if property == 'smoothing amount': return smoothingAmount
 
-func _set(property, value) -> bool:
-	if property == 'enabled': 
-		enabled = value
-		property_list_changed_notify()
+func _set(property, value):
 	if property == 'smoothing': 
 		smoothing = value
 		property_list_changed_notify()
-	if property == 'lock camera': lockCamera = value
+	if property == 'lock camera': 
+		lockCamera = value
+		property_list_changed_notify()
 	if property == 'sensitivity':
 		value = clamp(value,0,10)
 		sensitivity = value
@@ -42,7 +42,7 @@ func _set(property, value) -> bool:
 	return true
 
 func _get_property_list() -> Array:
-	var props = []
+	props = []
 	props.append(
 		{
 			'name': 'Basic Settings',
@@ -52,36 +52,29 @@ func _get_property_list() -> Array:
 	)
 	props.append(
 		{
-			'name': 'enabled',
+			'name': 'sensitivity',
+			'type': TYPE_REAL
+		}
+	)
+	props.append(
+		{
+			'name': 'smoothing',
 			'type': TYPE_BOOL
 		}
 	)
-	if enabled:
+	if smoothing:
 		props.append(
 			{
-				'name': 'sensitivity',
-				'type': TYPE_REAL
+				'name': 'smoothing amount',
+				'type': TYPE_INT
 			}
 		)
-		props.append(
-			{
-				'name': 'smoothing',
-				'type': TYPE_BOOL
-			}
-		)
-		if smoothing:
-			props.append(
-				{
-					'name': 'smoothing amount',
-					'type': TYPE_INT
-				}
-			)
-		props.append(
-			{
-				'name': 'lock camera',
-				'type': TYPE_BOOL
-			}
-		)
+	props.append(
+		{
+			'name': 'lock camera',
+			'type': TYPE_BOOL
+		}
+	)
 	return props
 
 func _ready():
@@ -107,7 +100,6 @@ func _ready():
 			camera.call_deferred('set_owner',player)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		movement = player.get_node("Movement")
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouseMovement = event.relative
@@ -115,7 +107,6 @@ func _input(event: InputEvent) -> void:
 		mouseMovement = Vector2.ZERO
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
-
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() == false:
 

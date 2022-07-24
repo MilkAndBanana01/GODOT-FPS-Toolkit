@@ -27,13 +27,6 @@ var hideGrappling : bool
 var hideSwimming : bool
 var hideRolling : bool
 
-var movementEnabled : bool
-var movementStyle : int
-var speed : int
-var acceleration : float
-var frictionEnabled : bool
-var friction : float
-
 var gravityEnabled : bool 
 var gravity : float
 var gravityLimitEnabled : bool 
@@ -225,14 +218,6 @@ func _get(property):
 	if property == 'advanced/grappling': return hideGrappling
 	if property == 'advanced/swimming (Floating)': return hideSwimming
 	if property == 'advanced/rolling': return hideRolling
-	
-	## MOVEMENT PROPERTIES
-	if property == 'movement/enabled': return movementEnabled
-	if property == 'movement/movement style': return movementStyle
-	if property == 'movement/enable friction': return frictionEnabled
-	if property == 'movement/speed': return speed
-	if property == 'movement/acceleration': return acceleration
-	if property == 'movement/friction': return friction
 
 	## GRAVITY PROPERTIES
 	if property == 'gravity/enabled': return gravityEnabled
@@ -430,31 +415,11 @@ func setDisplay(p,v):
 		checkAdvanced(v)
 func _set(property, value):
 	if value != null:
-	#	print("Setting: "+ str(property) + " | "+ str(value))
+#		print("Setting: "+ str(property) + " | "+ str(value))
 
 		## DISPLAY SETTINGS
 		setDisplay(property,value)
 
-		## MOVEMENT PROPERTIES
-		if property == 'movement/enabled': 
-			movementEnabled = value
-			property_list_changed_notify()
-		if property == 'movement/movement style': 
-			movementStyle = value
-			property_list_changed_notify()
-		if property == 'movement/enable friction': 
-			frictionEnabled = value
-			property_list_changed_notify()
-		if property == 'movement/speed':
-			value = clamp(value,0,INF)
-			speed = value
-		if property == 'movement/acceleration':
-			value = clamp(value,0,INF)
-			acceleration = value
-		if property == 'movement/friction':
-			value = clamp(value,0,INF)
-			friction = value
-		
 		## GRAVITY PROPERTIES
 		if property == 'gravity/enabled': 
 			gravityEnabled = value
@@ -600,35 +565,36 @@ func _set(property, value):
 		if property == 'grabbing & throwing/custom lock configuration/y rotation': grabbingRightLockY = value
 		if property == 'grabbing & throwing/custom lock configuration/z rotation': grabbingRightLockZ = value
 
-	if property == 'sliding/enabled': 
-		slidingEnabled = value
-		property_list_changed_notify()
-	if property == 'sliding/slide movement': 
-		slidingMovementStyle = value
-		property_list_changed_notify()
-	if property == 'sliding/boost duration': slidingBoostDuration = value
-	if property == 'sliding/stop after sliding': slidingStopSliding  = value
-	if property == 'sliding/slide speed': 
-		slidingSpeedConfig = value
-		property_list_changed_notify()
-	if property == 'sliding/additional slide speed': slidingAddSpeed = value
-	if property == 'sliding/custom slide speed': slidingCustomSpeed = value
-	if property == 'sliding/allow movement while sliding': 
-		slidingMovementSlidingEnabled = value
-		property_list_changed_notify()
-	if property == 'sliding/slide movement settings/movement configuration': 
-		slidingMovementConfig = value
-		property_list_changed_notify()
-	if property == 'sliding/slide movement settings/additional speed': slidingMovementAddSpeed = value
-	if property == 'sliding/slide movement settings/movement slide style': 
-		slidingMovementCustomStyle = value
-		property_list_changed_notify()
-	if property == 'sliding/slide movement settings/custom speed': slidingMovementCustomSpeed = value
-	if property == 'sliding/slide movement settings/custom acceleration': slidingMovementCustomAcc = value
-	if property == 'sliding/height configuration': 
-		slidingHeightConfig = value
-		property_list_changed_notify()
-	if property == 'sliding/custom height': slidingHeightCustom = value
+		if property == 'sliding/enabled': 
+			slidingEnabled = value
+			property_list_changed_notify()
+		if property == 'sliding/slide movement': 
+			slidingMovementStyle = value
+			property_list_changed_notify()
+		if property == 'sliding/boost duration': slidingBoostDuration = value
+		if property == 'sliding/stop after sliding': slidingStopSliding  = value
+		if property == 'sliding/slide speed': 
+			slidingSpeedConfig = value
+			property_list_changed_notify()
+		if property == 'sliding/additional slide speed': slidingAddSpeed = value
+		if property == 'sliding/custom slide speed': slidingCustomSpeed = value
+		if property == 'sliding/allow movement while sliding': 
+			slidingMovementSlidingEnabled = value
+			property_list_changed_notify()
+		if property == 'sliding/slide movement settings/movement configuration': 
+			slidingMovementConfig = value
+			property_list_changed_notify()
+		if property == 'sliding/slide movement settings/additional speed': slidingMovementAddSpeed = value
+		if property == 'sliding/slide movement settings/movement slide style': 
+			slidingMovementCustomStyle = value
+			property_list_changed_notify()
+		if property == 'sliding/slide movement settings/custom speed': slidingMovementCustomSpeed = value
+		if property == 'sliding/slide movement settings/custom acceleration': slidingMovementCustomAcc = value
+		if property == 'sliding/height configuration': 
+			slidingHeightConfig = value
+			property_list_changed_notify()
+		if property == 'sliding/custom height': slidingHeightCustom = value
+		return true
 
 func display_settings():
 	props.append(
@@ -765,55 +731,6 @@ func display_settings():
 		}
 	)
 
-func movement_properties():
-	props.append(
-		{
-			'name': 'Basic Settings',
-			'type': TYPE_NIL,
-			'usage': PROPERTY_USAGE_CATEGORY
-		}
-	)
-	props.append(
-		{
-			'name': 'movement/enabled',
-			'type': TYPE_BOOL
-		}
-	)
-	if movementEnabled:
-		props.append(
-			{
-				"name":"movement/movement style", 
-				"type":TYPE_INT, 
-				"hint":3,
-				"hint_string":"Retro - No Momentum,Modern - Momentum", 
-			}
-		)
-		props.append(
-			{
-				'name': 'movement/speed',
-				'type': TYPE_INT
-			}
-		)
-		if movementStyle == 1:
-			props.append(
-				{
-					'name': 'movement/acceleration',
-					'type': TYPE_REAL
-				}
-			)
-			props.append(
-				{
-					'name': 'movement/enable friction',
-					'type': TYPE_BOOL
-				}
-			)
-			if frictionEnabled:
-				props.append(
-					{
-						'name': 'movement/friction',
-						'type': TYPE_REAL
-					}
-				)
 func gravity_properties():
 	props.append(
 		{
@@ -841,7 +758,7 @@ func gravity_properties():
 					'type': TYPE_REAL
 				}
 			)
-		if movementStyle != 0:
+#		if movementStyle != 0:
 			props.append(
 				{
 					'name': 'gravity/enable air momentum',
@@ -915,13 +832,13 @@ func running_properties():
 				'type': TYPE_INT
 			}
 		)
-		if runningStyle == 2 or (movementStyle == 1 and runningStyle == 0):
-			props.append(
-				{
-					'name': 'running/acceleration',
-					'type': TYPE_REAL
-				}
-			)
+#		if runningStyle == 2 or (movementStyle == 1 and runningStyle == 0):
+#			props.append(
+#				{
+#					'name': 'running/acceleration',
+#					'type': TYPE_REAL
+#				}
+#			)
 		props.append(
 			{
 				'name': 'running/allow running mid air',
@@ -977,13 +894,13 @@ func jumping_properties():
 							'type': TYPE_INT
 						}
 					)
-					if movementStyle == 1:
-						props.append(
-							{
-								'name': 'jumping/custom acceleration',
-								'type': TYPE_REAL
-							}
-						)
+#					if movementStyle == 1:
+#						props.append(
+#							{
+#								'name': 'jumping/custom acceleration',
+#								'type': TYPE_REAL
+#							}
+#						)
 func crouching_properties():
 	props.append(
 		{
@@ -1325,8 +1242,6 @@ func _get_property_list() -> Array:
 	props = []
 	if not hideAll:
 		if not hideBasic:
-			if not hideMovement:
-				movement_properties()
 			if not hideGravity:
 				gravity_properties()
 			if not hideRunning:
@@ -1610,109 +1525,97 @@ func _input(event: InputEvent) -> void:
 						objectGrabbed.axis_lock_angular_y = grabbingLockY
 						objectGrabbed.axis_lock_angular_z = grabbingLockZ
 
-func _physics_process(delta):
-	if Engine.is_editor_hint() == false:
-		grounded = player.is_on_floor()
-		grab()
-# CAPTURING INPUTS
-		input = Input.get_vector('move_left','move_right','move_forward','move_back')
-		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+#func _physics_process(delta):
+#	if Engine.is_editor_hint() == false:
+#		grounded = player.is_on_floor()
+#		grab()
 
-# INTERPOLATING PLAYER HEIGHT INPUTS
-		if crouchingConfig == 0:
-			collision.shape.height = lerp(
-				collision.shape.height,
-				standingHeight - (int(Input.is_action_pressed('crouch')) * decreaseStandingHeight),
-				delta * crouchingSpeed)
-			capsuleMesh.mid_height = lerp(
-				capsuleMesh.mid_height,
-				standingHeight - (int(Input.is_action_pressed('crouch')) * decreaseStandingHeight),
-				delta * crouchingSpeed)
-		else:
-			collision.shape.height = lerp(
-				collision.shape.height,
-				(int(not Input.is_action_pressed('crouch')) * standingHeight) + 
-				(int(Input.is_action_pressed('crouch')) * crouchingHeight),
-				delta * crouchingSpeed)
-			capsuleMesh.mid_height = lerp(
-				capsuleMesh.mid_height,
-				(int(not Input.is_action_pressed('crouch')) * standingHeight) + 
-				(int(Input.is_action_pressed('crouch')) * crouchingHeight),
-				delta * crouchingSpeed)
-# GRAVITY
-		if grounded:
-			jumpCount = 0
-			snapVec = -player.get_floor_normal()
-			gravityVec = Vector3.ZERO
-			usedAcceleration = acceleration
-		else:
-			snapVec = Vector3.DOWN
-			gravityVec += Vector3.DOWN * gravity * delta
-			usedAcceleration = acceleration
-			if airMomentumEnabled:
-				if airMomentumStyle == 0:
-					usedAcceleration = acceleration
-				if airMomentumStyle == 1:
-					usedAcceleration = acceleration + airMomentum
-				if airMomentumStyle == 2:
-					usedAcceleration = airMomentum
-
-		var currentSpeed = ((speed 
-		+ (int(runningEnabled and Input.is_action_pressed("sprint"))) * runningSpeed) 
-		- (int(crouchingEnabled and Input.is_action_pressed('crouch') and \
-		grounded or not (airCrouching != 0 or airCrouching != 2))) * decreaseSpeed)
-
-# JUMPING
-		if Input.is_action_just_pressed("jump") and \
-		(grounded or \
-		jumpCount < availableJumps or \
-		airMovementEnabled):
-			jumpCount += 1
-			snapVec = Vector3.ZERO
-			gravityVec = Vector3.UP * jumpHeight
-			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
-			velocity.x = direction.x * currentSpeed
-			velocity.z = direction.z * currentSpeed
-
-# MOVEMENT STYLE
-		if grounded or !gravityEnabled:
-			if movementStyle == 0:
-				velocity = Vector3.ZERO
-				velocity.x = direction.x * currentSpeed
-				velocity.z = direction.z * currentSpeed
-			else:
-				velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * currentSpeed, delta * usedAcceleration)
-
-# FRICTION
-			if frictionEnabled and input == Vector2.ZERO:
-				velocity = velocity.linear_interpolate(Vector3.ZERO, delta * friction)
-
-# AIR MOVEMENT
-		else:
-			if airMovementEnabled:
-				if airMovementStyle == 1:
-					velocity = Vector3.ZERO
-					velocity.x = direction.x * airMovementSpeed
-					velocity.z = direction.z * airMovementSpeed
-				elif airMovementStyle == 2:
-					velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * airMovementSpeed, delta * airMovementAcc)
-
-# JUMP MOVEMENT
-			if jumpMovementEnabled and (jumpCount < jumpMovementAllowed):
-				var jumpAirSpeed : int
-				if jumpMovementStyle == 0:
-					jumpAirSpeed = currentSpeed
-				elif airMovementStyle == 1:
-					jumpAirSpeed = jumpMovementSpeed
-					if movementStyle == 0:
-						velocity = Vector3.ZERO
-						velocity.x = direction.x * jumpAirSpeed
-						velocity.z = direction.z * jumpAirSpeed
-					else:
-						velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * jumpAirSpeed, delta * jumpMovementAcc)
-
-		if gravityLimitEnabled:
-			velocity.y = clamp(gravityVec.y,-gravityLimit,jumpHeight)
-		else:
-			velocity.y = gravityVec.y
-		player.move_and_slide_with_snap(velocity,snapVec,Vector3.UP)
+## INTERPOLATING PLAYER HEIGHT INPUTS
+#		if crouchingConfig == 0:
+#			collision.shape.height = lerp(
+#				collision.shape.height,
+#				standingHeight - (int(Input.is_action_pressed('crouch')) * decreaseStandingHeight),
+#				delta * crouchingSpeed)
+#			capsuleMesh.mid_height = lerp(
+#				capsuleMesh.mid_height,
+#				standingHeight - (int(Input.is_action_pressed('crouch')) * decreaseStandingHeight),
+#				delta * crouchingSpeed)
+#		else:
+#			collision.shape.height = lerp(
+#				collision.shape.height,
+#				(int(not Input.is_action_pressed('crouch')) * standingHeight) + 
+#				(int(Input.is_action_pressed('crouch')) * crouchingHeight),
+#				delta * crouchingSpeed)
+#			capsuleMesh.mid_height = lerp(
+#				capsuleMesh.mid_height,
+#				(int(not Input.is_action_pressed('crouch')) * standingHeight) + 
+#				(int(Input.is_action_pressed('crouch')) * crouchingHeight),
+#				delta * crouchingSpeed)
+## GRAVITY
+#		if grounded:
+#			jumpCount = 0
+#			snapVec = -player.get_floor_normal()
+#			gravityVec = Vector3.ZERO
+#			usedAcceleration = acceleration
+#		else:
+#			snapVec = Vector3.DOWN
+#			gravityVec += Vector3.DOWN * gravity * delta
+#			usedAcceleration = acceleration
+#			if airMomentumEnabled:
+#				if airMomentumStyle == 0:
+#					usedAcceleration = acceleration
+#				if airMomentumStyle == 1:
+#					usedAcceleration = acceleration + airMomentum
+#				if airMomentumStyle == 2:
+#					usedAcceleration = airMomentum
+#
+#		var currentSpeed = ((speed 
+#		+ (int(runningEnabled and Input.is_action_pressed("sprint"))) * runningSpeed) 
+#		- (int(crouchingEnabled and Input.is_action_pressed('crouch') and \
+#		grounded or not (airCrouching != 0 or airCrouching != 2))) * decreaseSpeed)
+#
+## JUMPING
+#		if Input.is_action_just_pressed("jump") and \
+#		(grounded or \
+#		jumpCount < availableJumps or \
+#		airMovementEnabled):
+#			jumpCount += 1
+#			snapVec = Vector3.ZERO
+#			gravityVec = Vector3.UP * jumpHeight
+#			direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+#			velocity.x = direction.x * currentSpeed
+#			velocity.z = direction.z * currentSpeed
+#
+## FRICTION
+#			if frictionEnabled and input == Vector2.ZERO:
+#				velocity = velocity.linear_interpolate(Vector3.ZERO, delta * friction)
+#
+## AIR MOVEMENT
+#		else:
+#			if airMovementEnabled:
+#				if airMovementStyle == 1:
+#					velocity = Vector3.ZERO
+#					velocity.x = direction.x * airMovementSpeed
+#					velocity.z = direction.z * airMovementSpeed
+#				elif airMovementStyle == 2:
+#					velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * airMovementSpeed, delta * airMovementAcc)
+#
+## JUMP MOVEMENT
+#			if jumpMovementEnabled and (jumpCount < jumpMovementAllowed):
+#				var jumpAirSpeed : int
+#				if jumpMovementStyle == 0:
+#					jumpAirSpeed = currentSpeed
+#				elif airMovementStyle == 1:
+#					jumpAirSpeed = jumpMovementSpeed
+#					if movementStyle == 0:
+#						velocity = Vector3.ZERO
+#						velocity.x = direction.x * jumpAirSpeed
+#						velocity.z = direction.z * jumpAirSpeed
+#					else:
+#						velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * jumpAirSpeed, delta * jumpMovementAcc)
+#
+#		if gravityLimitEnabled:
+#			velocity.y = clamp(gravityVec.y,-gravityLimit,jumpHeight)
+#		else:
+#			velocity.y = gravityVec.y
+#		player.move_and_slide_with_snap(velocity,snapVec,Vector3.UP)

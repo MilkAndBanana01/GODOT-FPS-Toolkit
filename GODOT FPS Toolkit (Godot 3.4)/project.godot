@@ -11,8 +11,12 @@ config_version=4
 [application]
 
 config/name="GODOT FPS Toolkit (Godot 3.4)"
-run/main_scene="res://Demo - Facility/World.tscn"
+run/main_scene="res://World.tscn"
 config/icon="res://icon.png"
+
+[gdnative]
+
+singletons=[  ]
 
 [physics]
 
