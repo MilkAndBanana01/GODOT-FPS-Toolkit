@@ -8,3 +8,4 @@ panorama = ExtResource( 1 )
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
+auto_exposure_enabled = true

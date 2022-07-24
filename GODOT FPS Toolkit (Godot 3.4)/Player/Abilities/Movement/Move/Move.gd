@@ -16,6 +16,17 @@ var acceleration : float
 var frictionEnabled : bool
 var friction : float
 
+var properties = {
+	{
+		"property": 'Movement Settings',
+		"type": 'category',
+		"default": true,
+		"enabler": 'enabled',
+		"values": ['apple','banana','egg'],
+		""
+	}
+}
+
 func _get(property: String):
 	if property == "enabled" : return movementEnabled
 	if property == "movement style" : return movementStyle
@@ -116,4 +127,5 @@ func _physics_process(delta: float) -> void:
 		if player.is_on_floor():
 			snapVec = -player.get_floor_normal()
 		else:
+			snapVec = Vector3.DOWN
 		player.move_and_slide_with_snap(velocity,snapVec,Vector3.UP)
