@@ -9,3 +9,5 @@ panorama = ExtResource( 1 )
 background_mode = 2
 background_sky = SubResource( 1 )
 auto_exposure_enabled = true
+ssao_enabled = true
+ssao_quality = 2

@@ -1586,10 +1586,6 @@ func _input(event: InputEvent) -> void:
 #			velocity.x = direction.x * currentSpeed
 #			velocity.z = direction.z * currentSpeed
 #
-## FRICTION
-#			if frictionEnabled and input == Vector2.ZERO:
-#				velocity = velocity.linear_interpolate(Vector3.ZERO, delta * friction)
-#
 ## AIR MOVEMENT
 #		else:
 #			if airMovementEnabled:
