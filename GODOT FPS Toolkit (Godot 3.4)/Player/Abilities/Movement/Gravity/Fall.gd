@@ -2,7 +2,7 @@ tool
 extends Node
 
 var player
-var move
+var raycast
 var gravityVec : Vector3
 
 var gravityEnabled : bool
@@ -21,7 +21,7 @@ var airMovementAcc : float
 var properties = {
 	'Gravity Settings': {"t": 'category'},
 	'gravity/enabled': {"n": 'gravityEnabled',"t": 'bool',"d": true},
-	'gravity/gravity style': {"n": 'gravityStyle',"t": 'list',"d": 0,"e": ['gravityEnabled=true'],"v": "Constant,Exponential"},
+	'gravity/gravity style': {"n": 'gravityStyle',"t": 'list',"d": 1,"e": ['gravityEnabled=true'],"v": "Constant,Exponential"},
 	'gravity/gravity': {"n": 'gravity',"t": 'float',"d": 10,"e": ['gravityEnabled=true']},
 	'air momentum/enabled': {"n": 'airMomentumEnabled',"t": 'bool',"d": true},
 }
@@ -32,6 +32,12 @@ func _get(property: String):
 			return get(properties[property]["n"])
 func _set(property: String, value) -> bool:
 	if property in properties.keys():
+		if properties[property].has("mn"):
+			value = clamp(value,properties[property]["mn"],INF)
+		if properties[property].has("mx"):
+			value = clamp(value,-INF,properties[property]["mx"])
+		if properties[property].has("mn") and properties[property].has("mx"):
+			value = clamp(value,properties[property]["mn"],properties[property]["mx"])
 		set(properties[property]["n"], value)
 		if properties[property]["t"] == 'bool' or properties[property]["t"] == 'list':
 			property_list_changed_notify()
@@ -92,21 +98,28 @@ func property_can_revert(property:String) -> bool:
 func property_get_revert(property:String):
 	return properties[property]["d"]
 
-
 func _ready() -> void:
 	if get_parent() is KinematicBody:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
-		move = owner.get_node('Move')
+	var ray = player.get_node_or_null('JumpDetect')
+	if ray:
+		raycast = ray
+	else:
+		raycast = RayCast.new()
+		raycast.name = "FloorDetect"
+		raycast.enabled = true
+		raycast.cast_to = Vector3(0,-1.1,0)
+		player.call_deferred('add_child',raycast)
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() == false:
-		if player.is_on_floor():
+		if raycast.is_colliding():
 			gravityVec = Vector3.ZERO
 		else:
 			if gravityStyle == 1:
 				gravityVec += Vector3.DOWN * gravity * delta
 			else:
 				gravityVec = Vector3.DOWN * gravity
-		player.move_and_slide(gravityVec)
+		player.move_and_slide(gravityVec,Vector3.UP)

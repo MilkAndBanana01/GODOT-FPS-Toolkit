@@ -2,7 +2,8 @@ tool
 extends Node
 
 var player
-
+var raycast
+var jumpVec : Vector3
 var jumpCount : int
 
 var jumpEnabled : bool
@@ -19,12 +20,9 @@ var jumpLimit : int
 
 var properties = {
 	'Jump Settings': {"t": 'category'},
-	'enabled': {"n": 'movementEnabled',"t": 'bool',"d": true},
-	'movement style': {"n": 'movementStyle',"t": 'list',"d": 0,"e": ['movementEnabled=true'],"v": "Retro,Modern"},
-	'speed': {"n": 'speed',"t": 'int',"d": 10,"e": ['movementEnabled=true']},
-	'acceleration': {"n": 'acceleration',"t": 'float',"d": 5,"e": ['movementEnabled=true','movementStyle/0']},
-	'enable friction': {"n": 'frictionEnabled',"t": 'bool',"d": false,"e": ['movementEnabled=true','movementStyle/0']},
-	'friction': {"n": 'friction',"t": 'float',"d": 2,"e": ['movementEnabled=true','frictionEnabled=true','movementStyle/0']},
+	'enabled': {"n": 'jumpEnabled',"t": 'bool',"d": true},
+	'jump height': {"n": 'jumpHeight',"t": 'int',"d": 10},
+	'jump count': {"n": 'jumpLimit',"t": 'int',"d": 1, 'mn' : 1}
 }
 
 func _get(property: String):
@@ -33,6 +31,12 @@ func _get(property: String):
 			return get(properties[property]["n"])
 func _set(property: String, value) -> bool:
 	if property in properties.keys():
+		if properties[property].has("mn"):
+			value = clamp(value,properties[property]["mn"],INF)
+		if properties[property].has("mx"):
+			value = clamp(value,-INF,properties[property]["mx"])
+		if properties[property].has("mn") and properties[property].has("mx"):
+			value = clamp(value,properties[property]["mn"],properties[property]["mx"])
 		set(properties[property]["n"], value)
 		if properties[property]["t"] == 'bool' or properties[property]["t"] == 'list':
 			property_list_changed_notify()
@@ -98,4 +102,22 @@ func _ready() -> void:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
+	var ray = player.get_node_or_null('FloorDetect')
+	if ray:
+		raycast = ray
+	else:
+		raycast = RayCast.new()
+		raycast.name = "JumpDetect"
+		raycast.enabled = true
+		raycast.cast_to = Vector3(0,-1.1,0)
+		player.call_deferred('add_child',raycast)
 
+func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint() == false:
+		if raycast.is_colliding():
+			jumpCount = 0
+		if Input.is_action_just_pressed('jump') and jumpCount < jumpLimit:
+			jumpCount += 1
+			jumpVec.y = jumpHeight
+		print(jumpCount)
+		player.move_and_slide(jumpVec,Vector3.UP)

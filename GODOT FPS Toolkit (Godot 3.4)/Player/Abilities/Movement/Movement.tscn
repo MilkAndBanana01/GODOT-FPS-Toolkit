@@ -17,12 +17,12 @@ speed = 10
 [node name="Fall" type="Node" parent="."]
 script = ExtResource( 3 )
 gravity/enabled = true
-"gravity/gravity style" = 0
-gravity/gravity = 0.785
+"gravity/gravity style" = 1
+gravity/gravity = 10.0
 "air momentum/enabled" = true
 
 [node name="Jump" type="Node" parent="."]
 script = ExtResource( 4 )
 enabled = true
-"movement style" = 0
-speed = 0
+"jump height" = 10
+"jump count" = 1

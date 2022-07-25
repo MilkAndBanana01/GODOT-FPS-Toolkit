@@ -39,6 +39,12 @@ func _get(property: String):
 			return get(properties[property]["n"])
 func _set(property: String, value) -> bool:
 	if property in properties.keys():
+		if properties[property].has("mn"):
+			value = clamp(value,properties[property]["mn"],INF)
+		if properties[property].has("mx"):
+			value = clamp(value,-INF,properties[property]["mx"])
+		if properties[property].has("mn") and properties[property].has("mx"):
+			value = clamp(value,properties[property]["mn"],properties[property]["mx"])
 		set(properties[property]["n"], value)
 		if properties[property]["t"] == 'bool' or properties[property]["t"] == 'list':
 			property_list_changed_notify()
@@ -117,8 +123,4 @@ func _physics_process(delta: float) -> void:
 			velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * speed, delta * acceleration)
 			if input == Vector2.ZERO and frictionEnabled:
 				velocity = velocity.linear_interpolate(Vector3.ZERO, delta * friction)
-		if player.is_on_floor():
-			snapVec = -player.get_floor_normal()
-		else:
-			snapVec = Vector3.DOWN
-		player.move_and_slide_with_snap(velocity,snapVec,Vector3.UP)
+		player.move_and_slide(velocity,Vector3.UP)
