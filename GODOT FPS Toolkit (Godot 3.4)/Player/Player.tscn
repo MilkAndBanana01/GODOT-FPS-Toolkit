@@ -7,13 +7,6 @@
 
 [node name="Movement" parent="." instance=ExtResource( 1 )]
 
-[node name="Move" parent="Movement" index="0"]
-"air momentum/enabled" = false
-
 [node name="Camera" parent="." instance=ExtResource( 2 )]
-enabled = true
-sensitivity = 0.0
-"enable smoothing" = false
-smoothing = false
 
 [editable path="Movement"]

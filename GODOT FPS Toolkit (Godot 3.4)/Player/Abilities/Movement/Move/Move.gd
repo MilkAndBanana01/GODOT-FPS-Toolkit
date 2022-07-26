@@ -7,7 +7,6 @@ var input : Vector2
 var direction : Vector3
 var velocity : Vector3
 var snapVec : Vector3
-
 var jump
 
 var movementEnabled : bool
@@ -126,8 +125,18 @@ func _ready() -> void:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
-	jump = player.get_node('Movement/Gravity')
-	
+	jump = player.get_node_or_null('Movement/Gravity')
+	addCollision()
+
+func addCollision():
+	if player.get_node_or_null('Collision') == null:
+		var collision = CollisionShape.new()
+		var capsule = CapsuleShape.new()
+		collision.name = "Collision"
+		capsule.radius = 0.5
+		collision.set_shape(capsule)
+		collision.rotate_x(deg2rad(90))
+		player.call_deferred('add_child',collision)
 
 func movePlayer():
 	input = Vector2(Input.get_action_strength('move_right') - Input.get_action_strength('move_left'),Input.get_action_strength('move_back') - Input.get_action_strength('move_forward'))
@@ -141,14 +150,13 @@ func modernMovement(s,a,d):
 func applyFriction(f,d):
 	velocity = velocity.linear_interpolate(Vector3.ZERO, d * f)
 
-func _input(event: InputEvent) -> void:
-	if jump.updateDirection:
+func _input(_event: InputEvent) -> void:
+	if jump != null and jump.updateDirection:
 		if Input.is_action_just_pressed('jump') and jump.jumpCount < jump.jumpLimit:
 			movePlayer()
 			retroMovement(speed + airMomentumSpeed)
-
 func _physics_process(delta: float) -> void:
-	if Engine.is_editor_hint() == false:
+	if not Engine.editor_hint:
 		if player.is_on_floor():
 			movePlayer()
 			if movementStyle == 0:

@@ -1,3 +1,4 @@
+tool
 extends Node
 
 var inputs := ["move_left","move_right","move_back","move_forward","jump","sprint","crouch","interact"]
@@ -24,14 +25,14 @@ func _ready() -> void:
 		else:
 			InputMap.add_action(i)
 			addingEvent(pos,i)
-
 		pos += 1
-	player = get_parent()
 	addCollision()
 
 func addCollision():
-	collision.name = "Collision"
-	capsule.radius = 0.5
-	collision.set_shape(capsule)
-	collision.rotate_x(deg2rad(90))
-	player.call_deferred('add_child',collision)
+	player = get_parent()
+	if player.get_node_or_null('Collision') == null:
+		collision.name = "Collision"
+		capsule.radius = 0.5
+		collision.set_shape(capsule)
+		collision.rotate_x(deg2rad(90))
+		player.call_deferred('add_child',collision)

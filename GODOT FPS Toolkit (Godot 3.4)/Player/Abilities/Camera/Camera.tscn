@@ -4,3 +4,6 @@
 
 [node name="Camera" type="Node"]
 script = ExtResource( 1 )
+enabled = true
+sensitivity = 1.0
+"enable smoothing" = false

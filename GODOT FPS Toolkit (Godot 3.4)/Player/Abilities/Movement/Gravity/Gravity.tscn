@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Player/Abilities/Movement/Gravity/Gravity.gd" type="Script" id=1]
+
+[node name="Gravity" type="Node"]
+script = ExtResource( 1 )
+gravity/enabled = true
+"gravity/gravity style" = 1
+gravity/gravity = 10.0
+enabled = true
+"jump height" = 10
+"jump count" = 1
+"update direction" = true

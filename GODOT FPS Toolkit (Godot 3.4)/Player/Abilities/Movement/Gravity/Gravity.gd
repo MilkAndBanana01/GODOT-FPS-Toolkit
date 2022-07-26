@@ -1,8 +1,6 @@
 tool
 extends Node
 
-signal updateDirection
-
 var player
 var gravityVec : Vector3
 var snapVec : Vector3
@@ -111,7 +109,6 @@ func _ready() -> void:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
-	var move = player.get_node('Movement/Move')
 	raycast.cast_to = Vector3(0,-1.2,0)
 	raycast.enabled = true
 	player.call_deferred('add_child',raycast)

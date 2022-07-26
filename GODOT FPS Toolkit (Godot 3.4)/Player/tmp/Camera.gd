@@ -19,10 +19,10 @@ var lockCamera : bool
 
 var properties = {
 	'Camera Settings': {"t": 'category'},
-	'enabled': {"n": 'enabled',"t": 'bool'},
+	'enabled': {"n": 'enabled',"t": 'bool',"d": true},
 	'sensitivity': {"n": 'sensitivity',"t": 'float',"d": 1.0,'e':['enabled=true']},
-	'enable smoothing': {'n': 'smoothing','t': "bool",'e':['enabled=true']},
-	'smoothing': {"n": 'smoothRate',"t": 'int',"d": 0,'e':['smoothing=true']}
+	'enable smoothing': {"n": 'smoothing',"t": 'bool',"d": false},
+	'smoothing': {'n': 'smoothRate','t': 'int'}
 }
 
 func _get(property: String):
