@@ -27,10 +27,11 @@ func _ready() -> void:
 
 		pos += 1
 	player = get_parent()
-	camera.current = true
+	addCollision()
+
+func addCollision():
 	collision.name = "Collision"
 	capsule.radius = 0.5
 	collision.set_shape(capsule)
 	collision.rotate_x(deg2rad(90))
-	player.call_deferred('add_child',camera)
 	player.call_deferred('add_child',collision)

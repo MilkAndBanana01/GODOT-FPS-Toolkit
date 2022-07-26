@@ -1,5 +1,3 @@
-# testing
-
 tool
 extends Node
 
@@ -7,11 +5,10 @@ var player
 var mouseMovement
 var rotationVelocity: Vector2
 
-var movement
+onready var camera = Camera.new()
+onready var head = Spatial.new()
 
-var head
 var headExists : bool
-var camera
 var camExists : bool
 
 var enabled : bool
@@ -20,88 +17,113 @@ var smoothing : bool
 var smoothingAmount : int
 var lockCamera : bool
 
-var props : Array
+var properties = {
+	'Camera Settings': {"t": 'category'},
+	'enabled': {"n": 'enabled',"t": 'bool',"d": true},
+	'sensitivity': {"n": 'sensitivity',"t": 'float',"d": 1.0},
+	'enable smoothing': {"n": 'smoothing',"t": 'bool',"d": false},
+	'smoothing': {"n": 'smoothingAmount',"t": 'float',"d": 1,"mx": 100},
+}
 
-func _get(property):
-	if property == 'sensitivity': return sensitivity
-	if property == 'smoothing': return smoothing
-	if property == 'lock camera': return lockCamera
-	if property == 'smoothing amount': return smoothingAmount
-
-func _set(property, value):
-	if property == 'smoothing': 
-		smoothing = value
-		property_list_changed_notify()
-	if property == 'lock camera': 
-		lockCamera = value
-		property_list_changed_notify()
-	if property == 'sensitivity':
-		value = clamp(value,0,10)
-		sensitivity = value
-	if property == 'smoothing amount':
-		value = clamp(value,0,100)
-		smoothingAmount = value
+func _get(property: String):
+	if property in properties.keys():
+		if properties[property]["t"] != "category":
+			return get(properties[property]["n"])
+func _set(property: String, value) -> bool:
+	if property in properties.keys():
+		if properties[property].has("mn") and properties[property].has("mx"):
+			value = clamp(value,properties[property]["mn"],properties[property]["mx"])
+		else:
+			if properties[property].has("mn"):
+				value = clamp(value,properties[property]["mn"],INF)
+			if properties[property].has("mx"):
+				value = clamp(value,0,properties[property]["mx"])
+		set(properties[property]["n"], value)
+		if properties[property]["t"] == 'bool' or properties[property]["t"] == 'list':
+			property_list_changed_notify()
 	return true
-
 func _get_property_list() -> Array:
-	props = []
-	props.append(
-		{
-			'name': 'Basic Settings',
-			'type': TYPE_NIL,
-			'usage': PROPERTY_USAGE_CATEGORY
-		}
-	)
-	props.append(
-		{
-			'name': 'sensitivity',
-			'type': TYPE_REAL
-		}
-	)
-	props.append(
-		{
-			'name': 'smoothing',
-			'type': TYPE_BOOL
-		}
-	)
-	if smoothing:
-		props.append(
-			{
-				'name': 'smoothing amount',
-				'type': TYPE_INT
-			}
-		)
-	props.append(
-		{
-			'name': 'lock camera',
-			'type': TYPE_BOOL
-		}
-	)
+	var props := []
+	for i in properties.keys():
+		var curr_prop : Dictionary = properties[i]
+		var app = true
+		if curr_prop.has("e"):
+			for s in curr_prop["e"].size():
+				if !evaluate_string(curr_prop["e"][s]):
+					app = false
+					break
+		if !app:
+			continue
+
+		var app_dict : Dictionary = {}
+		app_dict["name"] = i
+		if curr_prop["t"] == 'category':
+			app_dict["type"] = TYPE_NIL
+			app_dict["usage"] = PROPERTY_USAGE_CATEGORY
+		if curr_prop["t"] == 'bool':
+			app_dict["type"] = TYPE_BOOL
+		if curr_prop["t"] == 'int':
+			app_dict["type"] = TYPE_INT
+		if curr_prop["t"] == 'float':
+			app_dict["type"] = TYPE_REAL
+		if curr_prop["t"] == 'list':
+			app_dict["type"] = 2
+			app_dict["hint"] = 3
+			app_dict["hint_string"] = curr_prop["v"]
+
+		props.append(app_dict)
 	return props
+func evaluate_string(eval  : String) -> bool:
+	if "/" in eval:
+		var char_position : int = eval.find("/")
+		var left : String = eval.left(char_position)
+		var right : String = eval.right(char_position+1)
+		if get(left) != str2var(right):
+			return true
+		else: return false
+	elif "=" in eval:
+		var char_position : int = eval.find("=")
+		var left : String = eval.left(char_position)
+		var right : String = eval.right(char_position+1)
+		if get(left) == str2var(right):
+			return true
+		else: return false
+	return false
+func property_can_revert(property:String) -> bool:
+	if property in properties.keys():
+		if "d" in properties[property].keys():
+			if typeof(properties[property]["d"]) == typeof(get(properties[property]["n"])):
+				return true
+	return false
+func property_get_revert(property:String):
+	return properties[property]["d"]
+
+func addCamera():
+	for i in player.get_children():
+		if i.name == "Head":
+			head = i
+			headExists = true
+			for child in head.get_children():
+				if child is Camera:
+					camera = child
+					camExists = true
+	if not headExists:
+		head.name = 'Head'
+		player.call_deferred('add_child',head)
+		head.call_deferred('set_owner',player)
+	if not camExists:
+		camera.name = 'Camera'
+		head.call_deferred('add_child',camera)
+		camera.call_deferred('set_owner',player)
 
 func _ready():
 	if Engine.is_editor_hint() == false:
-		player = get_parent()
-		for i in player.get_children():
-			if i.name == "Head":
-				head = i
-				headExists = true
-				for child in head.get_children():
-					if child is Camera:
-						camera = child
-						camExists = true
-		if not headExists:
-			head = Spatial.new()
-			head.name = 'Head'
-			player.call_deferred('add_child',head)
-			head.call_deferred('set_owner',player)
-		if not camExists:
-			camera = Camera.new()
-			camera.name = 'Camera'
-			head.call_deferred('add_child',camera)
-			camera.call_deferred('set_owner',player)
+		if get_parent() is KinematicBody:
+			player = get_parent()
+		else:
+			player = owner.get_parent()
+		addCamera()
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		movement = player.get_node("Movement")
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouseMovement = event.relative
@@ -109,14 +131,15 @@ func _input(event: InputEvent) -> void:
 		mouseMovement = Vector2.ZERO
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
+
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() == false:
-
-		head.translation.y = lerp(
-			head.translation.y,
-			(int(not Input.is_action_pressed('crouch')) * movement.standingHeight) + 
-			(int(Input.is_action_pressed('crouch')) * movement.crouchingHeight),
-			delta * movement.crouchingSpeed)
+#
+#		head.translation.y = lerp(
+#			head.translation.y,
+#			(int(not Input.is_action_pressed('crouch')) * movement.standingHeight) + 
+#			(int(Input.is_action_pressed('crouch')) * movement.crouchingHeight),
+#			delta * movement.crouchingSpeed)
 
 		if mouseMovement != null:
 			if smoothing:
@@ -128,6 +151,3 @@ func _physics_process(delta: float) -> void:
 				head.rotate_x(-deg2rad(rotationVelocity.y))
 				head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
 			mouseMovement = Vector2.ZERO
-
-func updateHeight(n):
-	head.translation.y = n

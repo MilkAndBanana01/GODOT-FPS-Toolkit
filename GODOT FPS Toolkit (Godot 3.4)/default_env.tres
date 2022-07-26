@@ -8,6 +8,13 @@ panorama = ExtResource( 1 )
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
+tonemap_mode = 2
 auto_exposure_enabled = true
 ssao_enabled = true
 ssao_quality = 2
+dof_blur_far_enabled = true
+dof_blur_far_distance = 21.07
+dof_blur_far_amount = 0.11
+dof_blur_far_quality = 2
+dof_blur_near_enabled = true
+dof_blur_near_quality = 2

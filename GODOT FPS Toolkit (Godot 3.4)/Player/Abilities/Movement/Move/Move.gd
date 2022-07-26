@@ -8,12 +8,20 @@ var direction : Vector3
 var velocity : Vector3
 var snapVec : Vector3
 
+var jump
+
 var movementEnabled : bool
 var movementStyle : int
 var speed : int
 var acceleration : float
 var frictionEnabled : bool
 var friction : float
+var airMomentumEnabled : bool 
+var airMomentumAcc : float
+var airMomentumSpeed : int
+var airMovementEnabled : bool
+var airMovementSpeed : int
+var airMovementAcc : float
 
 #n = name
 #t = type
@@ -28,9 +36,17 @@ var properties = {
 	'enabled': {"n": 'movementEnabled',"t": 'bool',"d": true},
 	'movement style': {"n": 'movementStyle',"t": 'list',"d": 0,"e": ['movementEnabled=true'],"v": "Retro,Modern"},
 	'speed': {"n": 'speed',"t": 'int',"d": 10,"e": ['movementEnabled=true']},
-	'acceleration': {"n": 'acceleration',"t": 'float',"d": 5,"e": ['movementEnabled=true','movementStyle/0']},
+	'acceleration': {"n": 'acceleration',"t": 'float',"d": 5.0,"e": ['movementEnabled=true','movementStyle/0']},
 	'enable friction': {"n": 'frictionEnabled',"t": 'bool',"d": false,"e": ['movementEnabled=true','movementStyle/0']},
-	'friction': {"n": 'friction',"t": 'float',"d": 2,"e": ['movementEnabled=true','frictionEnabled=true','movementStyle/0']},
+	'friction': {"n": 'friction',"t": 'float',"d": 2.0,"e": ['movementEnabled=true','frictionEnabled=true','movementStyle/0']},
+
+	'air momentum/enabled': {"n": 'airMomentumEnabled',"t": 'bool',"d": true, 'e': ['airMovementEnabled/true']},
+	'air momentum/acceleration': {"n": 'airMomentumAcc',"t": 'float',"d": 1.0,"e": ['airMomentumEnabled=true','movementStyle=1','airMovementEnabled/true'],'mn':0},
+	'air momentum/custom speed': {"n": 'airMomentumSpeed',"t": 'int',"d": 0,"e": ['airMomentumEnabled=true','airMovementEnabled/true']},
+
+	'air movement/enabled': {"n": 'airMovementEnabled',"t": 'bool',"d": false},
+	'air movement/custom speed': {"n": 'airMovementSpeed',"t": 'int',"d": 0,"e": ['airMovementEnabled=true']},
+	'air movement/custom acceleration': {"n": 'airMovementAcc',"t": 'float',"d": 0.0,"e": ['airMovementEnabled=true','movementStyle=1'],'mn': 0},
 }
 
 func _get(property: String):
@@ -110,17 +126,49 @@ func _ready() -> void:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
+	jump = player.get_node('Movement/Gravity')
+	
+
+func movePlayer():
+	input = Vector2(Input.get_action_strength('move_right') - Input.get_action_strength('move_left'),Input.get_action_strength('move_back') - Input.get_action_strength('move_forward'))
+	direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+func retroMovement(s):
+	velocity = Vector3.ZERO
+	velocity.x = direction.x * s
+	velocity.z = direction.z * s
+func modernMovement(s,a,d):
+	velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * s, d * a)
+func applyFriction(f,d):
+	velocity = velocity.linear_interpolate(Vector3.ZERO, d * f)
+
+func _input(event: InputEvent) -> void:
+	if jump.updateDirection:
+		if Input.is_action_just_pressed('jump') and jump.jumpCount < jump.jumpLimit:
+			movePlayer()
+			retroMovement(speed + airMomentumSpeed)
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() == false:
-		input = Vector2(Input.get_action_strength('move_right') - Input.get_action_strength('move_left'),Input.get_action_strength('move_back') - Input.get_action_strength('move_forward'))
-		direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
-		if movementStyle == 0:
-			velocity = Vector3.ZERO
-			velocity.x = direction.x * speed
-			velocity.z = direction.z * speed
+		if player.is_on_floor():
+			movePlayer()
+			if movementStyle == 0:
+				retroMovement(speed)
+			else:
+				modernMovement(speed,acceleration,delta)
+				if input == Vector2.ZERO and frictionEnabled:
+					applyFriction(friction,delta)
 		else:
-			velocity = velocity.linear_interpolate(Vector3(direction.x,0,direction.z) * speed, delta * acceleration)
-			if input == Vector2.ZERO and frictionEnabled:
-				velocity = velocity.linear_interpolate(Vector3.ZERO, delta * friction)
+			if airMovementEnabled:
+				movePlayer()
+				if movementStyle == 1:
+					modernMovement((speed + airMovementSpeed),airMovementAcc,delta)
+				else:
+					retroMovement(speed + airMovementSpeed)
+			elif airMomentumEnabled:
+				if movementStyle == 1:
+					modernMovement((speed + airMomentumSpeed),airMomentumAcc,delta)
+				else:
+					retroMovement(speed + airMomentumSpeed)
+			else:
+				velocity = Vector3.ZERO
 		player.move_and_slide(velocity,Vector3.UP)

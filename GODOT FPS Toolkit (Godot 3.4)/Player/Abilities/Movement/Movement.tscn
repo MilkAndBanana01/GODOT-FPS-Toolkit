@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Player/Abilities/Movement/Movement.gd" type="Script" id=1]
 [ext_resource path="res://Player/Abilities/Movement/Move/Move.gd" type="Script" id=2]
-[ext_resource path="res://Player/Abilities/Movement/Gravity/Fall.gd" type="Script" id=3]
-[ext_resource path="res://Player/Abilities/Movement/Jump/Jump.gd" type="Script" id=4]
+[ext_resource path="res://Player/Abilities/Movement/Gravity/Gravity.gd" type="Script" id=3]
 
 [node name="Movement" type="Node"]
 script = ExtResource( 1 )
@@ -14,15 +13,12 @@ enabled = true
 "movement style" = 0
 speed = 10
 
-[node name="Fall" type="Node" parent="."]
+[node name="Gravity" type="Node" parent="."]
 script = ExtResource( 3 )
 gravity/enabled = true
 "gravity/gravity style" = 1
 gravity/gravity = 10.0
 "air momentum/enabled" = true
-
-[node name="Jump" type="Node" parent="."]
-script = ExtResource( 4 )
 enabled = true
 "jump height" = 10
 "jump count" = 1

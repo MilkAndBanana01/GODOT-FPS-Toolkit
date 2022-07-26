@@ -1,29 +1,37 @@
 tool
 extends Node
 
+signal updateDirection
+
 var player
-var raycast
 var gravityVec : Vector3
+var snapVec : Vector3
+var jumping = false
+var jumpCount : int
+
+onready var raycast = RayCast.new()
 
 var gravityEnabled : bool
 var gravityStyle : int
 var gravity : float
 var gravityLimitEnabled : bool 
 var gravityLimit : float
-var airMomentumEnabled : bool 
-var airMomentumStyle : int
-var airMomentum : float
-var airMovementEnabled : bool
-var airMovementStyle : int
-var airMovementSpeed : int
-var airMovementAcc : float
+var jumpEnabled : bool
+var jumpHeight : int
+var jumpLimit : int
+var updateDirection : bool
 
 var properties = {
 	'Gravity Settings': {"t": 'category'},
 	'gravity/enabled': {"n": 'gravityEnabled',"t": 'bool',"d": true},
 	'gravity/gravity style': {"n": 'gravityStyle',"t": 'list',"d": 1,"e": ['gravityEnabled=true'],"v": "Constant,Exponential"},
 	'gravity/gravity': {"n": 'gravity',"t": 'float',"d": 10,"e": ['gravityEnabled=true']},
-	'air momentum/enabled': {"n": 'airMomentumEnabled',"t": 'bool',"d": true},
+
+	'Jump Settings': {"t": 'category'},
+	'enabled': {"n": 'jumpEnabled',"t": 'bool',"d": true},
+	'jump height': {"n": 'jumpHeight',"t": 'int',"d": 10},
+	'jump count': {"n": 'jumpLimit',"t": 'int',"d": 1, 'mn' : 1},
+	'update direction': {"n": 'updateDirection',"t": 'bool',"d": true}
 }
 
 func _get(property: String):
@@ -103,23 +111,26 @@ func _ready() -> void:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
-	var ray = player.get_node_or_null('JumpDetect')
-	if ray:
-		raycast = ray
-	else:
-		raycast = RayCast.new()
-		raycast.name = "FloorDetect"
-		raycast.enabled = true
-		raycast.cast_to = Vector3(0,-1.1,0)
-		player.call_deferred('add_child',raycast)
+	var move = player.get_node('Movement/Move')
+	raycast.cast_to = Vector3(0,-1.2,0)
+	raycast.enabled = true
+	player.call_deferred('add_child',raycast)
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() == false:
-		if raycast.is_colliding():
+		if raycast.is_colliding() and not Input.is_action_pressed('jump'):
+			jumpCount = 0
+		if Input.is_action_just_pressed('jump') and jumpCount < jumpLimit:
+			snapVec = Vector3.ZERO
+			gravityVec = jumpHeight * Vector3.UP
+			jumpCount += 1
+		if player.is_on_floor():
 			gravityVec = Vector3.ZERO
+			snapVec = -player.get_floor_normal()
 		else:
+			snapVec = Vector3.DOWN
 			if gravityStyle == 1:
 				gravityVec += Vector3.DOWN * gravity * delta
 			else:
 				gravityVec = Vector3.DOWN * gravity
-		player.move_and_slide(gravityVec,Vector3.UP)
+		player.move_and_slide_with_snap(gravityVec,snapVec,Vector3.UP)

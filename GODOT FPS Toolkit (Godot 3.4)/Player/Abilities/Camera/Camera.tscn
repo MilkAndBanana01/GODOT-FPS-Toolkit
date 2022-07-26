@@ -4,6 +4,3 @@
 
 [node name="Camera" type="Node"]
 script = ExtResource( 1 )
-sensitivity = 0.0
-smoothing = false
-"lock camera" = false
