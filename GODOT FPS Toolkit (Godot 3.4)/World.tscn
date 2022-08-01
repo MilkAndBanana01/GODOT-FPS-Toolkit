@@ -1,40 +1,35 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://default_env.tres" type="Environment" id=1]
-[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
-
-[sub_resource type="SpatialMaterial" id=1]
-albedo_color = Color( 0.823529, 0.156863, 0.156863, 1 )
-
-[sub_resource type="CubeMesh" id=2]
-material = SubResource( 1 )
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://default_env.tres" type="Environment" id=2]
+[ext_resource path="res://Player/Abilities/Movement/Run/Run.gd" type="Script" id=3]
 
 [node name="WorldEnvironment" type="WorldEnvironment"]
-environment = ExtResource( 1 )
+environment = ExtResource( 2 )
 
 [node name="CSGBox" type="CSGBox" parent="."]
 use_collision = true
-width = 34.648
-depth = 30.1879
+width = 17.6598
+depth = 19.9429
 
-[node name="MeshInstance" type="MeshInstance" parent="CSGBox"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.51217, 0 )
-mesh = SubResource( 2 )
-material/0 = null
+[node name="Player" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.705834, -0.708377, 0, 0.213284, 0.212519, 0.953596, -0.675505, -0.673081, 0.301089, 0, 4.33981, 0 )
-shadow_enabled = true
+[node name="Movement" parent="Player" index="0"]
+height = 2.0
 
-[node name="Player" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.92105, 0 )
+[node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
+jumpLimit = 10
 
-[node name="Move" parent="Player/Movement" index="0"]
-"air movement/enabled" = true
-"air movement/custom speed" = 0
+[node name="Crouch" parent="Player/Movement" index="2"]
+crouchHeight = 1.0
 
-[node name="Camera" parent="Player" index="1"]
-enabled = false
+[node name="Run" parent="Player/Movement" index="3"]
+script = ExtResource( 3 )
+runningSpeed = 20
 
 [editable path="Player"]
 [editable path="Player/Movement"]
+[editable path="Player/Movement/Move"]
+[editable path="Player/Movement/Gravity"]
+[editable path="Player/Camera"]

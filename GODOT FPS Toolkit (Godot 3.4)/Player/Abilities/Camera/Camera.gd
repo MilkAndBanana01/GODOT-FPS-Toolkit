@@ -2,8 +2,7 @@ tool
 extends Node
 
 var player
-var mouseMovement
-var rotationVelocity: Vector2
+var movement
 
 onready var camera = Camera.new()
 onready var head = Spatial.new()
@@ -11,18 +10,43 @@ onready var head = Spatial.new()
 var headExists : bool
 var camExists : bool
 
-export var enabled := true
-export var sensitivity : int = 1
-export var smoothing := true
-export(int,0,100) var smoothRate
-export var lockCamera := false
+func addCamera():
+	for i in player.get_children():
+		if i.name == "Head":
+			head = i
+			headExists = true
+			for child in head.get_children():
+				if child is Camera:
+					camera = child
+					camExists = true
+	if not headExists:
+		head.name = 'Head'
+		player.call_deferred('add_child',head)
+		head.call_deferred('set_owner',player)
+		head.translation.y = movement.height
+	if not camExists:
+		camera.name = 'Camera'
+		head.call_deferred('add_child',camera)
+		camera.call_deferred('set_owner',player)
+
+func _ready():
+	if Engine.is_editor_hint() == false:
+		if get_parent() is KinematicBody:
+			player = get_parent()
+		else:
+			player = owner.get_parent()
+		movement = player.get_node('Movement')
+		addCamera()
+
+func updateHeight(h):
+	head.translation.y = h
 
 """
 Spent an hour trying to fix this inconistent piece of shit, idk why its not working
 here even if its the exact same piece of code. i already deleted the damn import folder
 to remove any history on this node and still nothing.
 """
-#
+
 #var properties = {
 #	'Camera Settings': {"t": 'category'},
 #	'enabled': {"n": 'enabled',"t": "bool"},
@@ -104,49 +128,3 @@ to remove any history on this node and still nothing.
 #func property_get_revert(property:String):
 #	return properties[property]["d"]
 
-func addCamera():
-	for i in player.get_children():
-		if i.name == "Head":
-			head = i
-			headExists = true
-			for child in head.get_children():
-				if child is Camera:
-					camera = child
-					camExists = true
-	if not headExists:
-		head.name = 'Head'
-		player.call_deferred('add_child',head)
-		head.call_deferred('set_owner',player)
-	if not camExists:
-		camera.name = 'Camera'
-		head.call_deferred('add_child',camera)
-		camera.call_deferred('set_owner',player)
-
-func _ready():
-	if Engine.is_editor_hint() == false:
-		if get_parent() is KinematicBody:
-			player = get_parent()
-		else:
-			player = owner.get_parent()
-		addCamera()
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		mouseMovement = event.relative
-	else:
-		mouseMovement = Vector2.ZERO
-	if Input.is_key_pressed(KEY_ESCAPE):
-		get_tree().quit()
-
-func _physics_process(_delta: float) -> void:
-	if Engine.is_editor_hint() == false:
-		if mouseMovement != null:
-			if smoothing:
-				rotationVelocity = rotationVelocity.linear_interpolate(mouseMovement * (sensitivity * 0.25), (100.5 - smoothRate) * .01)
-			else:
-				rotationVelocity = mouseMovement * (sensitivity * 0.25)
-			if not lockCamera:
-				player.rotate_y(-deg2rad(rotationVelocity.x))
-				head.rotate_x(-deg2rad(rotationVelocity.y))
-				head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
-			mouseMovement = Vector2.ZERO

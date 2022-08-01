@@ -1,13 +1,20 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Player/Abilities/Movement/Gravity/Gravity.gd" type="Script" id=1]
+[ext_resource path="res://Player/Abilities/Movement/Gravity/Jump Settings.gd" type="Script" id=2]
+[ext_resource path="res://Player/Abilities/Movement/Gravity/Gravity Settings.gd" type="Script" id=3]
 
 [node name="Gravity" type="Node"]
 script = ExtResource( 1 )
-gravity/enabled = true
-"gravity/gravity style" = 1
-gravity/gravity = 10.0
-enabled = true
-"jump height" = 10
-"jump count" = 1
-"update direction" = true
+
+[node name="Gravity Settings" type="Node" parent="."]
+script = ExtResource( 3 )
+__meta__ = {
+"_editor_description_": "If Gravity Style is set to COSTANT, Gravity Limit will be IGNORED."
+}
+
+[node name="Jump Settings" type="Node" parent="."]
+script = ExtResource( 2 )
+__meta__ = {
+"_editor_description_": "Update Direction will propel the player forward to wherever they are facing when jumping multiple times."
+}

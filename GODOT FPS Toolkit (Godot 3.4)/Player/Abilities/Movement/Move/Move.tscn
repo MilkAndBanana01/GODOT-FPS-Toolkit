@@ -1,12 +1,27 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Player/Abilities/Movement/Move/Move.gd" type="Script" id=1]
+[ext_resource path="res://Player/Abilities/Movement/Move/Air Momentum/Air Momentum Settings.gd" type="Script" id=2]
+[ext_resource path="res://Player/Abilities/Movement/Move/Air Movement/Air Movement Settings.gd" type="Script" id=3]
+[ext_resource path="res://Player/Abilities/Movement/Move/Movement/Movement Settings.gd" type="Script" id=4]
 
 [node name="Move" type="Node"]
 script = ExtResource( 1 )
-enabled = true
-"movement style" = 0
-speed = 10
-"air momentum/enabled" = true
-"air momentum/custom speed" = 0
-"air movement/enabled" = false
+
+[node name="Movement Settings" type="Node" parent="."]
+script = ExtResource( 4 )
+__meta__ = {
+"_editor_description_": "If Movement Style is set to RETRO, Acceleration and Friction is IGNORED."
+}
+
+[node name="Air Momentum Settings" type="Node" parent="."]
+script = ExtResource( 2 )
+__meta__ = {
+"_editor_description_": "Air Momentum is disabled if Air Movement is ENABLED."
+}
+
+[node name="Air Movement Settings" type="Node" parent="."]
+script = ExtResource( 3 )
+__meta__ = {
+"_editor_description_": "CUSTOM SPEED and ACCELERATION will add/subtract to the Movement Settings."
+}

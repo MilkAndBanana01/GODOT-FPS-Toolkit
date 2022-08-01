@@ -7,6 +7,12 @@
 
 [node name="Movement" parent="." instance=ExtResource( 1 )]
 
+[node name="Crouch" parent="Movement" index="2"]
+midAirConfiguration = 2
+
 [node name="Camera" parent="." instance=ExtResource( 2 )]
 
 [editable path="Movement"]
+[editable path="Movement/Move"]
+[editable path="Movement/Gravity"]
+[editable path="Camera"]
