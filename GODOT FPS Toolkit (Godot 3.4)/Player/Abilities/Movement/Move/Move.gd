@@ -58,7 +58,8 @@ func _input(_event: InputEvent) -> void:
 			if Input.is_action_just_pressed('jump') and gravityNode.jumpCount < jumpNode.jumpLimit:
 				movePlayer()
 				retroMovement(speed + airMomentumSpeed)
-	if Input.is_action_pressed('crouch'):
+	if Input.is_action_pressed('crouch') and player.is_on_floor() \
+	and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
 		crouchNode.collision.disabled = false
 		movementNode.collision.disabled = true
 	else:

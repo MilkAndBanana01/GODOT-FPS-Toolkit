@@ -11,6 +11,7 @@ export(int,'Affect Height','Affect Speed','Affect Both') var midAirConfiguration
 var player
 var collision = CollisionShape.new()
 var capsule = CapsuleShape.new()
+var raycast = RayCast.new()
 
 var movementNode
 

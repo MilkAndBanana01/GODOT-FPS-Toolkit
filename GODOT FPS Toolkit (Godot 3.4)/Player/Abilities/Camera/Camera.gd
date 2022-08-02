@@ -5,6 +5,7 @@ var player
 
 var movementNode
 var crouchNode
+var runNode
 
 var currentHeight : float
 
@@ -34,25 +35,28 @@ func addCamera():
 		camera.call_deferred('set_owner',player)
 
 func _input(event: InputEvent) -> void:
-	if Input.is_action_pressed('crouch'):
+	if Input.is_action_pressed('crouch') and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
 		currentHeight = crouchNode.crouchHeight
 	else:
 		currentHeight = movementNode.height
 
 func _ready():
-	if Engine.is_editor_hint() == false:
+	if not Engine.editor_hint:
 		if get_parent() is KinematicBody:
 			player = get_parent()
 		else:
 			player = owner.get_parent()
 		movementNode = player.get_node('Movement')
 		crouchNode = player.get_node('Movement/Crouch')
+		runNode = player.get_node('Movement/Run')
 		addCamera()
+
 func _process(delta: float) -> void:
-	if crouchNode.heightConfiguration == 0:
-		head.translation.y = currentHeight
-	else:
-		head.translation.y = lerp(head.translation.y,currentHeight,crouchNode.heightInterpolation * delta)
+	if not Engine.editor_hint:
+		if crouchNode.heightConfiguration == 0:
+			head.translation.y = currentHeight
+		else:
+			head.translation.y = lerp(head.translation.y,currentHeight,crouchNode.heightInterpolation * delta)
 
 func updateHeight(h):
 	head.translation.y = h

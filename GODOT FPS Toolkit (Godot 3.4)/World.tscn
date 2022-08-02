@@ -12,6 +12,12 @@ use_collision = true
 width = 17.6598
 depth = 19.9429
 
+[node name="CSGBox2" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.35253, -4.10802 )
+use_collision = true
+width = 17.6598
+depth = 2.13773
+
 [node name="Player" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
 
