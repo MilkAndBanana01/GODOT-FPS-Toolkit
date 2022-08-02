@@ -6,6 +6,8 @@ var player
 var movementNode
 var crouchNode
 
+var currentHeight : float
+
 onready var camera = Camera.new()
 onready var head = Spatial.new()
 
@@ -33,9 +35,9 @@ func addCamera():
 
 func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed('crouch'):
-		head.translation.y = crouchNode.crouchHeight
+		currentHeight = crouchNode.crouchHeight
 	else:
-		head.translation.y = movementNode.height
+		currentHeight = movementNode.height
 
 func _ready():
 	if Engine.is_editor_hint() == false:
@@ -46,6 +48,11 @@ func _ready():
 		movementNode = player.get_node('Movement')
 		crouchNode = player.get_node('Movement/Crouch')
 		addCamera()
+func _process(delta: float) -> void:
+	if crouchNode.heightConfiguration == 0:
+		head.translation.y = currentHeight
+	else:
+		head.translation.y = lerp(head.translation.y,currentHeight,crouchNode.heightInterpolation * delta)
 
 func updateHeight(h):
 	head.translation.y = h

@@ -4,6 +4,7 @@ export var enabled := true
 export var crouchSpeed := 5
 export var crouchHeight := 0.5
 export(int,'Instant','Interpolated') var heightConfiguration := 0
+export(float,1,100) var heightInterpolation := 4 
 export var allowMidAir := false
 export(int,'Affect Height','Affect Speed','Affect Both') var midAirConfiguration := 0
 
