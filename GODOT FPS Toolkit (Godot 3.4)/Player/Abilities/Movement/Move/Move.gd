@@ -2,6 +2,8 @@ tool
 extends Node
 
 var player
+
+var movementNode
 var gravityNode
 var jumpNode
 var crouchNode
@@ -31,6 +33,7 @@ func _ready() -> void:
 		player = get_parent()
 	else:
 		player = owner.get_parent()
+	movementNode = get_parent()
 	gravityNode = player.get_node_or_null('Movement/Gravity')
 	jumpNode = player.get_node_or_null('Movement/Gravity/Jump Settings')
 	crouchNode = player.get_node_or_null('Movement/Crouch')
@@ -55,6 +58,13 @@ func _input(_event: InputEvent) -> void:
 			if Input.is_action_just_pressed('jump') and gravityNode.jumpCount < jumpNode.jumpLimit:
 				movePlayer()
 				retroMovement(speed + airMomentumSpeed)
+	if Input.is_action_pressed('crouch'):
+		crouchNode.collision.disabled = false
+		movementNode.collision.disabled = true
+	else:
+		crouchNode.collision.disabled = true
+		movementNode.collision.disabled = false
+
 
 func _physics_process(delta: float) -> void:
 	if not Engine.editor_hint:

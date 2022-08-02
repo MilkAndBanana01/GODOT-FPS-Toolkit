@@ -2,7 +2,9 @@ tool
 extends Node
 
 var player
-var movement
+
+var movementNode
+var crouchNode
 
 onready var camera = Camera.new()
 onready var head = Spatial.new()
@@ -23,11 +25,17 @@ func addCamera():
 		head.name = 'Head'
 		player.call_deferred('add_child',head)
 		head.call_deferred('set_owner',player)
-		head.translation.y = movement.height
+		head.translation.y = movementNode.height
 	if not camExists:
 		camera.name = 'Camera'
 		head.call_deferred('add_child',camera)
 		camera.call_deferred('set_owner',player)
+
+func _input(event: InputEvent) -> void:
+	if Input.is_action_pressed('crouch'):
+		head.translation.y = crouchNode.crouchHeight
+	else:
+		head.translation.y = movementNode.height
 
 func _ready():
 	if Engine.is_editor_hint() == false:
@@ -35,7 +43,8 @@ func _ready():
 			player = get_parent()
 		else:
 			player = owner.get_parent()
-		movement = player.get_node('Movement')
+		movementNode = player.get_node('Movement')
+		crouchNode = player.get_node('Movement/Crouch')
 		addCamera()
 
 func updateHeight(h):
