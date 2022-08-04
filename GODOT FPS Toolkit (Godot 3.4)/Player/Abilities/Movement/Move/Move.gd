@@ -58,17 +58,18 @@ func _input(_event: InputEvent) -> void:
 			if Input.is_action_just_pressed('jump') and gravityNode.jumpCount < jumpNode.jumpLimit:
 				movePlayer()
 				retroMovement(speed + airMomentumSpeed)
-	if Input.is_action_pressed('crouch') and player.is_on_floor() \
+	if Input.is_action_pressed('crouch') and player.is_on_floor()\
 	and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
 		crouchNode.collision.disabled = false
 		movementNode.collision.disabled = true
-	else:
+	elif not crouchNode.raycast.is_colliding():
 		crouchNode.collision.disabled = true
 		movementNode.collision.disabled = false
 
 
 func _physics_process(delta: float) -> void:
 	if not Engine.editor_hint:
+		print(crouchNode.raycast.is_colliding())
 		currentSpeed = speed - (int(crouchNode.enabled) * (Input.get_action_strength('crouch') * crouchNode.crouchSpeed)) + (int(runNode.enabled) * (Input.get_action_strength('run') * runNode.runningSpeed))
 		if player.is_on_floor():
 			movePlayer()

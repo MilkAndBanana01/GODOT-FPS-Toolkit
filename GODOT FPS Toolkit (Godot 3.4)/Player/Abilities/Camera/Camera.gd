@@ -34,12 +34,6 @@ func addCamera():
 		head.call_deferred('add_child',camera)
 		camera.call_deferred('set_owner',player)
 
-func _input(event: InputEvent) -> void:
-	if Input.is_action_pressed('crouch') and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
-		currentHeight = crouchNode.crouchHeight
-	else:
-		currentHeight = movementNode.height
-
 func _ready():
 	if not Engine.editor_hint:
 		if get_parent() is KinematicBody:
@@ -57,7 +51,10 @@ func _process(delta: float) -> void:
 			head.translation.y = currentHeight
 		else:
 			head.translation.y = lerp(head.translation.y,currentHeight,crouchNode.heightInterpolation * delta)
-
+		if Input.is_action_pressed('crouch') and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
+			currentHeight = crouchNode.crouchHeight
+		elif not crouchNode.raycast.is_colliding():
+			currentHeight = movementNode.height
 func updateHeight(h):
 	head.translation.y = h
 

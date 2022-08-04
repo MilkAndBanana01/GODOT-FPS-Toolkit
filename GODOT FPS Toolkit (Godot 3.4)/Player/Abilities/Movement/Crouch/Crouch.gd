@@ -15,11 +15,16 @@ var raycast = RayCast.new()
 
 var movementNode
 
-# formula for instant crouch coll (x-y) / 2 = z
-
 func _ready() -> void:
 	player = owner.get_parent()
 	movementNode = get_parent()
+
+	raycast.name = "CheckCeiling"
+	raycast.enabled = true
+	raycast.cast_to = Vector3(0,1,0)
+	raycast.translation.y = ((movementNode.height - crouchHeight) / 2)
+	player.call_deferred('add_child',raycast)
+	
 	collision.name = "InstantCrouch"
 	capsule.height = crouchHeight
 	capsule.radius = 0.5
