@@ -58,7 +58,7 @@ func _input(_event: InputEvent) -> void:
 			if Input.is_action_just_pressed('jump') and gravityNode.jumpCount < jumpNode.jumpLimit:
 				movePlayer()
 				retroMovement(speed + airMomentumSpeed)
-	if Input.is_action_pressed('crouch') and player.is_on_floor()\
+	if Input.is_action_pressed('crouch') and (player.is_on_floor() or (crouchNode.allowMidAir and (crouchNode.midAirConfiguration == 0 or crouchNode.midAirConfiguration > 1)))\
 	and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
 		crouchNode.collision.disabled = false
 		movementNode.collision.disabled = true
@@ -69,8 +69,9 @@ func _input(_event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	if not Engine.editor_hint:
-		print(crouchNode.raycast.is_colliding())
-		currentSpeed = speed - (int(crouchNode.enabled) * (Input.get_action_strength('crouch') * crouchNode.crouchSpeed)) + (int(runNode.enabled) * (Input.get_action_strength('run') * runNode.runningSpeed))
+		currentSpeed = speed - \
+		(int(crouchNode.enabled) * (clamp(crouchNode.midAirConfiguration,0,1) * int(crouchNode.allowMidAir)) * (clamp((Input.get_action_strength('crouch') + int(crouchNode.raycast.is_colliding())),0,1) * crouchNode.crouchSpeed)) + \
+		(int(runNode.enabled) * int(player.is_on_floor() or runNode.allowMidAir) * (Input.get_action_strength('run') * runNode.runningSpeed))
 		if player.is_on_floor():
 			movePlayer()
 			if movementStyle == 0:
@@ -82,15 +83,15 @@ func _physics_process(delta: float) -> void:
 		else:
 			if airMomentumEnabled:
 				if movementStyle == 1:
-					modernMovement((speed + airMomentumSpeed),acceleration + airMomentumAcc,delta)
+					modernMovement((currentSpeed + airMomentumSpeed),acceleration + airMomentumAcc,delta)
 				else:
-					retroMovement(speed + airMomentumSpeed)
+					retroMovement(currentSpeed + airMomentumSpeed)
 			elif airMovementEnabled:
 				movePlayer()
 				if movementStyle == 1:
-					modernMovement((speed + airMovementSpeed),acceleration + airMovementAcc,delta)
+					modernMovement((currentSpeed + airMovementSpeed),acceleration + airMovementAcc,delta)
 				else:
-					retroMovement(speed + airMovementSpeed)
+					retroMovement(currentSpeed + airMovementSpeed)
 			else:
 				velocity = Vector3.ZERO
 		player.move_and_slide(velocity,Vector3.UP)

@@ -51,7 +51,8 @@ func _process(delta: float) -> void:
 			head.translation.y = currentHeight
 		else:
 			head.translation.y = lerp(head.translation.y,currentHeight,crouchNode.heightInterpolation * delta)
-		if Input.is_action_pressed('crouch') and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
+		if Input.is_action_pressed('crouch') and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run'))\
+		and (player.is_on_floor() or (crouchNode.allowMidAir and (crouchNode.midAirConfiguration == 0 or crouchNode.midAirConfiguration > 1))):
 			currentHeight = crouchNode.crouchHeight
 		elif not crouchNode.raycast.is_colliding():
 			currentHeight = movementNode.height

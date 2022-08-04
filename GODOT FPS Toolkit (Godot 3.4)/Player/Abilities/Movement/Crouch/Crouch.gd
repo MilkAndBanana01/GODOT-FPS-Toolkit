@@ -21,7 +21,7 @@ func _ready() -> void:
 
 	raycast.name = "CheckCeiling"
 	raycast.enabled = true
-	raycast.cast_to = Vector3(0,1,0)
+	raycast.cast_to = Vector3(0,0.5,0)
 	raycast.translation.y = ((movementNode.height - crouchHeight) / 2)
 	player.call_deferred('add_child',raycast)
 	

@@ -24,8 +24,16 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
 [node name="Movement" parent="Player" index="0"]
 height = 2.0
 
+[node name="Air Momentum Settings" parent="Player/Movement/Move" index="1"]
+enabled = false
+
 [node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
 jumpLimit = 10
+
+[node name="Crouch" parent="Player/Movement" index="2"]
+crouchSpeed = 7
+allowMidAir = true
+midAirConfiguration = 1
 
 [node name="Run" parent="Player/Movement" index="3"]
 script = ExtResource( 3 )
