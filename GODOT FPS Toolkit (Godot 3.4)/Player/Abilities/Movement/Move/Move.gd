@@ -66,11 +66,10 @@ func _input(_event: InputEvent) -> void:
 		crouchNode.collision.disabled = true
 		movementNode.collision.disabled = false
 
-
 func _physics_process(delta: float) -> void:
 	if not Engine.editor_hint:
 		currentSpeed = speed - \
-		(int(crouchNode.enabled) * (clamp(crouchNode.midAirConfiguration,0,1) * int(crouchNode.allowMidAir)) * (clamp((Input.get_action_strength('crouch') + int(crouchNode.raycast.is_colliding())),0,1) * crouchNode.crouchSpeed)) + \
+		(int(crouchNode.enabled) * (int(player.is_on_floor() or (clamp(crouchNode.midAirConfiguration,0,1)) * int(crouchNode.allowMidAir))) * (clamp((Input.get_action_strength('crouch') + int(crouchNode.raycast.is_colliding())),0,1) * crouchNode.crouchSpeed)) + \
 		(int(runNode.enabled) * int(player.is_on_floor() or runNode.allowMidAir) * (Input.get_action_strength('run') * runNode.runningSpeed))
 		if player.is_on_floor():
 			movePlayer()

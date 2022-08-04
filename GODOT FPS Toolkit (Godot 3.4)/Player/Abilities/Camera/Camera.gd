@@ -1,13 +1,15 @@
 tool
 extends Node
 
-var player
+export var startingFov := 70.0
 
+var player
 var movementNode
 var crouchNode
 var runNode
 
 var currentHeight : float
+var currentFOV : float
 
 onready var camera = Camera.new()
 onready var head = Spatial.new()
@@ -33,6 +35,7 @@ func addCamera():
 		camera.name = 'Camera'
 		head.call_deferred('add_child',camera)
 		camera.call_deferred('set_owner',player)
+	camera.fov = startingFov
 
 func _ready():
 	if not Engine.editor_hint:
@@ -47,6 +50,13 @@ func _ready():
 
 func _process(delta: float) -> void:
 	if not Engine.editor_hint:
+		if runNode.changeFOV and Input.is_action_pressed('run'):
+			currentFOV = 200 if not runNode.customFOV > 0 else runNode.customFOV
+		else:
+			currentFOV = startingFov
+		
+		camera.fov = lerp(70,currentFOV,delta * 0.7)
+		
 		if crouchNode.heightConfiguration == 0:
 			head.translation.y = currentHeight
 		else:
@@ -56,6 +66,7 @@ func _process(delta: float) -> void:
 			currentHeight = crouchNode.crouchHeight
 		elif not crouchNode.raycast.is_colliding():
 			currentHeight = movementNode.height
+
 func updateHeight(h):
 	head.translation.y = h
 

@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="GODOT FPS Toolkit (Godot 3.4)"
-run/main_scene="res://World.tscn"
+run/main_scene="res://World/World.tscn"
 config/icon="res://icon.png"
 
 [gdnative]
