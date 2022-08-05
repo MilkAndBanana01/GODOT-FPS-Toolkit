@@ -29,6 +29,9 @@ enabled = false
 [node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
 jumpLimit = 10
 
+[node name="Dash" parent="Player/Movement" index="4"]
+cooldown = 1
+
 [editable path="Player"]
 [editable path="Player/Movement"]
 [editable path="Player/Movement/Move"]
