@@ -1,6 +1,5 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Player/Abilities/Movement/Run/Run.gd" type="Script" id=1]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Environment/default_env.tres" type="Environment" id=3]
 
@@ -29,12 +28,6 @@ enabled = false
 
 [node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
 jumpLimit = 10
-
-[node name="Run" parent="Player/Movement" index="3"]
-script = ExtResource( 1 )
-runningSpeed = 10
-allowMidAir = true
-allowRunningWhileCrouching = true
 
 [editable path="Player"]
 [editable path="Player/Movement"]
