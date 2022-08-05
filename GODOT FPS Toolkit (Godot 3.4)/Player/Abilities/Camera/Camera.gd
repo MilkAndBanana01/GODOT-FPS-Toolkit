@@ -50,13 +50,13 @@ func _ready():
 
 func _process(delta: float) -> void:
 	if not Engine.editor_hint:
-		if runNode.changeFOV and Input.is_action_pressed('run'):
-			currentFOV = 200 if not runNode.customFOV > 0 else runNode.customFOV
-		else:
-			currentFOV = startingFov
-		
-		camera.fov = lerp(70,currentFOV,delta * 0.7)
-		
+		if runNode.changeFOV:
+			if Input.is_action_pressed('run'):
+				currentFOV = 100 if not runNode.customFOV > 0 else runNode.customFOV
+			else:
+				currentFOV = startingFov
+		print(currentFOV)
+		camera.fov = lerp(camera.fov,clamp(currentFOV * clamp(movementNode.get_node('Move').velocity.length(),0,1),startingFov,100 if not runNode.customFOV > 0 else runNode.customFOV),delta * runNode.customFOVRate)
 		if crouchNode.heightConfiguration == 0:
 			head.translation.y = currentHeight
 		else:

@@ -30,12 +30,11 @@ enabled = false
 [node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
 jumpLimit = 10
 
-[node name="Crouch" parent="Player/Movement" index="2"]
-midAirConfiguration = 1
-
 [node name="Run" parent="Player/Movement" index="3"]
 script = ExtResource( 1 )
-customFOV = 300.0
+runningSpeed = 10
+allowMidAir = true
+allowRunningWhileCrouching = true
 
 [editable path="Player"]
 [editable path="Player/Movement"]
