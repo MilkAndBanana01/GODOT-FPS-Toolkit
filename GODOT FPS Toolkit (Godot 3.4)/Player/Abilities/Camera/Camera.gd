@@ -10,6 +10,9 @@ onready var camera = Camera.new()
 onready var head = Spatial.new()
 onready var wallCheck = RayCast.new()
 onready var dashCheck = RayCast.new()
+onready var cameraDashPos = MeshInstance.new()
+onready var springArm = SpringArm.new()
+onready var springArmPos = Spatial.new()
 
 var headExists : bool
 var camExists : bool
@@ -36,6 +39,16 @@ func addCamera():
 		dashCheck.cast_to = Vector3(0,0,-AP.dashNode.distance)
 		head.call_deferred('add_child',wallCheck)
 		head.call_deferred('add_child',dashCheck)
+		cameraDashPos.name = "cameraDashPos"
+		
+		cameraDashPos.mesh = CubeMesh.new()
+		head.call_deferred('add_child',cameraDashPos)
+		cameraDashPos.translation = Vector3(0,0,-AP.dashNode.distance)
+#		springArm.shape = SphereShape.new()
+#		springArm.spring_length = -AP.dashNode.distance
+#		head.call_deferred('add_child',springArm)
+#		springArm.call_deferred('add_child',springArmPos)
+
 	if not camExists:
 		camera.name = 'Camera'
 		head.call_deferred('add_child',camera)
@@ -46,6 +59,7 @@ func addCamera():
 func _ready():
 	if not Engine.editor_hint:
 		addCamera()
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _process(delta: float) -> void:
 	if not Engine.editor_hint:

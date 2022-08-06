@@ -1,5 +1,5 @@
 tool
-extends "res://Player/Abilities/Camera/Camera.gd"
+extends Node
 
 var mouseMovement
 var rotationVelocity: Vector2
@@ -9,10 +9,6 @@ export var sensitivity : int = 1
 export var smoothing := true
 export(int,0,100) var smoothRate
 export var lockCamera := false
-
-func _ready():
-	if not Engine.editor_hint:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -31,6 +27,6 @@ func _physics_process(_delta: float) -> void:
 				rotationVelocity = mouseMovement * (sensitivity * 0.25)
 			if not lockCamera:
 				AP.player.rotate_y(-deg2rad(rotationVelocity.x))
-				head.rotate_x(-deg2rad(rotationVelocity.y))
-				head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
+				get_parent().head.rotate_x(-deg2rad(rotationVelocity.y))
+				get_parent().head.rotation.x = clamp(get_parent().head.rotation.x,deg2rad(-90),deg2rad(90))
 			mouseMovement = Vector2.ZERO

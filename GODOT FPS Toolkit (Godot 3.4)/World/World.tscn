@@ -37,7 +37,8 @@ gravityRate = 18.527
 jumpLimit = 10
 
 [node name="Dash" parent="Player/Movement" index="4"]
-dashConfiguration = 1
+dashInput = 1
+invicibility = true
 cooldown = 2
 
 [editable path="Player"]
