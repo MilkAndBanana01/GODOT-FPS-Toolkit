@@ -24,16 +24,20 @@ func _ready() -> void:
 	timer.wait_time = cooldown
 	cameraNode = player.get_node("Camera")
 	player.call_deferred('add_child',timer)
-	timer.connect('timeout',self,'refreshDash')
 
 func _input(event: InputEvent) -> void:
 	input = Vector2(Input.get_action_strength('move_right') - Input.get_action_strength('move_left'),Input.get_action_strength('move_back') - Input.get_action_strength('move_forward'))
 	if Input.is_action_just_pressed("run") and timer.is_stopped()\
-	and (not cameraNode.wallCheck.is_colliding() or invicibility):
+	and (invicibility or not cameraNode.wallCheck.is_colliding()):
 		if dashConfiguration == 0:
-			player.translate(Vector3(input.x * distance,0,input.y * distance))
-			print('dash')
-		timer.start()
+			if invicibility or (not invicibility and not cameraNode.dashCheck.is_colliding()):
+				player.translate(Vector3(input.x * distance,0,input.y * distance))
+				timer.start()
+			else:
+				if cameraNode.dashCheck.is_colliding():
+					var newPos = cameraNode.dashCheck.get_collision_point()
+					player.global_transform.origin = Vector3(newPos.x,player.global_transform.origin.y,newPos.z)
+					timer.start()
 
 func _physics_process(delta: float) -> void:
 	moveNode.velocity += extraSpeed
