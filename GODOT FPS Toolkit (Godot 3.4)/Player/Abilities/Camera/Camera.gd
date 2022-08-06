@@ -7,12 +7,15 @@ var player
 var movementNode
 var crouchNode
 var runNode
+var dashNode
 
 var currentHeight : float
 var currentFOV : float
 
 onready var camera = Camera.new()
 onready var head = Spatial.new()
+onready var wallCheck = RayCast.new()
+onready var dashCheck = RayCast.new()
 
 var headExists : bool
 var camExists : bool
@@ -31,10 +34,19 @@ func addCamera():
 		player.call_deferred('add_child',head)
 		head.call_deferred('set_owner',player)
 		head.translation.y = movementNode.height
+		wallCheck.name = "wallCheck"
+		dashCheck.name = "dashCheck"
+		wallCheck.enabled = true
+		dashCheck.enabled = true
+		wallCheck.cast_to = Vector3(0,0,-1)
+		dashCheck.cast_to = Vector3(0,0,-dashNode.distance)
+		head.call_deferred('add_child',wallCheck)
+		head.call_deferred('add_child',dashCheck)
 	if not camExists:
 		camera.name = 'Camera'
 		head.call_deferred('add_child',camera)
 		camera.call_deferred('set_owner',player)
+	
 	camera.fov = startingFov
 
 func _ready():
@@ -46,6 +58,7 @@ func _ready():
 		movementNode = player.get_node('Movement')
 		crouchNode = player.get_node('Movement/Crouch')
 		runNode = player.get_node('Movement/Run')
+		dashNode = player.get_node('Movement/Dash')
 		addCamera()
 
 func _process(delta: float) -> void:
