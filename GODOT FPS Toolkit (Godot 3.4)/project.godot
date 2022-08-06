@@ -14,6 +14,10 @@ config/name="GODOT FPS Toolkit (Godot 3.4)"
 run/main_scene="res://World/World.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+AP="*res://Player/AP.gd"
+
 [gdnative]
 
 singletons=[  ]

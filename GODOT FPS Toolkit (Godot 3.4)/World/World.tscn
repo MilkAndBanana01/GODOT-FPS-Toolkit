@@ -23,13 +23,21 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
 [node name="Movement" parent="Player" index="0"]
 height = 2.0
 
+[node name="Movement Settings" parent="Player/Movement/Move" index="0"]
+movementStyle = 1
+acceleration = 6.455
+
 [node name="Air Momentum Settings" parent="Player/Movement/Move" index="1"]
 enabled = false
+
+[node name="Gravity Settings" parent="Player/Movement/Gravity" index="0"]
+gravityRate = 18.527
 
 [node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
 jumpLimit = 10
 
 [node name="Dash" parent="Player/Movement" index="4"]
+dashConfiguration = 1
 cooldown = 2
 
 [editable path="Player"]

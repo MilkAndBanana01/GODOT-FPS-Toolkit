@@ -1,7 +1,6 @@
 tool
 extends Node
 
-var player
 var gravityVec : Vector3
 var snapVec : Vector3
 var jumping = false
@@ -20,15 +19,11 @@ onready var jump_limit = get_node("Jump Settings").jumpLimit
 onready var jump_updateDirection = get_node("Jump Settings").updateDirection
 
 func _ready() -> void:
-	if get_parent() is KinematicBody:
-		player = get_parent()
-	else:
-		player = owner.get_parent()
 	var height = get_parent().height
 	raycast.translation.y = ((-height + 1)/2)
 	raycast.cast_to = Vector3(0,-1.01,0)
 	raycast.enabled = true
-	player.call_deferred('add_child',raycast)
+	AP.player.call_deferred('add_child',raycast)
 
 func updateHeight(h):
 	raycast.translation.y = ((-h + 1)/2)
@@ -39,7 +34,7 @@ func _physics_process(delta: float) -> void:
 			jumpCount = 0
 		if raycast.is_colliding():
 			gravityVec = Vector3.ZERO
-			snapVec = -player.get_floor_normal()
+			snapVec = -AP.player.get_floor_normal()
 		if Input.is_action_just_pressed('jump') and jumpCount < jump_limit:
 			snapVec = Vector3.ZERO
 			gravityVec = jump_height * Vector3.UP
@@ -50,4 +45,4 @@ func _physics_process(delta: float) -> void:
 				gravityVec += Vector3.DOWN * grav_gravityRate * delta
 			else:
 				gravityVec = Vector3.DOWN * grav_gravityRate
-		player.move_and_slide_with_snap(gravityVec,snapVec,Vector3.UP)
+		AP.player.move_and_slide_with_snap(gravityVec,snapVec,Vector3.UP)

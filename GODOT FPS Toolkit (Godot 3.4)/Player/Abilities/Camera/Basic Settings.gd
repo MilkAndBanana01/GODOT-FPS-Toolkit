@@ -30,7 +30,7 @@ func _physics_process(_delta: float) -> void:
 			else:
 				rotationVelocity = mouseMovement * (sensitivity * 0.25)
 			if not lockCamera:
-				player.rotate_y(-deg2rad(rotationVelocity.x))
+				AP.player.rotate_y(-deg2rad(rotationVelocity.x))
 				head.rotate_x(-deg2rad(rotationVelocity.y))
 				head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
 			mouseMovement = Vector2.ZERO

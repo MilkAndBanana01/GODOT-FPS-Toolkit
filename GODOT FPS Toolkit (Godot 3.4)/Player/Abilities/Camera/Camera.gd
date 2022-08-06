@@ -3,12 +3,6 @@ extends Node
 
 export var startingFov := 70.0
 
-var player
-var movementNode
-var crouchNode
-var runNode
-var dashNode
-
 var currentHeight : float
 var currentFOV : float
 
@@ -21,7 +15,7 @@ var headExists : bool
 var camExists : bool
 
 func addCamera():
-	for i in player.get_children():
+	for i in AP.player.get_children():
 		if i.name == "Head":
 			head = i
 			headExists = true
@@ -31,141 +25,45 @@ func addCamera():
 					camExists = true
 	if not headExists:
 		head.name = 'Head'
-		player.call_deferred('add_child',head)
-		head.call_deferred('set_owner',player)
-		head.translation.y = movementNode.height
+		AP.player.call_deferred('add_child',head)
+		head.call_deferred('set_owner',AP.player)
+		head.translation.y = AP.movementNode.height
 		wallCheck.name = "wallCheck"
 		dashCheck.name = "dashCheck"
 		wallCheck.enabled = true
 		dashCheck.enabled = true
 		wallCheck.cast_to = Vector3(0,0,-1)
-		dashCheck.cast_to = Vector3(0,0,-dashNode.distance)
+		dashCheck.cast_to = Vector3(0,0,-AP.dashNode.distance)
 		head.call_deferred('add_child',wallCheck)
 		head.call_deferred('add_child',dashCheck)
 	if not camExists:
 		camera.name = 'Camera'
 		head.call_deferred('add_child',camera)
-		camera.call_deferred('set_owner',player)
+		camera.call_deferred('set_owner',AP.player)
 	
 	camera.fov = startingFov
 
 func _ready():
 	if not Engine.editor_hint:
-		if get_parent() is KinematicBody:
-			player = get_parent()
-		else:
-			player = owner.get_parent()
-		movementNode = player.get_node('Movement')
-		crouchNode = player.get_node('Movement/Crouch')
-		runNode = player.get_node('Movement/Run')
-		dashNode = player.get_node('Movement/Dash')
 		addCamera()
 
 func _process(delta: float) -> void:
 	if not Engine.editor_hint:
-		if runNode.changeFOV:
+		if AP.runNode.changeFOV:
 			if Input.is_action_pressed('run'):
-				currentFOV = 100 if not runNode.customFOV > 0 else runNode.customFOV
+				currentFOV = 100 if not AP.runNode.customFOV > 0 else AP.runNode.customFOV
 			else:
 				currentFOV = startingFov
-		camera.fov = lerp(camera.fov,clamp(currentFOV * clamp(movementNode.get_node('Move').velocity.length(),0,1),startingFov,100 if not runNode.customFOV > 0 else runNode.customFOV),delta * runNode.customFOVRate)
-		if crouchNode.heightConfiguration == 0:
+		camera.fov = lerp(camera.fov,clamp(currentFOV * clamp(AP.movementNode.get_node('Move').velocity.length(),0,1),startingFov,100 if not AP.runNode.customFOV > 0 else AP.runNode.customFOV),delta * AP.runNode.customFOVRate)
+		if AP.crouchNode.heightConfiguration == 0:
 			head.translation.y = currentHeight
 		else:
-			head.translation.y = lerp(head.translation.y,currentHeight,crouchNode.heightInterpolation * delta)
-		if Input.is_action_pressed('crouch') and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run'))\
-		and (player.is_on_floor() or (crouchNode.allowMidAir and (crouchNode.midAirConfiguration == 0 or crouchNode.midAirConfiguration > 1))):
-			currentHeight = crouchNode.crouchHeight
-		elif not crouchNode.raycast.is_colliding():
-			currentHeight = movementNode.height
+			head.translation.y = lerp(head.translation.y,currentHeight,AP.crouchNode.heightInterpolation * delta)
+		if Input.is_action_pressed('crouch') and (AP.runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run'))\
+		and (AP.player.is_on_floor() or (AP.crouchNode.allowMidAir and (AP.crouchNode.midAirConfiguration == 0 or AP.crouchNode.midAirConfiguration > 1))):
+			currentHeight = AP.crouchNode.crouchHeight
+		elif not AP.crouchNode.raycast.is_colliding():
+			currentHeight = AP.movementNode.height
 
 func updateHeight(h):
 	head.translation.y = h
-
-"""
-Spent an hour trying to fix this inconistent piece of shit, idk why its not working
-here even if its the exact same piece of code. i already deleted the damn import folder
-to remove any history on this node and still nothing.
-"""
-
-#var properties = {
-#	'Camera Settings': {"t": 'category'},
-#	'enabled': {"n": 'enabled',"t": "bool"},
-#	'sensitivity': {"n": 'sensitivity',"t": 'float',"d": 1.0,'e':['enabled=true']},
-#	'enable smoothing': {'n': 'smoothing','t': "bool",'e':['enabled=true']},
-#	'smoothing': {"n": 'smoothRate',"t": 'int',"d": 0,'e':['smoothing=true']}
-#}
-#
-#func _get(property: String):
-#	if property in properties.keys():
-#		if properties[property]["t"] != "category":
-#			return get(properties[property]["n"])
-#func _set(property: String, value) -> bool:
-#	print(properties[property])
-#	if property in properties.keys():
-#		if properties[property].has("mn"):
-#			value = clamp(value,properties[property]["mn"],INF)
-#		if properties[property].has("mx"):
-#			value = clamp(value,0,properties[property]["mx"])
-#		if properties[property].has("mn") and properties[property].has("mx"):
-#			value = clamp(value,properties[property]["mn"],properties[property]["mx"])
-#		set(properties[property]["n"], value)
-#		if properties[property]["t"] == 'bool' or properties[property]["t"] == 'list':
-#			property_list_changed_notify()
-#	return true
-#func _get_property_list() -> Array:
-#	var props := []
-#	for i in properties.keys():
-#		var curr_prop : Dictionary = properties[i]
-#		var app = true
-#		if curr_prop.has("e"):
-#			for s in curr_prop["e"].size():
-#				if !evaluate_string(curr_prop["e"][s]):
-#					app = false
-#					break
-#		if !app:
-#			continue
-#
-#		var app_dict : Dictionary = {}
-#		app_dict["name"] = i
-#		if curr_prop["t"] == 'category':
-#			app_dict["type"] = TYPE_NIL
-#			app_dict["usage"] = PROPERTY_USAGE_CATEGORY
-#		if curr_prop["t"] == 'bool':
-#			app_dict["type"] = TYPE_BOOL
-#		if curr_prop["t"] == 'int':
-#			app_dict["type"] = TYPE_INT
-#		if curr_prop["t"] == 'float':
-#			app_dict["type"] = TYPE_REAL
-#		if curr_prop["t"] == 'list':
-#			app_dict["type"] = 2
-#			app_dict["hint"] = 3
-#			app_dict["hint_string"] = curr_prop["v"]
-#
-#		props.append(app_dict)
-#	return props
-#func evaluate_string(eval  : String) -> bool:
-#	if "/" in eval:
-#		var char_position : int = eval.find("/")
-#		var left : String = eval.left(char_position)
-#		var right : String = eval.right(char_position+1)
-#		if get(left) != str2var(right):
-#			return true
-#		else: return false
-#	elif "=" in eval:
-#		var char_position : int = eval.find("=")
-#		var left : String = eval.left(char_position)
-#		var right : String = eval.right(char_position+1)
-#		if get(left) == str2var(right):
-#			return true
-#		else: return false
-#	return false
-#func property_can_revert(property:String) -> bool:
-#	if property in properties.keys():
-#		if "d" in properties[property].keys():
-#			if typeof(properties[property]["d"]) == typeof(get(properties[property]["n"])):
-#				return true
-#	return false
-#func property_get_revert(property:String):
-#	return properties[property]["d"]
-

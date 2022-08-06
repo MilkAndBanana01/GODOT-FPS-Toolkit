@@ -1,14 +1,6 @@
 tool
 extends Node
 
-var player
-
-var movementNode
-var gravityNode
-var jumpNode
-var crouchNode
-var runNode
-
 var currentSpeed
 var input : Vector2
 var direction : Vector3
@@ -29,20 +21,11 @@ onready var airMovementSpeed = get_node("Air Movement Settings").customSpeed
 onready var airMovementAcc = get_node("Air Movement Settings").customAcceleration
 
 func _ready() -> void:
-	if get_parent() is KinematicBody:
-		player = get_parent()
-	else:
-		player = owner.get_parent()
-	movementNode = get_parent()
-	gravityNode = player.get_node_or_null('Movement/Gravity')
-	jumpNode = player.get_node_or_null('Movement/Gravity/Jump Settings')
-	crouchNode = player.get_node_or_null('Movement/Crouch')
-	runNode = player.get_node_or_null('Movement/Run')
 	currentSpeed = speed
 
 func movePlayer():
 	input = Vector2(Input.get_action_strength('move_right') - Input.get_action_strength('move_left'),Input.get_action_strength('move_back') - Input.get_action_strength('move_forward'))
-	direction = (player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
+	direction = (AP.player.transform.basis * Vector3(input.x, 0, input.y)).normalized()
 func retroMovement(s):
 	velocity = Vector3.ZERO
 	velocity.x = direction.x * s
@@ -53,25 +36,25 @@ func applyFriction(f,d):
 	velocity = velocity.linear_interpolate(Vector3.ZERO, d * f)
 
 func _input(_event: InputEvent) -> void:
-	if jumpNode != null:
-		if jumpNode.updateDirection:
-			if Input.is_action_just_pressed('jump') and gravityNode.jumpCount < jumpNode.jumpLimit:
+	if is_instance_valid(AP.jumpNode):
+		if AP.jumpNode.updateDirection:
+			if Input.is_action_just_pressed('jump') and AP.gravityNode.jumpCount < AP.jumpNode.jumpLimit:
 				movePlayer()
 				retroMovement(speed + airMomentumSpeed)
-	if Input.is_action_pressed('crouch') and (player.is_on_floor() or (crouchNode.allowMidAir and (crouchNode.midAirConfiguration == 0 or crouchNode.midAirConfiguration > 1)))\
-	and (runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
-		crouchNode.collision.disabled = false
-		movementNode.collision.disabled = true
-	elif not crouchNode.raycast.is_colliding():
-		crouchNode.collision.disabled = true
-		movementNode.collision.disabled = false
+	if Input.is_action_pressed('crouch') and (AP.player.is_on_floor() or (AP.crouchNode.allowMidAir and (AP.crouchNode.midAirConfiguration == 0 or AP.crouchNode.midAirConfiguration > 1)))\
+	and (AP.runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
+		AP.crouchNode.collision.disabled = false
+		AP.movementNode.collision.disabled = true
+	elif not AP.crouchNode.raycast.is_colliding():
+		AP.crouchNode.collision.disabled = true
+		AP.movementNode.collision.disabled = false
 
 func _physics_process(delta: float) -> void:
 	if not Engine.editor_hint:
 		currentSpeed = speed - \
-		(int(crouchNode.enabled) * (int(player.is_on_floor() or (clamp(crouchNode.midAirConfiguration,0,1)) * int(crouchNode.allowMidAir))) * (clamp((Input.get_action_strength('crouch') + int(crouchNode.raycast.is_colliding())),0,1) * crouchNode.crouchSpeed)) + \
-		(int(runNode.enabled) * int(player.is_on_floor() or runNode.allowMidAir) * (Input.get_action_strength('run') * runNode.runningSpeed))
-		if player.is_on_floor():
+		(int(AP.crouchNode.enabled) * (int(AP.player.is_on_floor() or (clamp(AP.crouchNode.midAirConfiguration,0,1)) * int(AP.crouchNode.allowMidAir))) * (clamp((Input.get_action_strength('crouch') + int(AP.crouchNode.raycast.is_colliding())),0,1) * AP.crouchNode.crouchSpeed)) + \
+		(int(AP.runNode.enabled) * int(AP.player.is_on_floor() or AP.runNode.allowMidAir) * (Input.get_action_strength('run') * AP.runNode.runningSpeed))
+		if AP.player.is_on_floor():
 			movePlayer()
 			if movementStyle == 0:
 				retroMovement(currentSpeed)
@@ -93,4 +76,4 @@ func _physics_process(delta: float) -> void:
 					retroMovement(currentSpeed + airMovementSpeed)
 			else:
 				velocity = Vector3.ZERO
-		player.move_and_slide(velocity,Vector3.UP)
+		AP.player.move_and_slide(velocity,Vector3.UP)
