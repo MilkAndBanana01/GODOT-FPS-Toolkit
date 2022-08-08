@@ -23,14 +23,11 @@ depth = 19.9429
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
 
 [node name="Movement" parent="Player" index="0"]
-height = 2.0
+height = 3.0
 
 [node name="Movement Settings" parent="Player/Movement/Move" index="0"]
 movementStyle = 1
 acceleration = 6.455
-
-[node name="Air Momentum Settings" parent="Player/Movement/Move" index="1"]
-enabled = false
 
 [node name="Gravity Settings" parent="Player/Movement/Gravity" index="0"]
 gravityRate = 18.527

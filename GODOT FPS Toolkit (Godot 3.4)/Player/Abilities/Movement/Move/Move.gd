@@ -41,13 +41,6 @@ func _input(_event: InputEvent) -> void:
 			if Input.is_action_just_pressed('jump') and AP.gravityNode.jumpCount < AP.jumpNode.jumpLimit:
 				movePlayer()
 				retroMovement(speed + airMomentumSpeed)
-	if Input.is_action_pressed('crouch') and (AP.player.is_on_floor() or (AP.crouchNode.allowMidAir and (AP.crouchNode.midAirConfiguration == 0 or AP.crouchNode.midAirConfiguration > 1)))\
-	and (AP.runNode.allowRunningWhileCrouching or not Input.is_action_pressed('run')):
-		AP.crouchNode.collision.disabled = false
-		AP.movementNode.collision.disabled = true
-	elif not AP.crouchNode.raycast.is_colliding():
-		AP.crouchNode.collision.disabled = true
-		AP.movementNode.collision.disabled = false
 
 func _physics_process(delta: float) -> void:
 	if not Engine.editor_hint:

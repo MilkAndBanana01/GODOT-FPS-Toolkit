@@ -18,11 +18,11 @@ var timer = Timer.new()
 var extraSpeed := Vector3()
 var forward := true
 
-func _ready() -> void:
-	timer.one_shot = true
-	timer.wait_time = cooldown
-	timer.name = "DashTimer"
-	AP.player.call_deferred('add_child',timer)
+#func _ready() -> void:
+#	timer.one_shot = true
+#	timer.wait_time = cooldown
+#	timer.name = "DashTimer"
+#	AP.player.call_deferred('add_child',timer)
 
 func _input(event: InputEvent) -> void:
 	if dashInput == 0:

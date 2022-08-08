@@ -13,6 +13,8 @@ var capsule = CapsuleShape.new()
 
 var baseCol
 var crouchCol
+var checkCeiling
+var checkFloor
 
 func addingEvent(pos,i):
 	var inputEvent = InputEventKey.new()
@@ -34,6 +36,8 @@ func _ready() -> void:
 	addCollision()
 	print(baseCol)
 	print(crouchCol)
+	print(checkCeiling)
+	print(checkFloor)
 
 func addCollision():
 	var tallestHeight = 0
@@ -44,7 +48,18 @@ func addCollision():
 				tallestHeight = i.shape.height
 			else:
 				crouchCol = i
-	
+		if i is RayCast:
+			checkFloor = i
+	for i in crouchCol.get_children():
+		if i is RayCast:
+			checkCeiling = i
+
+	baseCol.shape.height = height
+	crouchCol.shape.height = AP.crouchNode.crouchHeight
+	crouchCol.translation = Vector3(0,-((baseCol.shape.height - crouchCol.shape.height) / 2),0)
+	checkCeiling.cast_to = Vector3(0,2 + ((baseCol.shape.height - crouchCol.shape.height) / 2),0)
+	checkFloor.cast_to = Vector3(0,0.5 + (baseCol.shape.height / 2),0)
+
 #	if AP.player.get_node_or_null('Collision') == null:
 #		collision.name = "Collision"
 #		capsule.height = height
