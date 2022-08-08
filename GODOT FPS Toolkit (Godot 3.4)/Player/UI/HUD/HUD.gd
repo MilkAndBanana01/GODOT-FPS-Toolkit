@@ -9,20 +9,20 @@ func _ready() -> void:
 	if crosshairTexture != null:
 		crosshair.texture = crosshairTexture
 	else:
-		dir_contents(crosshairFolderPath)
+		findImg(crosshairFolderPath)
 	crosshair.position = Vector2(OS.get_window_size().x,OS.get_window_size().y) / 2
 	crosshair.scale = Vector2(0.5,0.5)
 	AP.player.call_deferred("add_child",crosshair)
 
-func dir_contents(path):
+func findImg(path):
 	var dir = Directory.new()
 	if dir.open(path) == OK:
 		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if ".png" in file_name and not ".import" in file_name:
-				crosshair.texture = load(crosshairFolderPath + file_name)
+		var fileName = dir.get_next()
+		while fileName != "":
+			if ".png" in fileName and not ".import" in fileName:
+				crosshair.texture = load(crosshairFolderPath + fileName)
 				break
-			file_name = dir.get_next()
+			fileName = dir.get_next()
 	else:
-		print("Cannot find Crosshairs Folder in UI Folder.")
+		print("Cannot find images in UI Folder or UI folder is not available.")

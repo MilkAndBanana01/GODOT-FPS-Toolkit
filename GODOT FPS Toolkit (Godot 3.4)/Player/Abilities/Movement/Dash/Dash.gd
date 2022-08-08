@@ -28,7 +28,7 @@ func _input(event: InputEvent) -> void:
 	if dashInput == 0:
 		input = Vector2(Input.get_action_strength('move_right') - Input.get_action_strength('move_left'),Input.get_action_strength('move_back') - Input.get_action_strength('move_forward'))
 #	else:
-#		input = Vector3( - AP.cameraNode.head.global_transform.origin).normalized()
+#		input = Vector3(AP.cameraNode.cameraDashPos.global_transform.origin - AP.cameraNode.head.global_transform.origin).normalized()
 	if Input.is_action_just_pressed("run") and timer.is_stopped()\
 	and (invicibility or not AP.cameraNode.wallCheck.is_colliding()):
 		if dashConfiguration == 0:
@@ -36,15 +36,16 @@ func _input(event: InputEvent) -> void:
 				if dashInput == 0:
 					AP.player.translate(Vector3(input.x * distance,0,input.y * distance))
 				else:
-					AP.player.global_transform.origin = AP.cameraNode.cameraDashPos.global_transform.origin
+					if not AP.cameraNode.checkDashPos.is_colliding():
+						AP.player.global_transform.origin = AP.cameraNode.cameraDashPos.global_transform.origin
 				timer.start()
 			else:
-				if AP.cameraNode.dashCheck.is_colliding():
+				if AP.cameraNode.dashCheck.is_colliding() and not AP.cameraNode.checkDashPos.is_colliding():
 					var newPos = AP.cameraNode.dashCheck.get_collision_point()
 					AP.player.global_transform.origin = Vector3(newPos.x,AP.player.global_transform.origin.y,newPos.z)
 					timer.start()
 		else:
-			extraSpeed = (AP.player.transform.basis * Vector3(input.x, 0, input.y)).normalized() * distance
+			extraSpeed = input * distance
 			timer.start()
 
 func _physics_process(_delta: float) -> void:

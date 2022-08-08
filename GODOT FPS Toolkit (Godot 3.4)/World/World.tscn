@@ -1,7 +1,15 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Environment/default_env.tres" type="Environment" id=3]
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.745098, 0.109804, 0.109804, 1 )
+
+[sub_resource type="CubeMesh" id=3]
+material = SubResource( 2 )
 
 [node name="WorldEnvironment" type="WorldEnvironment"]
 environment = ExtResource( 3 )
@@ -10,12 +18,6 @@ environment = ExtResource( 3 )
 use_collision = true
 width = 17.6598
 depth = 19.9429
-
-[node name="CSGBox2" type="CSGBox" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.35253, -4.10802 )
-use_collision = true
-width = 17.6598
-depth = 2.13773
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
@@ -38,7 +40,21 @@ jumpLimit = 10
 
 [node name="Dash" parent="Player/Movement" index="4"]
 dashInput = 1
+distance = 6
 cooldown = 3
+
+[node name="Basic Settings" parent="Player/Camera" index="0"]
+enabled = false
+
+[node name="StaticBody" type="StaticBody" parent="."]
+transform = Transform( 9.45596, 0, 0, 0, 1, 0, 0, 0, 4.07479, 0, 4.00153, -4.50824 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody/CollisionShape"]
+mesh = SubResource( 3 )
+material/0 = null
 
 [editable path="Player"]
 [editable path="Player/Movement"]
