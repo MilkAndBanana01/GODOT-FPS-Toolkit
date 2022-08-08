@@ -37,4 +37,3 @@ func _ready() -> void:
 	for i in nodeNames:
 		self[variables[count]] = player.get_node_or_null(i)
 		count += 1
-	print("loaded nodes")

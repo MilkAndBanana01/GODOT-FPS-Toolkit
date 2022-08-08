@@ -38,8 +38,7 @@ jumpLimit = 10
 
 [node name="Dash" parent="Player/Movement" index="4"]
 dashInput = 1
-invicibility = true
-cooldown = 2
+cooldown = 3
 
 [editable path="Player"]
 [editable path="Player/Movement"]

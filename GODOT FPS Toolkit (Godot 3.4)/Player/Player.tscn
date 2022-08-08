@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Player/Abilities/Movement/Movement.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Player/Abilities/Camera/Camera.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Player/UI/HUD/HUD.gd" type="Script" id=3]
 
 [node name="Player" type="KinematicBody"]
 
@@ -11,6 +12,13 @@
 midAirConfiguration = 2
 
 [node name="Camera" parent="." instance=ExtResource( 2 )]
+
+[node name="UI" type="Node" parent="."]
+
+[node name="HUD" type="Node" parent="UI"]
+script = ExtResource( 3 )
+
+[node name="Menus" type="Node" parent="UI"]
 
 [editable path="Movement"]
 [editable path="Movement/Move"]
