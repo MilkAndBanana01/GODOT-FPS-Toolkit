@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Run/Run.gd" type="Script" id=1]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Movement.gd" type="Script" id=2]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Move/Move.tscn" type="PackedScene" id=3]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Gravity/Gravity.tscn" type="PackedScene" id=4]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Dash/Dash.gd" type="Script" id=5]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Crouch/Crouch.gd" type="Script" id=6]
+
+[node name="Movement" type="Node"]
+script = ExtResource( 2 )
+
+[node name="Move" parent="." instance=ExtResource( 3 )]
+
+[node name="Gravity" parent="." instance=ExtResource( 4 )]
+
+[node name="Crouch" type="Node" parent="."]
+script = ExtResource( 6 )
+
+[node name="Run" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[node name="Dash" type="Node" parent="."]
+script = ExtResource( 5 )
+__meta__ = {
+"_editor_description_": "Distance will be turning into extra velocity when configuration is set to Interpolated."
+}
+
+[editable path="Move"]
+[editable path="Gravity"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Player/Abilities/Movement/Movement.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Player/Abilities/Camera/Camera.tscn" type="PackedScene" id=2]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Movement.tscn" type="PackedScene" id=1]
+[ext_resource path="res://tmp/player v1/Abilities/Camera/Camera.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Player/UI/HUD/HUD.gd" type="Script" id=3]
 
 [sub_resource type="CapsuleShape" id=1]

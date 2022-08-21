@@ -1,15 +1,15 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Player/Abilities/Movement/Move/Move.gd" type="Script" id=1]
-[ext_resource path="res://Player/Abilities/Movement/Move/Air Momentum/Air Momentum Settings.gd" type="Script" id=2]
-[ext_resource path="res://Player/Abilities/Movement/Move/Air Movement/Air Movement Settings.gd" type="Script" id=3]
-[ext_resource path="res://Player/Abilities/Movement/Move/Movement/Movement Settings.gd" type="Script" id=4]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Move/Movement/Movement Settings.gd" type="Script" id=1]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Move/Air Momentum/Air Momentum Settings.gd" type="Script" id=2]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Move/Air Movement/Air Movement Settings.gd" type="Script" id=3]
+[ext_resource path="res://tmp/player v1/Abilities/Movement/Move/Move.gd" type="Script" id=4]
 
 [node name="Move" type="Node"]
-script = ExtResource( 1 )
+script = ExtResource( 4 )
 
 [node name="Movement Settings" type="Node" parent="."]
-script = ExtResource( 4 )
+script = ExtResource( 1 )
 __meta__ = {
 "_editor_description_": "If Movement Style is set to RETRO, Acceleration and Friction is IGNORED."
 }

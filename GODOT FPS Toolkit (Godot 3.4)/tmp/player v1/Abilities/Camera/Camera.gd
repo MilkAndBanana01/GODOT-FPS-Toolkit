@@ -91,5 +91,6 @@ func _process(delta: float) -> void:
 		elif not AP.crouchNode.raycast.is_colliding():
 			currentHeight = AP.movementNode.height
 		springArmPos.rotation_degrees = Vector3.ZERO
+
 func updateHeight(h):
 	head.translation.y = h

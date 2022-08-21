@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Player/Camera/Camera Settings.gd" type="Script" id=1]
+[ext_resource path="res://Player/Sample Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Environment/default_env.tres" type="Environment" id=3]
+[ext_resource path="res://Player/Camera/Panning/Panning.gd" type="Script" id=4]
 
 [sub_resource type="BoxShape" id=1]
 
@@ -19,32 +21,9 @@ use_collision = true
 width = 17.6598
 depth = 19.9429
 
-[node name="Player" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.30265, 0 )
-
-[node name="Movement" parent="Player" index="0"]
-height = 3.0
-
-[node name="Movement Settings" parent="Player/Movement/Move" index="0"]
-movementStyle = 1
-acceleration = 6.455
-
-[node name="Gravity Settings" parent="Player/Movement/Gravity" index="0"]
-gravityRate = 18.527
-
-[node name="Jump Settings" parent="Player/Movement/Gravity" index="1"]
-jumpLimit = 10
-
-[node name="Dash" parent="Player/Movement" index="4"]
-dashInput = 1
-distance = 6
-cooldown = 3
-
-[node name="Basic Settings" parent="Player/Camera" index="0"]
-enabled = false
-
 [node name="StaticBody" type="StaticBody" parent="."]
 transform = Transform( 9.45596, 0, 0, 0, 1, 0, 0, 0, 4.07479, 0, 4.00153, -4.50824 )
+visible = false
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
 shape = SubResource( 1 )
@@ -53,8 +32,11 @@ shape = SubResource( 1 )
 mesh = SubResource( 3 )
 material/0 = null
 
-[editable path="Player"]
-[editable path="Player/Movement"]
-[editable path="Player/Movement/Move"]
-[editable path="Player/Movement/Gravity"]
-[editable path="Player/Camera"]
+[node name="Player" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01989, 0 )
+
+[node name="Camera Settings" type="Node" parent="Player"]
+script = ExtResource( 1 )
+
+[node name="Panning" type="Node" parent="Player/Camera Settings"]
+script = ExtResource( 4 )
