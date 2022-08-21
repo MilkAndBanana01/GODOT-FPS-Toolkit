@@ -46,4 +46,3 @@ script = ExtResource( 4 )
 script = ExtResource( 5 )
 zooming_enabled = true
 zoom_fov = 20.0
-smoothing_amount = 1.889

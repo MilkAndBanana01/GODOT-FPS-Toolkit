@@ -6,6 +6,10 @@ export var lock_camera := false
 
 var mouse_movement : Vector2
 var rotation_velocity : Vector2
+var current_sensitivity
+
+func _ready() -> void:
+	Ap.camera_panning = self
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and not lock_camera:
@@ -16,7 +20,8 @@ func _physics_process(delta: float) -> void:
 	move_camera()
 
 func interpolate_mouse_movement(delta):
-	rotation_velocity = rotation_velocity.linear_interpolate(Vector2(mouse_movement.x,mouse_movement.y) * mouse_sensitivity, 
+	current_sensitivity =  mouse_sensitivity/Ap.camera_zooming.mouse_desensitivity_rate if Input.is_action_pressed("zoom") and Ap.camera_zooming.zooming_enabled else mouse_sensitivity
+	rotation_velocity = rotation_velocity.linear_interpolate(Vector2(mouse_movement.x * current_sensitivity,mouse_movement.y * current_sensitivity), 
 	delta * (10.1 - smoothing_amount) if smoothing_enabled else 1)
 
 func move_camera():
