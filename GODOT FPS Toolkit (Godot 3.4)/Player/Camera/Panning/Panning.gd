@@ -13,13 +13,13 @@ func _input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	interpolate_mouse_movement(delta)
-	move_camera(delta,rotation_velocity)
+	move_camera()
 
 func interpolate_mouse_movement(delta):
 	rotation_velocity = rotation_velocity.linear_interpolate(Vector2(mouse_movement.x,mouse_movement.y) * mouse_sensitivity, 
 	delta * (10.1 - smoothing_amount) if smoothing_enabled else 1)
 
-func move_camera(delta,movement):
+func move_camera():
 	Ap.player.rotate_y(-deg2rad(rotation_velocity.x))
 	head.rotate_x(-deg2rad(rotation_velocity.y))
 	head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
