@@ -9,13 +9,14 @@ export var affect_mouse_sensitivity := true
 export var mouse_desensitivity_rate := 4.0
 
 onready var camera = Ap.player.get_node("Head/Camera")
-onready var current_sensitivity = Ap.camera_settings.mouse_sensitivity
 
+var current_sensitivity
 var current_fov
 var zoomedIn := false
 var enable_zoom : bool
 
 func _ready() -> void:
+	current_sensitivity = Ap.camera_settings.mouse_sensitivity
 	current_fov = camera.fov
 	Ap.camera_zooming = self
 

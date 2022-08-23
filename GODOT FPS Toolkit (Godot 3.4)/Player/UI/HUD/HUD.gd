@@ -13,7 +13,7 @@ func _ready() -> void:
 	crosshair.position = Vector2(OS.get_window_size().x,OS.get_window_size().y) / 2
 	crosshair.scale = Vector2(0.5,0.5)
 	crosshair.name = "Crosshair"
-	AP.player.call_deferred("add_child",crosshair)
+	Ap.player.call_deferred("add_child",crosshair)
 
 func findImg(path):
 	var dir = Directory.new()
