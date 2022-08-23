@@ -1,6 +1,7 @@
 extends Node
 
 var player
+var camera_settings
 var camera_zooming
 var camera_panning
 

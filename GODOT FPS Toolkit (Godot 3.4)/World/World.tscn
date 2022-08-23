@@ -31,7 +31,6 @@ shape = SubResource( 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="StaticBody/CollisionShape"]
 mesh = SubResource( 3 )
-material/0 = null
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01989, 0 )
@@ -45,4 +44,7 @@ script = ExtResource( 4 )
 [node name="Zooming" type="Node" parent="Player/Camera Settings"]
 script = ExtResource( 5 )
 zooming_enabled = true
+toggle_mode = true
 zoom_fov = 20.0
+
+[node name="Movement Settings" type="Node" parent="Player"]

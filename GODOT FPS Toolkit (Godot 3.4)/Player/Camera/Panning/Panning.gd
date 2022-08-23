@@ -1,8 +1,10 @@
-extends "res://Player/Camera/Camera Settings.gd"
+extends Node
 
 export var smoothing_enabled := false
 export(float,0,10) var smoothing_amount := 5.0
 export var lock_camera := false
+
+onready var head = Ap.player.get_node("Head")
 
 var mouse_movement : Vector2
 var rotation_velocity : Vector2
@@ -20,7 +22,7 @@ func _physics_process(delta: float) -> void:
 	move_camera()
 
 func interpolate_mouse_movement(delta):
-	current_sensitivity =  mouse_sensitivity/Ap.camera_zooming.mouse_desensitivity_rate if Input.is_action_pressed("zoom") and Ap.camera_zooming.zooming_enabled else mouse_sensitivity
+	current_sensitivity =  Ap.camera_settings.mouse_sensitivity/Ap.camera_zooming.mouse_desensitivity_rate if Ap.camera_zooming.enable_zoom else Ap.camera_settings.mouse_sensitivity
 	rotation_velocity = rotation_velocity.linear_interpolate(Vector2(mouse_movement.x * current_sensitivity,mouse_movement.y * current_sensitivity), 
 	delta * (10.1 - smoothing_amount) if smoothing_enabled else 1)
 
