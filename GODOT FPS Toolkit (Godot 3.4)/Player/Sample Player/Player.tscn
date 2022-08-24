@@ -32,4 +32,4 @@ current = true
 
 [node name="Check Floor" type="RayCast" parent="."]
 enabled = true
-cast_to = Vector3( 0, -1.02, 0 )
+cast_to = Vector3( 0, -1.2, 0 )

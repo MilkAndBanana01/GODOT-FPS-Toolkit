@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Player/Camera/Camera Settings.gd" type="Script" id=1]
 [ext_resource path="res://Player/Sample Player/Player.tscn" type="PackedScene" id=2]
@@ -9,17 +9,38 @@
 [ext_resource path="res://Player/UI/HUD/HUD.gd" type="Script" id=7]
 [ext_resource path="res://Player/Movement/Jumping/Jumping.gd" type="Script" id=8]
 [ext_resource path="res://Player/Movement/Gravity/Gravity.gd" type="Script" id=9]
+[ext_resource path="res://Player/Movement/Gravity/Mid-Air Settings.gd" type="Script" id=10]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.615686, 0.164706, 0.164706, 1 )
 
 [node name="WorldEnvironment" type="WorldEnvironment"]
 environment = ExtResource( 3 )
 
 [node name="CSGBox" type="CSGBox" parent="."]
 use_collision = true
-width = 17.6598
-depth = 19.9429
+width = 84.906
+height = 1.057
+depth = 107.165
+
+[node name="CSGBox" type="CSGBox" parent="CSGBox"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.41628, 0 )
+material = SubResource( 1 )
+
+[node name="CSGBox2" type="CSGBox" parent="CSGBox"]
+transform = Transform( 0.907887, 0, -0.419214, 0, 1, 0, 0.419214, 0, 0.907887, 0, 3.63371, -15.8942 )
+width = 10.9276
+height = 8.07138
+material = SubResource( 1 )
+
+[node name="CSGBox3" type="CSGBox" parent="CSGBox"]
+transform = Transform( -2.46363e-08, -0.826039, 0.563613, -3.61073e-08, 0.563613, 0.826039, -1, 0, -4.37114e-08, -16.732, 1.23923, -2.34167 )
+width = 10.9276
+height = 8.07138
+material = SubResource( 1 )
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.04585, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.61619, 0 )
 
 [node name="Camera Settings" type="Node" parent="Player"]
 script = ExtResource( 1 )
@@ -33,14 +54,17 @@ zooming_enabled = true
 
 [node name="Movement Settings" type="Node" parent="Player"]
 script = ExtResource( 6 )
+movement_speed = 20.306
 
 [node name="Gravity" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 9 )
-gravity_rate = 0.521
+
+[node name="Mid-Air Settings" type="Node" parent="Player/Movement Settings/Gravity"]
+script = ExtResource( 10 )
 
 [node name="Jumping" type="Node" parent="Player/Movement Settings/Gravity"]
 script = ExtResource( 8 )
-jump_height = 23.23
+maximum_jumps = 575
 
 [node name="UI" type="Node" parent="Player"]
 
