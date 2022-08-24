@@ -53,7 +53,6 @@ script = ExtResource( 4 )
 [node name="Zooming" type="Node" parent="Player/Camera Settings"]
 script = ExtResource( 5 )
 enabled = true
-smoothing_amount = 10.0
 
 [node name="Camera Effects" type="Node" parent="Player/Camera Settings"]
 
@@ -65,11 +64,9 @@ script = ExtResource( 12 )
 
 [node name="Movement Settings" type="Node" parent="Player"]
 script = ExtResource( 6 )
-movement_speed = 20.306
 
 [node name="Gravity" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 9 )
-enable = false
 
 [node name="Mid-Air Settings" type="Node" parent="Player/Movement Settings/Gravity"]
 script = ExtResource( 10 )

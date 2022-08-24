@@ -2,7 +2,7 @@ extends Node
 
 export var enabled := true
 export(int,"Retro","Modern") var style := 0
-export var movement_speed := 10.0
+export var movement_speed := 20.0
 export var movement_acceleration := 1.0
 export var enable_friction := false
 export var friction_rate := 1.0

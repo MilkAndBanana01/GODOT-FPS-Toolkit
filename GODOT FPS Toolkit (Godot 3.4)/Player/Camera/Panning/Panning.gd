@@ -4,8 +4,6 @@ export var smoothing_enabled := false
 export(float,0,10) var smoothing_amount := 5.0
 export var lock_camera := false
 
-onready var head = Ap.player.get_node("Head")
-
 var mouse_movement : Vector2
 var rotation_velocity : Vector2
 var current_sensitivity
@@ -28,6 +26,6 @@ func interpolate_mouse_movement(delta):
 
 func move_camera():
 	Ap.player.rotate_y(-deg2rad(rotation_velocity.x))
-	head.rotate_x(-deg2rad(rotation_velocity.y))
-	head.rotation.x = clamp(head.rotation.x,deg2rad(-90),deg2rad(90))
+	Ap.head.rotate_x(-deg2rad(rotation_velocity.y))
+	Ap.head.rotation.x = clamp(Ap.head.rotation.x,deg2rad(-90),deg2rad(90))
 	mouse_movement = Vector2.ZERO

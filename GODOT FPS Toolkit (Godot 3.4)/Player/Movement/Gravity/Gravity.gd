@@ -3,8 +3,6 @@ extends Node
 export var enable := true
 export var gravity_rate := 1.0
 
-#onready var check_floor = Ap.player.get_node("Check Floor")
-
 var gravity : Vector3
 var snap : Vector3
 var momentum : Vector3
