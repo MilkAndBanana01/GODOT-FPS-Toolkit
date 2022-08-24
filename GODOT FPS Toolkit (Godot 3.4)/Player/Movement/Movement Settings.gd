@@ -1,17 +1,16 @@
 extends Node
 
+export var enabled := true
 export(int,"Retro","Modern") var style := 0
 export var movement_speed := 10.0
 export var movement_acceleration := 1.0
 export var enable_friction := false
 export var friction_rate := 1.0
 
-
-onready var check_floor = Ap.player.get_node("Check Floor")
 var input : Vector2
 var direction : Vector3
 var velocity : Vector3
-
+var snap : Vector3
 
 func _enter_tree() -> void:
 	Ap.movement_settings = self
@@ -39,10 +38,12 @@ func applyFriction(f,d):
 
 
 func _physics_process(delta: float) -> void:
-	movement_speed = movement_speed + Ap.mid_air_settings.custom_air_speed if Ap.mid_air_settings.enabled else movement_speed
-	movement_acceleration = movement_acceleration + Ap.mid_air_settings.custom_air_acceleration if Ap.mid_air_settings.enabled else movement_acceleration
-	if check_floor.is_colliding() or not Ap.gravity.enable or Ap.mid_air_settings.enable_air_movement:
-		update_direction()
-		retroMovement(movement_speed) if style == 0 else modernMovement(movement_speed,movement_acceleration,delta)
-	Ap.player.move_and_slide(velocity,Vector3.UP)
-
+	if enabled:
+		movement_speed = movement_speed + Ap.mid_air_settings.custom_air_speed if Ap.mid_air_settings.enabled else movement_speed
+		movement_acceleration = movement_acceleration + Ap.mid_air_settings.custom_air_acceleration if Ap.mid_air_settings.enabled else movement_acceleration
+		snap = -Ap.player.get_floor_normal() if Ap.player.is_on_floor() else Vector3.ZERO
+		if Ap.player.is_on_floor() or not Ap.gravity.enable or Ap.mid_air_settings.enable_air_movement:
+			update_direction()
+			retroMovement(movement_speed) if style == 0 else modernMovement(movement_speed,movement_acceleration,delta)
+		if Ap.player.is_on_floor() or Ap.mid_air_settings.enable_air_momentum or Ap.mid_air_settings.enable_air_movement:
+			Ap.player.move_and_slide_with_snap(velocity,snap,Vector3.UP)

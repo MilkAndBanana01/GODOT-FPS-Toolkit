@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Player/Camera/Camera Settings.gd" type="Script" id=1]
 [ext_resource path="res://Player/Sample Player/Player.tscn" type="PackedScene" id=2]
@@ -10,6 +10,8 @@
 [ext_resource path="res://Player/Movement/Jumping/Jumping.gd" type="Script" id=8]
 [ext_resource path="res://Player/Movement/Gravity/Gravity.gd" type="Script" id=9]
 [ext_resource path="res://Player/Movement/Gravity/Mid-Air Settings.gd" type="Script" id=10]
+[ext_resource path="res://Player/Camera/Camera Effects/Dynamic FOV.gd" type="Script" id=11]
+[ext_resource path="res://Player/Camera/Camera Effects/Camera Tilt.gd" type="Script" id=12]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.615686, 0.164706, 0.164706, 1 )
@@ -50,7 +52,16 @@ script = ExtResource( 4 )
 
 [node name="Zooming" type="Node" parent="Player/Camera Settings"]
 script = ExtResource( 5 )
-zooming_enabled = true
+enabled = true
+smoothing_amount = 10.0
+
+[node name="Camera Effects" type="Node" parent="Player/Camera Settings"]
+
+[node name="Dynamic FOV" type="Node" parent="Player/Camera Settings/Camera Effects"]
+script = ExtResource( 11 )
+
+[node name="Camera Tilt" type="Node" parent="Player/Camera Settings/Camera Effects"]
+script = ExtResource( 12 )
 
 [node name="Movement Settings" type="Node" parent="Player"]
 script = ExtResource( 6 )
@@ -58,6 +69,7 @@ movement_speed = 20.306
 
 [node name="Gravity" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 9 )
+enable = false
 
 [node name="Mid-Air Settings" type="Node" parent="Player/Movement Settings/Gravity"]
 script = ExtResource( 10 )
