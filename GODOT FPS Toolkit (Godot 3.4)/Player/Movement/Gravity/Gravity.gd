@@ -5,7 +5,9 @@ export var gravity_rate := 1.0
 
 var gravity : Vector3
 var snap : Vector3
+
 var momentum : Vector3
+
 var jump_count := 0
 
 
@@ -23,6 +25,7 @@ func _physics_process(delta: float) -> void:
 			gravity = Vector3.UP * Ap.jumping.jump_height
 			if Ap.jumping.update_direction:
 				Ap.movement_settings.update_direction()
+				Ap.movement_settings.retro_movement(Ap.movement_settings.speed)
 		elif snap != Vector3.ZERO:
 			jump_count = 0
 		Ap.player.move_and_slide_with_snap(gravity,snap,Vector3.UP)
