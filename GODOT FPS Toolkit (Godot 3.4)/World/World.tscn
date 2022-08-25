@@ -61,10 +61,10 @@ enabled = true
 
 [node name="Dynamic FOV" type="Node" parent="Player/Camera Settings/Camera Effects"]
 script = ExtResource( 11 )
+enabled = false
 
 [node name="Camera Tilt" type="Node" parent="Player/Camera Settings/Camera Effects"]
 script = ExtResource( 12 )
-enabled = false
 
 [node name="Movement Settings" type="Node" parent="Player"]
 script = ExtResource( 6 )

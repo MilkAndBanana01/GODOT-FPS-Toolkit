@@ -20,7 +20,9 @@ func _physics_process(delta: float) -> void:
 	if enabled:
 		var movement = Ap.movement_settings.velocity.length() / Ap.movement_settings.speed
 		var current_FOV = clamp(
-			(maximum_FOV * Ap.movement_settings.input.length() if Ap.running.enabled and not Input.is_action_pressed("run") else running_FOV * movement),
+			(maximum_FOV * Ap.movement_settings.input.length() 
+			if Ap.running.enabled and not Input.is_action_pressed("run") 
+			else running_FOV * movement),
 			minimum_FOV,
 			running_FOV)
 		Ap.camera.fov = lerp(Ap.camera.fov,current_FOV,delta * 4)
