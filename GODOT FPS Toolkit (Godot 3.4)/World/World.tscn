@@ -94,7 +94,7 @@ script = ExtResource( 13 )
 [node name="Flying" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 14 )
 enabled = true
-inputs = 3
+inputs = 7
 
 [node name="UI" type="Node" parent="Player"]
 
