@@ -10,3 +10,4 @@ export var custom_tilt := 0.0
 
 func _enter_tree() -> void:
 	Ap.running = self
+

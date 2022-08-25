@@ -18,10 +18,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if enabled:
-		var movement = Ap.movement_settings.velocity.length() / Ap.movement_settings.speed
+		var movement = (Ap.movement_settings.velocity.length() / Ap.movement_settings.speed) + abs(Ap.gravity.gravity.y / Ap.gravity.gravity_limit)
 		var current_FOV = clamp(
-			(maximum_FOV * Ap.movement_settings.input.length() 
-			if Ap.running.enabled and not Input.is_action_pressed("run") 
+			(maximum_FOV * movement 
+			if Ap.running.enabled and not (Input.is_action_pressed("run") and not Ap.flying.minecraft_style or Input.is_key_pressed(KEY_CONTROL) and Ap.flying.minecraft_style)
 			else running_FOV * movement),
 			minimum_FOV,
 			running_FOV)

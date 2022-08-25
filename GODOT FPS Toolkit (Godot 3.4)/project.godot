@@ -18,6 +18,10 @@ config/icon="res://icon.png"
 
 Ap="*res://Player/AP.gd"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/ridiculous_coding/plugin.cfg" )
+
 [gdnative]
 
 singletons=[  ]

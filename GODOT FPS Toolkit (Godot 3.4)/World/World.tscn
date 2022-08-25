@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Player/Camera/Camera Settings.gd" type="Script" id=1]
 [ext_resource path="res://Player/Sample Player/Player.tscn" type="PackedScene" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://Player/Camera/Camera Effects/Dynamic FOV.gd" type="Script" id=11]
 [ext_resource path="res://Player/Camera/Camera Effects/Camera Tilt.gd" type="Script" id=12]
 [ext_resource path="res://Player/Movement/Running/Running.gd" type="Script" id=13]
+[ext_resource path="res://Player/Movement/Flying/Flying.gd" type="Script" id=14]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.615686, 0.164706, 0.164706, 1 )
@@ -61,7 +62,6 @@ enabled = true
 
 [node name="Dynamic FOV" type="Node" parent="Player/Camera Settings/Camera Effects"]
 script = ExtResource( 11 )
-enabled = false
 
 [node name="Camera Tilt" type="Node" parent="Player/Camera Settings/Camera Effects"]
 script = ExtResource( 12 )
@@ -72,18 +72,29 @@ acceleration = 4.0
 
 [node name="Gravity" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 9 )
-enable = false
-
-[node name="Mid-Air Settings" type="Node" parent="Player/Movement Settings/Gravity"]
-script = ExtResource( 10 )
 
 [node name="Jumping" type="Node" parent="Player/Movement Settings/Gravity"]
 script = ExtResource( 8 )
 maximum_jumps = 575
 
+[node name="Mid-Air Settings" type="Node" parent="Player/Movement Settings/Gravity"]
+script = ExtResource( 10 )
+
 [node name="Running" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 13 )
-speed = 30.632
+
+[node name="Crouching" type="Node" parent="Player/Movement Settings"]
+
+[node name="Dashing" type="Node" parent="Player/Movement Settings"]
+
+[node name="Sliding" type="Node" parent="Player/Movement Settings"]
+
+[node name="Climbing" type="Node" parent="Player/Movement Settings"]
+
+[node name="Flying" type="Node" parent="Player/Movement Settings"]
+script = ExtResource( 14 )
+enabled = true
+inputs = 3
 
 [node name="UI" type="Node" parent="Player"]
 
