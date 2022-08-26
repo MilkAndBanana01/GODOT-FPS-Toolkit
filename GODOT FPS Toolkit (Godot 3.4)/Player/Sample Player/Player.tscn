@@ -1,6 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Player/Sample Player/Debug Meshes/Debug Shape.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Player/Sample Player/Debug Meshes/Debug Mesh.gd" type="Script" id=2]
+[ext_resource path="res://Player/Sample Player/Player.gd" type="Script" id=5]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -9,23 +11,61 @@ radius = 0.5
 radius = 0.5
 
 [sub_resource type="SpatialMaterial" id=3]
-albedo_color = Color( 1, 0.607843, 0, 1 )
+albedo_color = Color( 1, 0.607843, 0, 0.811765 )
+roughness = 0.51
+
+[sub_resource type="CapsuleShape" id=5]
+radius = 0.5
+height = 0.5
+
+[sub_resource type="CapsuleMesh" id=6]
+radius = 0.494
+mid_height = 0.5
+
+[sub_resource type="SpatialMaterial" id=4]
+albedo_color = Color( 0, 0.0392157, 1, 1 )
 roughness = 0.51
 
 [node name="Player" type="KinematicBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+script = ExtResource( 5 )
+base_collision = NodePath("Base Collision")
+base_debug_mesh = NodePath("Base Collision/Debug Base Mesh")
+crouch_collision = NodePath("Crouch Collision")
+crouch_debug_mesh = NodePath("Crouch Collision/Debug Crouch Mesh")
+head = NodePath("Head")
+crouch_height = 0.5
+crouch_interpolation = 4.0
 
-[node name="Collision" type="CollisionShape" parent="."]
+[node name="Base Collision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
 shape = SubResource( 1 )
 
-[node name="Debug Shape" type="MeshInstance" parent="Collision"]
+[node name="Debug Base Mesh" type="MeshInstance" parent="Base Collision"]
 mesh = SubResource( 2 )
 material/0 = SubResource( 3 )
+script = ExtResource( 2 )
+
+[node name="Crouch Collision" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.25, 0 )
+shape = SubResource( 5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Debug Crouch Mesh" type="MeshInstance" parent="Crouch Collision"]
+mesh = SubResource( 6 )
+material/0 = SubResource( 4 )
+script = ExtResource( 2 )
 
 [node name="Head" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Camera" type="Camera" parent="Head"]
 current = true
 
 [node name="Debug Shape" parent="Head" instance=ExtResource( 1 )]
+script = ExtResource( 2 )

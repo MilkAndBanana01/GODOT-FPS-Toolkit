@@ -44,7 +44,7 @@ height = 8.07138
 material = SubResource( 1 )
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.61619, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.05457, 0 )
 
 [node name="Camera Settings" type="Node" parent="Player"]
 script = ExtResource( 1 )
