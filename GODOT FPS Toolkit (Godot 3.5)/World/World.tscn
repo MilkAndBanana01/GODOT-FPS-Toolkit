@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Player/Camera/Camera Settings.gd" type="Script" id=1]
 [ext_resource path="res://Player/Sample Player/Player.tscn" type="PackedScene" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://Player/Camera/Camera Effects/Camera Tilt.gd" type="Script" id=12]
 [ext_resource path="res://Player/Movement/Running/Running.gd" type="Script" id=13]
 [ext_resource path="res://Player/Movement/Flying/Flying.gd" type="Script" id=14]
+[ext_resource path="res://Player/Movement/Crouching/Crouching.gd" type="Script" id=15]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.615686, 0.164706, 0.164706, 1 )
@@ -87,6 +88,7 @@ script = ExtResource( 13 )
 speed = 19.41
 
 [node name="Crouching" type="Node" parent="Player/Movement Settings"]
+script = ExtResource( 15 )
 
 [node name="Dashing" type="Node" parent="Player/Movement Settings"]
 

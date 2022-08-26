@@ -27,17 +27,18 @@ func loadNodes():
 
 
 func _process(delta: float) -> void:
-	loadNodes()
+	if Engine.editor_hint:
+		loadNodes()
 
-	load_base_col.shape.height = height
-	load_base_debug_mesh.mesh.mid_height = height
+		load_base_col.shape.height = height
+		load_base_debug_mesh.mesh.mid_height = height
 
-	crouch_height = clamp(crouch_height if crouch_height > 0 else height / 2,0,height)
-	load_crouch_col.shape.height = crouch_height
-	load_crouch_col.translation.y = -(height - crouch_height) / 2
-	load_crouch_debug_mesh.mesh.mid_height = crouch_height
+		crouch_height = clamp(crouch_height if crouch_height > 0 else height / 2,0,height)
+		load_crouch_col.shape.height = crouch_height
+		load_crouch_col.translation.y = -(height - crouch_height) / 2
+		load_crouch_debug_mesh.mesh.mid_height = crouch_height
 
-	crouch_interpolation = crouch_interpolation if crouch_interpolation > 0 else 4
+		crouch_interpolation = crouch_interpolation if crouch_interpolation > 0 else 4
 
 	var current_height = (height - (height / 2)) + 0.5 if load_base_col.visible else (load_crouch_col.translation.y + load_crouch_col.shape.height / 2) + 0.5
 	load_head.translation.y = lerp(load_head.translation.y,current_height,delta * crouch_interpolation) if crouch_transition == 1 else current_height

@@ -37,7 +37,7 @@ func applyFriction(f,d):
 	if input == Vector2.ZERO and enable_friction:
 		velocity = velocity.linear_interpolate(Vector3.ZERO, d * f)
 
-#TODO : flying and running still not fully fixed
+
 func checkRunning():
 	if Ap.running.enabled and Input.is_action_pressed("run") and Ap.player.is_on_floor()\
 	or Ap.flying.enabled and Ap.flying.running_input != 3 and \
