@@ -62,9 +62,11 @@ enabled = true
 
 [node name="Dynamic FOV" type="Node" parent="Player/Camera Settings/Camera Effects"]
 script = ExtResource( 11 )
+enabled = false
 
 [node name="Camera Tilt" type="Node" parent="Player/Camera Settings/Camera Effects"]
 script = ExtResource( 12 )
+enabled = false
 
 [node name="Movement Settings" type="Node" parent="Player"]
 script = ExtResource( 6 )
@@ -82,6 +84,7 @@ script = ExtResource( 10 )
 
 [node name="Running" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 13 )
+speed = 19.41
 
 [node name="Crouching" type="Node" parent="Player/Movement Settings"]
 
@@ -94,7 +97,8 @@ script = ExtResource( 13 )
 [node name="Flying" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 14 )
 enabled = true
-inputs = 7
+inputs = 1
+speed_limit = 98
 
 [node name="UI" type="Node" parent="Player"]
 
