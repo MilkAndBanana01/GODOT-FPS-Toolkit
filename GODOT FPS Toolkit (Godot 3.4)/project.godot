@@ -10,17 +10,13 @@ config_version=4
 
 [application]
 
-config/name="GODOT FPS Toolkit (Godot 3.4)"
+config/name="GODOT FPS Toolkit (Godot 3.5)"
 run/main_scene="res://World/World.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 Ap="*res://Player/AP.gd"
-
-[editor_plugins]
-
-enabled=PoolStringArray( "res://addons/ridiculous_coding/plugin.cfg" )
 
 [gdnative]
 

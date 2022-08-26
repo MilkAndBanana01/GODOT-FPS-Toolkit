@@ -39,14 +39,12 @@ func applyFriction(f,d):
 
 #TODO : flying and running still not fully fixed
 func checkRunning():
-	if Ap.running.enabled:
-		if Ap.flying.is_flying and (Input.is_action_pressed("run") and not Ap.flying.minecraft_style or Input.is_key_pressed(KEY_CONTROL) and Ap.flying.minecraft_style):
-			current_speed += Ap.flying.speed if Ap.flying.speed > 0 else speed + speed/2
-			current_acceleration = Ap.flying.custom_acceleration if Ap.flying.custom_acceleration > 0 else acceleration
-		else:
-			current_speed += running_speed
-			current_acceleration = Ap.running.acceleration if Ap.running.acceleration > 0 else acceleration
-
+	if Ap.running.enabled and Input.is_action_pressed("run") and Ap.player.is_on_floor()\
+	or Ap.flying.enabled and Ap.flying.running_input != 3 and \
+	(Input.is_action_pressed("run") and (Ap.flying.running_input == 0 and not Ap.flying.minecraft_style or Ap.flying.running_input == 2)) or \
+	(Input.is_key_pressed(KEY_CONTROL) and (Ap.flying.running_input == 0 and Ap.flying.minecraft_style or Ap.flying.running_input == 1)):
+		current_speed += running_speed
+		current_acceleration = Ap.running.acceleration if Ap.running.acceleration > 0 else acceleration
 
 
 func _enter_tree() -> void:

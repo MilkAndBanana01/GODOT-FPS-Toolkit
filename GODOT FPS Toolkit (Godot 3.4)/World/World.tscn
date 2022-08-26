@@ -96,9 +96,6 @@ speed = 19.41
 
 [node name="Flying" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 14 )
-enabled = true
-inputs = 1
-speed_limit = 98
 
 [node name="UI" type="Node" parent="Player"]
 
