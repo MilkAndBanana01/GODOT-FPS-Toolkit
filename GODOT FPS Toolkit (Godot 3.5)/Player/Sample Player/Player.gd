@@ -18,6 +18,16 @@ var load_base_debug_mesh
 var load_crouch_debug_mesh
 
 
+func _enter_tree() -> void:
+	Ap.player = self
+	Ap.head = get_node(head)
+	Ap.camera = get_node(str(head) + "/Camera")
+
+
+func _ready() -> void:
+	loadNodes()
+
+
 func loadNodes():
 	load_base_col = get_node(base_collision)
 	load_crouch_col = get_node(crouch_collision)

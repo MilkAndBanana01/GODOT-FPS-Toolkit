@@ -6,23 +6,22 @@ export(int,"Default","Control","Shift","Disabled") var running_input := 0
 export(int,FLAGS,"Godot","Minecraft-style","Camera") var inputs := 2
 export var custom_speed := 0.0
 export var custom_acceleration := 0.0
-#export var scroll_speed_change := true
 export var speed_rate := 0.0
 export var speed_limit := 0.0
+
 onready var minecraft_style : bool = (Ap.flying.inputs > 1 and Ap.flying.inputs < 4) or (Ap.flying.inputs > 5 and Ap.flying.inputs < 8)
 onready var godot_style : bool = Ap.flying.inputs > 0 and Ap.flying.inputs % 2 != 0
 onready var camera_input : bool = Ap.flying.inputs > 3
-
 onready var timer = Timer.new()
 onready var gravity_enabled = Ap.gravity.enabled
+onready var speed = custom_speed if custom_speed > 0 else Ap.walking.speed
+onready var acceleration = custom_acceleration if custom_acceleration > 0 else Ap.walking.acceleration
+
 var is_flying := false
 var attempt_flying := false
-onready var speed = custom_speed if custom_speed > 0 else Ap.movement_settings.speed
-onready var acceleration = custom_acceleration if custom_acceleration > 0 else Ap.movement_settings.acceleration
 var flying_direction : float
 var snap :Vector3
 var flying_velocity : Vector3
-
 
 func retro():
 	flying_velocity = Vector3.ZERO

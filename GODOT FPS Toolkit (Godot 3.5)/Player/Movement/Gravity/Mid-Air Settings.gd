@@ -9,4 +9,3 @@ onready var enabled = bool(enable_air_momentum or enable_air_movement)
 
 func _ready() -> void:
 	Ap.mid_air_settings = self
-
