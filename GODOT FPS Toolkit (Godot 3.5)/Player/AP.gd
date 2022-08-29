@@ -15,4 +15,5 @@ var gravity
 var mid_air_settings
 var jumping
 var running
+var climbing
 var flying

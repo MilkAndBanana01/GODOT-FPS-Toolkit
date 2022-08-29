@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Player/Camera/Camera Settings.gd" type="Script" id=1]
 [ext_resource path="res://Player/Sample Player/Player.tscn" type="PackedScene" id=2]
@@ -16,6 +16,7 @@
 [ext_resource path="res://Player/Movement/Flying/Flying.gd" type="Script" id=14]
 [ext_resource path="res://Player/Movement/Crouching/Crouching.gd" type="Script" id=15]
 [ext_resource path="res://Player/Movement/Walking/Walking.gd" type="Script" id=16]
+[ext_resource path="res://Player/Movement/Climbing/Climbing.gd" type="Script" id=17]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.615686, 0.164706, 0.164706, 1 )
@@ -98,6 +99,7 @@ script = ExtResource( 15 )
 [node name="Sliding" type="Node" parent="Player/Movement Settings"]
 
 [node name="Climbing" type="Node" parent="Player/Movement Settings"]
+script = ExtResource( 17 )
 
 [node name="Flying" type="Node" parent="Player/Movement Settings"]
 script = ExtResource( 14 )
